@@ -1,0 +1,29 @@
+{
+    "url": "https://disk.yandex.ru/d/_5EQGnBOjbDOmQ",
+    "PyForge": {
+        "url": "https://disk.yandex.ru/d/QnU-6-x6ciXRnw"
+
+    },
+    "versions": {
+        "0.0.1": {
+            "url": "https://disk.yandex.ru/d/u3OPel19wSJAig",
+            "name": "0.0.1",
+            "fast_name": "PyForge"
+        },
+        "0.0.2": {
+            "url": "https://disk.yandex.ru/d/X5JWCNqfWYxdWA",
+            "name": "0.0.2",
+            "fast_name": "PyForge"
+        },
+        "0.0.3": {
+            "url": "https://disk.yandex.ru/d/dk8lTcoqZLhpJw",
+            "name": "0.0.3",
+            "fast_name": "PyForge"
+        },
+        "0.1.0": {
+            "url": "",
+            "name": "0.0.3",
+            "fast_name": "PyForge"
+        }
+    }
+}

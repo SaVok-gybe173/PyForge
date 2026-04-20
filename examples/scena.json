@@ -1,0 +1,31 @@
+{
+    "name": "main",
+    "atrubuts": [
+
+    ],
+    "def": {
+        "__init__": {
+            "b0aa111aa11a": {
+                "type": "return",
+                "name": "&fotot",
+                "args": [
+                    "PyForge\\image\\logotip\\20250928_1928_image.png"
+                ],
+                "kargs": {
+
+                }
+            },
+            "a0aa111aa11a":{
+                "type": "return",
+                "name": "$button1",
+                "args": [
+
+                ],
+                "kargs": {
+                    "left_top": [100, 100],
+                    "image": "&fotot"
+                }
+            }
+        }
+    }
+}

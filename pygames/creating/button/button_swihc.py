@@ -3,14 +3,12 @@ try:
 	from ..colisions import collision_surface, collision_maus
 except ImportError:
 	from colisions import collision_surface, collision_maus
+from PyForge.tools import PfObject
 
-class SwitchingButton: ...
-class Switching: ...
-
-class AnimarionSwitching:
+class AnimarionSwitching(PfObject):
 	pass
 
-class Circle:
+class Circle(PfObject):
 	def __init__(self, holst: pg.Surface = None, color = (225,25,225), spid = 10):
 		self.holst = holst
 		self.center = None
@@ -20,7 +18,7 @@ class Circle:
 		self.new_position = 0
 		self.spid = spid
 		
-	def __call__(self, button: Switching):
+	def __call__(self, button: "Switching"):
 		self.button = button
 		if self.holst is None:
 			self.holst = pg.Surface((button.holst.get_width() // 2, button.holst.get_width()))
@@ -46,7 +44,7 @@ class Circle:
 		else:
 			self.new_position = self.fin_position
 
-class Switching:
+class Switching(PfObject):
 	def __init__(self, color = (0,0,0,0),circle: Circle = None, radius = 0, color_radius = (0,0,0,0), animation: AnimarionSwitching = None):
 		''' 
 		*args:
@@ -62,7 +60,7 @@ class Switching:
 		self.radius = radius
 		self.color_radius = color_radius
 		
-	def __call__(self, button: SwitchingButton, wigth_height, x_y):
+	def __call__(self, button: "SwitchingButton", wigth_height, x_y):
 		self.up = pg.Surface(wigth_height)
 		self.button = button
 		self.set_wigth_height(wigth_height)
@@ -103,7 +101,7 @@ class Switching:
 	def update(self):
 		pass
 		
-class SwitchingButton:
+class SwitchingButton(PfObject):
 	def __init__(self, wigth_height = (80,40), x_y = (0,0), switching: Switching = None, radius: int = 0, distance = 4):
 		''' 
 		*args:

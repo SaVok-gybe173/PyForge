@@ -55,9 +55,9 @@ else:
         from EaselPy.strukture import Window
 
 try:
-    from .game_obgect import Game
+    from .game_object import Game
 except ImportError:
-    from game_obgect import Game
+    from PyForge.game_object import Game
 
 try:
     from .mods.mod import FrameMod
@@ -74,7 +74,7 @@ from .pygames.creating.image import get_none_image, round_image, resize_image_wi
 
 
 try:
-    from .pygames.StGame.glk_3d.scene import degrees_to_radians, load_obj, Figure, get_figyre
+    from .pygames.StGame.glk_3d.scene import degrees_to_radians, load_obj, Figure, get_figyre, Camera
 except (ImportError , Exception) as e:
     print("101 - error:", e)
 

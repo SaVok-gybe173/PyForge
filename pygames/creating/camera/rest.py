@@ -1,5 +1,6 @@
 import cv2
 import pygame as pg
+from PyForge.tools import PfObject
 
 IS_INIT = False
 
@@ -27,7 +28,7 @@ def list_cameras():
     raise pg.error("нету инцилизации camera.init()")
 
 
-class Camera:
+class Camera(PfObject):
     def __init__(self, width_height, x_y, camer = 0):
         self.x_y = x_y
         self.cap = cv2.VideoCapture(camer)

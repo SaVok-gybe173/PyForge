@@ -25,6 +25,8 @@ class FrameMod:
         Аргументы:
             screen: pg.display.set_mode
         '''
+    def start(self):
+        pass
 
 class Main(FrameMod):
     def __init__(self, game):

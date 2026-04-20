@@ -1,11 +1,12 @@
 import pygame as pg
-
+from PyForge.tools import PfObject
 from dataclasses import dataclass
-from typing import Tuple
+from typing import Tuple, Any
 
 @dataclass
 class ListItems: 
     image: pg.Surface
+    info: Any = ''
     
     @property
     def width(self):
@@ -26,10 +27,14 @@ class ListItems:
     def __call__(self):
         return self.image
 
+class Governance:
+    DOWN = 0
+    RiGHTWARDS = 1
 
 
-class ListOfItems:
-    def __init__(self, left_top: Tuple[int, int], width_height: Tuple[int, int], items: list[ListItems] | None = None, distance: int = 10, hitbox: bool = False, shadow: int = 10, size_streak = 10, color_streak = (255,255,255), speed = 5):
+
+class ListOfItems(PfObject):
+    def __init__(self, left_top: Tuple[int, int], width_height: Tuple[int, int], items: list[ListItems] | None = None, governance = Governance.DOWN, distance: int = 10, hitbox: bool = False, shadow: int = 10, size_streak = 10, color_streak = (255,255,255), speed = 5):
         '''
         список элементов ListItems
         
@@ -38,15 +43,22 @@ class ListOfItems:
             width_height: Tuple[int, int] - размеры
             
             items: list[ListItems] - элементы в списке
+            governance: направление куда будет смотреть список
             distance: int - растояние между элементами
+
+            size_streak - линия нахождения
+            color_streak - цвет линии
             
+            speed - скорость пролистования
+        
         не передаваемые:
             outline_color: Tuple[int, int, int] - цвет обводки
             outline: int - обводка
+            fons - задний фон
         '''
         self.outline_color = (255,255,255)
         self.outline = 0
-        
+        self.governance = governance
         self.hitbox = hitbox
         
         self.left, self.top = left_top
@@ -67,13 +79,17 @@ class ListOfItems:
         self.__h = 0
         if items:
             self._update()
+        self.fons = pg.Surface((0, 0), pg.SRCALPHA)
     def add(self, *args: Tuple[ListItems]):
         self.items.extend(args)
         self._update()
     def append(self, item):
         self.items.append(item)
         self._update()
-    def _update(self):
+
+
+
+    def _update_down(self):
         self.items_holst = pg.Surface((self.width, sum([(el.heigh + self.distance if i != len(self.items)-1 else el.heigh) for (i, el) in enumerate(self.items)])), pg.SRCALPHA)
         self.items_holst.fill(self.collor)
         
@@ -90,7 +106,86 @@ class ListOfItems:
         self.holst.blit(self.items_holst, (0, self.offset_y))
         if self.__h > self.height:
             self.holst.blit(self.image_streak, (self.width-self._size_streak, self.koficent))
+    def _update_rightwards(self):
+        self.items_holst = pg.Surface((sum([(el.width + self.distance if i != len(self.items)-1 else el.width) for (i, el) in enumerate(self.items)]), self.height), pg.SRCALPHA)
+        self.items_holst.fill(self.collor)
         
+        self.image_streak = pg.Surface((self._update_size(self.items_holst.get_width(), self.holst.get_width())[0], self._size_streak))
+        self.image_streak.fill(self._color_streak)
+        # продолжить (завтра 13.04.26)
+        top = 0
+        for i in self.items:
+            i.heigh = self.height-self._size_streak 
+            self.items_holst.blit(i.image, (top, self._size_streak))
+            top += i.width + self.distance
+        self.__h = top
+        self.holst.fill(self.collor)
+        self.holst.blit(self.items_holst, (self.offset_y, self._size_streak))
+        if self.__h > self.width:
+            self.holst.blit(self.image_streak, (self.koficent, 0))
+
+    def _update(self):
+        if self.governance == Governance.DOWN:
+            self._update_down()
+        elif self.governance == Governance.RiGHTWARDS:
+            self._update_rightwards()
+        else:
+            raise ValueError("governance передан не правельно, используйте Governance класс")
+        
+    
+    
+    def _event_down(self, event):
+        if event.type == pg.MOUSEBUTTONDOWN and self.__h > self.height:
+            if event.button == 4 and self.retention(event.pos):
+                self.koficent = max(0, self.koficent-self.speed )
+            elif event.button == 5 and self.retention(event.pos):
+                self.koficent = min(self._update_size(self.items_holst.get_height(), self.holst.get_height())[1], self.koficent+self.speed )
+            self.holst.fill(self.collor)
+            self.offset_y = -self._event_size(self.items_holst.get_height(), self.holst.get_height(),self.koficent )
+            self.holst.blit(self.items_holst, (0, self.offset_y))
+            self.holst.blit(self.image_streak, (self.width-self._size_streak, self.koficent))
+        return False
+    
+    def _event_rightwards(self, event):
+        if event.type == pg.MOUSEBUTTONDOWN and self.__h > self.width:
+            if event.button == 4 and self.retention(event.pos):
+                self.koficent = max(0, self.koficent-self.speed )
+            elif event.button == 5 and self.retention(event.pos):
+                self.koficent = min(self._update_size(self.items_holst.get_width(), self.holst.get_width())[1], self.koficent+self.speed )
+            self.holst.fill(self.collor)
+            self.offset_y = -self._event_size(self.items_holst.get_width(), self.holst.get_width(), self.koficent )
+            self.holst.blit(self.items_holst, (self.offset_y, 0))
+            self.holst.blit(self.image_streak, (self.koficent, 0))
+        return False
+    
+            
+    def event(self,event):
+        if self.governance == Governance.DOWN:
+            self._event_down(event)
+        elif self.governance == Governance.RiGHTWARDS:
+            self._event_rightwards(event)
+        else:
+            raise ValueError("governance передан не правельно, используйте Governance класс")
+    def draw(self, screen: pg.Surface):
+        screen.blit(self.fons, (self.left, self.top))
+        screen.blit(self.holst, (self.left, self.top))
+        if self.outline:
+            pg.draw.rect(screen, self.outline_color, self.holst.get_rect(left=self.left, top=self.top), self.outline )
+
+    @property
+    def shadow(self):
+        return self.collor[3]
+    @shadow.setter
+    def shadow(self, shadow):
+        self.collor = (*self.color, shadow)
+    
+    @property
+    def color(self):
+        return (self.collor[0], self.collor[1], self.collor[2])
+    @color.setter
+    def color(self, color: list):
+        self.collor = (*color, self.shadow)
+
     @staticmethod
     def _update_size(h: int, h2: int):
         #выводит текуще каэфицент 
@@ -112,6 +207,12 @@ class ListOfItems:
         if self.holst.get_rect(left = self.left, top = self.top).collidepoint(pos):
             return True 
         return False
+
+
+    def clear(self, is_update = True):
+        self.items.clear()
+        if is_update:
+            self._update()
     def index(self):
             # при больших кординатах срабатывает плохо
             for i, el in enumerate(self.items):
@@ -119,46 +220,7 @@ class ListOfItems:
                     return i
             else:
                 return None
-    def event(self,event):
-        #if event.type == 4352:
-        #    self.holst.fill(self.collor)
-        #    self.holst.blit(self.items_holst, (0, self._event_size(self.items_holst.get_height(), self.holst.get_height(), 1 )))
-        #    self.holst.blit(self.image_streak, (self.width-self._size_streak, self.koficent))
-        if event.type == pg.MOUSEBUTTONDOWN and self.__h > self.height:
-            if event.button == 4 and self.retention(event.pos):
-                self.koficent = max(0, self.koficent-self.speed )
-            elif event.button == 5 and self.retention(event.pos):
-                self.koficent = min(self._update_size(self.items_holst.get_height(), self.holst.get_height())[1], self.koficent+self.speed )
-            self.holst.fill(self.collor)
-            self.offset_y = -self._event_size(self.items_holst.get_height(), self.holst.get_height(),self.koficent )
-            self.holst.blit(self.items_holst, (0, self.offset_y))
-            self.holst.blit(self.image_streak, (self.width-self._size_streak, self.koficent))
-        return False
-    def draw(self, screen: pg.Surface):
-        screen.blit(self.holst, (self.left, self.top))
-        if self.outline:
-            pg.draw.rect(screen, self.outline_color, self.holst.get_rect(left=self.left, top=self.top), self.outline )
-    def update(self): ...
-
-
-    @property
-    def shadow(self):
-        return self.collor[3]
-    @shadow.setter
-    def shadow(self, shadow):
-        self.collor = (*self.color, shadow)
-    
-    @property
-    def color(self):
-        return (self.collor[0], self.collor[1], self.collor[2])
-    @color.setter
-    def color(self, color: list):
-        self.collor = (*color, self.shadow)
-    def clear(self, update = True):
-        self.items.clear()
-        if update:
-            self._update()
-    
+            
 if __name__ == '__main__':
 
     pg.init()

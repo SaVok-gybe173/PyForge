@@ -1,4 +1,7 @@
 import pygame as pg
+from functools import wraps
+from typing import Callable
+from PyForge.tools import PfObject
 
 def set_txt_bufer(text_string):
     """
@@ -22,12 +25,12 @@ def ger_txt_bufer():
     else:
         raise TypeError("Буфер обмена не инициализирован, не удалось поместить текст.")
 
-class InputLine:
+class InputLine(PfObject):
     _log_txt_func: list 
     _log_delte_func: list
-    active: bool = False
+    active: bool = False # активен ли ввод
 
-    def __init__(self, left_top, surfase: pg.Surface = None, text='', color = (255,255,255), font: pg.font.Font = None, fps = 60, line_time = 1):
+    def __init__(self, left_top: list[int], surfase: pg.Surface , text: str='', color = (255,255,255), font: pg.font.Font = None, fps: int= 60, line_time: int | float = 1):
         '''
         командная строка HeartComandRend
         
@@ -43,23 +46,21 @@ class InputLine:
         '''
         self._left, self._top = left_top
         self.left_text, self.top_text = left_top
-        self.surfase = surfase
-        self._text = text
-        self.color = color
-        if font is None:
-            self.font = pg.font.Font(None, 32)
-        else:
-            self.font = font
-        self.txt_surface = self.font.render(text, True, self.color) 
-        self._log_txt_func = []
-        self._log_delte_func = []
-        self._log_click_func = []
+        self.surfase = surfase # фон
+        self.color = color # цвет текста
+        self.font = pg.font.Font(None, 32) if font is None else font # шрифт
+        self.text = text # тест
+     
+        self._log_txt_func = [] #
+        self._log_delte_func = [] #
+        self._log_click_func = [] #
+        self._log_key_func = []
 
-        self.line_update = True
-        self.line_time = line_time
-        self.line_out = 0
-        self.line_aktiv = False
-        self.tik = 1/fps
+        self.line_update = True # обновление строки анимации
+        self.line_time = line_time #
+        self.line_out = 0 #
+        self.line_aktiv = False #
+        self.tik = 1/fps #
 
     @property
     def text(self):
@@ -67,7 +68,7 @@ class InputLine:
     @text.setter
     def text(self, t):
         self._text = t
-        self.txt_surface = self.font.render(self._text, True, self.color)
+        self.txt_surface = self.font.render(self._text, True, self.color).convert_alpha()
     def clic_window(self, e):
         if e.type == pg.MOUSEBUTTONDOWN:
             return self.surfase.get_rect(left = self._left, top = self._top).collidepoint(e.pos)
@@ -91,6 +92,8 @@ class InputLine:
                 if event.key == pg.K_v and (pg.key.get_mods() & pg.KMOD_CTRL):
                     
                     self.text += ger_txt_bufer()
+                    for f in self._log_key_func:
+                        f(self.text)
                 elif event.key == pg.K_c and (pg.key.get_mods() & pg.KMOD_CTRL):
                     set_txt_bufer(self.text)
                 elif event.key == pg.K_RETURN:  
@@ -102,6 +105,8 @@ class InputLine:
                         f(self.text)
                 else:
                     self.text += event.unicode
+                    for f in self._log_key_func:
+                        f(self.text)
                 if self.line_aktiv:
                     self.text += '|'
     
@@ -122,18 +127,30 @@ class InputLine:
         screen.blit(self.txt_surface, (self.left_text, self.top_text))
         
     # дикораторы
-    def log_enter(self, func: object):
+    def log_enter(self, func: Callable):
+        """вызывается при нажании энтр"""
         self._log_txt_func.append(func)
+        @wraps(func)
         def wrapper(*args, **kwargs):
             return func(self.text)
         return wrapper
-    def log_delte(self, func: object):
+    def log_delte(self, func: Callable):
+        """вызывается при нажатии кнопки удалить"""
         self._log_delte_func.append(func)
+        @wraps(func)
         def wrapper(*args, **kwargs):
             return func(self.text)
         return wrapper
-    def log_clik(self, func: object):
+    def log_key(self, func: Callable):
+        """вызывается при нажатии на кнопку"""
+        self._log_key_func.append(func)
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            return func(self.text)
+        return wrapper
+    def log_clik(self, func: Callable):
         self._log_click_func.append(func)
+        @wraps(func)
         def wrapper(*args, **kwargs):
             return func(self.text)
         return wrapper

@@ -1,4 +1,5 @@
 import pygame as pg, numpy as np, math
+from PyForge.tools import PfObject
 
 def degrees_to_radians(deg: int):
     # из в градуса в радиант
@@ -8,7 +9,7 @@ def none(*args, **kargs):
             return None
 
 # ---------- Camera (orbit) ----------
-class _Camera:
+class _Camera(PfObject):
     mouse_pressed = False
     fun_turn_x = none
     def __init__(self, pos=[0,0,0], yaw=0.0, pitch=0.0):

@@ -19,8 +19,6 @@ class aabb:
     bottom: int
     top: int
 
-class SurfaceGL: ...
-
 class SurfaceGL:
     def __init__(self, x=0, y=0, width=100, height=100, color=(1.0, 1.0, 1.0)):
         self.x = x
@@ -120,7 +118,7 @@ class SurfaceGL:
             return (aabb.left <= point_x <= aabb.right and 
                     aabb.bottom <= point_y <= aabb.top)
     
-    def collides_with_surface(self, other_surface: SurfaceGL):
+    def collides_with_surface(self, other_surface: "SurfaceGL"):
         """Проверяет коллизию с другим SurfaceGL объектом"""
         aabb1 = self.get_aabb()
         aabb2 = other_surface.get_aabb()

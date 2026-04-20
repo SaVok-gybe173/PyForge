@@ -97,4 +97,3 @@ from PyForge.button import Button вместо from PyForge import Button.
 
 # 0.0.1
 Первый бета-релиз.
-

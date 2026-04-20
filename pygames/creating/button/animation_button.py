@@ -2,10 +2,8 @@ import pygame as pg
 import os
 import sys
 
-try:
-    from .animation import FrameAnimationButton
-except ImportError:
-    from animation import FrameAnimationButton
+from .animation import FrameAnimationButton
+
     
 try:
     
@@ -20,14 +18,11 @@ except (ImportError, ModuleNotFoundError):
         from image.tools import round_corners_alternative
     
     
-    
 class Increase(FrameAnimationButton):
-    def __init__(self, sped = 0.5, fps = 60, seze = 10, click_size = 0, efects_size = 5):
-        if efects_size < seze:
-            raise TypeError('efects_size < seze')
+    def __init__(self, speed = 0.5, fps = 60, seze = 5, click_size = 0, efects_size = 10):
         self.efects_size =  efects_size
-        self.sped = sped
-        self.click_size = click_size or sped//2
+        self.speed = speed
+        self.click_size = click_size or speed//2
         self.i = 0
         self.conif = 1/fps
         self.seze = seze
@@ -48,22 +43,22 @@ class Increase(FrameAnimationButton):
     def update(self):
         if self.button.retention():
             if self.seze > self.i:
-                self.x = self.x - (self.sped + self.conif)
-                self.y = self.y - (self.sped + self.conif)
+                self.x = self.x - (self.speed + self.conif)
+                self.y = self.y - (self.speed + self.conif)
                 
-                self.height = self.height + (self.sped + self.conif)*2
-                self.width = self.width + (self.sped + self.conif)*2
+                self.height = self.height + (self.speed + self.conif)*2
+                self.width = self.width + (self.speed + self.conif)*2
                 
-                self.i += self.sped + self.conif
+                self.i += self.speed + self.conif
         elif 0 < self.i:
 
-            self.x = self.x + (self.sped + self.conif)
-            self.y = self.y + (self.sped + self.conif)
+            self.x = self.x + (self.speed + self.conif)
+            self.y = self.y + (self.speed + self.conif)
             
-            self.height = self.height - (self.sped + self.conif)*2
-            self.width = self.width - (self.sped + self.conif)*2
+            self.height = self.height - (self.speed + self.conif)*2
+            self.width = self.width - (self.speed + self.conif)*2
             
-            self.i -= self.sped + self.conif
+            self.i -= self.speed + self.conif
         self.button.y = self.y
         self.button.x = self.x
         
@@ -78,9 +73,9 @@ class Increase(FrameAnimationButton):
         self.height = button.height
 
 class Impuls(FrameAnimationButton):
-    def __init__(self, sped: int | float = 0.5, fps:int = 60, shadow: int = 50, clic_shadow: int = 30, time_click: int | float = 0.1):
+    def __init__(self, speed: int | float = 0.5, fps:int = 60, shadow: int = 50, clic_shadow: int = 30, time_click: int | float = 0.1):
         self.conif = 1/fps
-        self.sped = sped
+        self.speed = speed
         self.i = 0
         self.clic_shadow = clic_shadow
         self.shadow = (0,0,0, shadow)

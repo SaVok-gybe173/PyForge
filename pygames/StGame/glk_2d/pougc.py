@@ -5,10 +5,10 @@ try:
 except NameError:
 	class function(object):
 		pass
+from PyForge.tools import PfObject
 
 
-
-class StrucktureBlock(pygame.sprite.Sprite):
+class StrucktureBlock(PfObject):
 	name = "StrucktureBlock"
 	id = 0
 	teg = "FyForge:struckture.StrucktureBlock"

@@ -1,7 +1,13 @@
 import pygame as pg
-from typing_extensions import (
-    deprecated,  # added in 3.13
-)
+try:
+    from typing_extensions import (
+        deprecated,  # added in 3.13
+    )
+except ModuleNotFoundError:
+    def deprecated(message, *, category = None, stacklevel: int = 1):
+        def wr(f):
+            return f
+        return wr
 
 from copy import copy
 
@@ -9,6 +15,7 @@ try:
     from .animation import FrameAnimationButton
 except ImportError:
     from animation import FrameAnimationButton
+from PyForge.tools import PfObject
 
 class ButtonClick:
     LCM = 3
@@ -18,10 +25,10 @@ class ButtonClick:
     FORWARD = 4
     BACK = 5
     
-class Button:
+class Button(PfObject):
     _event = None
     
-    def __init__(self, left_top: list[int, int], image: pg.Surface, *, is_mask: bool, alpha: int = 0):
+    def __init__(self, left_top: list[int, int], image: pg.Surface, *, is_mask: bool = False, alpha: int = 0, is_clicking: bool = True):
         '''
         инцилизация!
         
@@ -31,30 +38,41 @@ class Button:
             
             is_mask: bool - использовать маску для точной колизии
             alpha: int - прозрачность для маски
+            is_clicking: bool - показывать облость нажатия
         '''
-        self._is_mask = is_mask
+        self.set_mask(is_mask)
         self._rect = pg.Rect(left_top, image.get_size())
         self.collor_button = None
         self.image = image
-
+        self.is_clicking = is_clicking
+        self._is_clicking = False
     def update(self): pass
-    def event(self, event):pass
+    def event(self, event):
+        if self.is_clicking and event.type == pg.MOUSEMOTION:
+            if self._rect.collidepoint(event.pos):
+                self._is_clicking = True
+                pg.mouse.set_cursor(pg.SYSTEM_CURSOR_HAND)
+                self.clicking()
+            else:
+                if self._is_clicking:
+                    self._is_clicking = False
+                    pg.mouse.set_cursor(pg.SYSTEM_CURSOR_ARROW)
 
     def draw(self, screen: pg.Surface):
         screen.blit(self.image, (self._rect.x, self._rect.y))
 
-    def _click(self,event, i):
+    def _click(self,event: pg.event.Event, i: int) -> bool:
         if event.type == pg.MOUSEBUTTONDOWN:
             if event.button == i and self._rect.collidepoint(event.pos):
-                return True 
+                return True
         return False
     
 
-    def lcm(self, event) -> bool: return self._click(event, ButtonClick.PCM)
-    def pcm(self, event) -> bool: return self._click(event, ButtonClick.LCM)
-    def scm(self, event) -> bool: return self._click(event, ButtonClick.SCR)
-    def forward(self, event) -> bool: return self._click(event, ButtonClick.FORWARD)
-    def back(self, event) -> bool: return self._click(event, ButtonClick.BACK)
+    def lcm(self, event: pg.event.Event) -> bool: return self._click(event, ButtonClick.PCM)
+    def pcm(self, event: pg.event.Event) -> bool: return self._click(event, ButtonClick.LCM)
+    def scm(self, event: pg.event.Event) -> bool: return self._click(event, ButtonClick.SCR)
+    def forward(self, event: pg.event.Event) -> bool: return self._click(event, ButtonClick.FORWARD)
+    def back(self, event: pg.event.Event) -> bool: return self._click(event, ButtonClick.BACK)
     
     def copy(self):
         cop = copy(self)
@@ -98,9 +116,18 @@ class Button:
     @y.setter
     def y(self, y: int | float):
         self._rect.y = y
+        
     @deprecated("Функция перенагружает систему, лучше использовать стандарт")
     def retention(self):
         return self._rect.collidepoint(pg.mouse.get_pos())
+    
+    def set_mask(self, is_mask):
+        self._is_mask = is_mask
+
+    def clicking(self):
+        pass
+    def collidepoint(self, pos):
+        return self._rect.collidepoint(pos)
 
 class AnimationButton(Button):
     '''
@@ -112,9 +139,12 @@ class AnimationButton(Button):
             image: pg.Surface - изображение (размеры)
             
             animation: FrameAnimationButton - класс анимации
+            is_mask: bool - использовать маску для точной колизии
+            alpha: int - прозрачность для маски
+            is_clicking: bool - показывать облость нажатия
         '''
-    def __init__(self, left_top: list[int, int], image: pg.Surface,  animation: FrameAnimationButton = FrameAnimationButton()):
-        super().__init__(left_top,image)
+    def __init__(self, left_top: list[int, int], image: pg.Surface,  animation: FrameAnimationButton = FrameAnimationButton(), *, is_mask: bool = False, alpha: int = 0, is_clicking: bool = True):
+        super().__init__(left_top,image, is_mask=is_mask, alpha=alpha, is_clicking=is_clicking)
         self.animation = animation
         self.animation(self)
     def draw(self, screen: pg.Surface):
@@ -128,35 +158,3 @@ class AnimationButton(Button):
     def efects(self):
         self.animation.efects()
 
-
-if __name__ == '__main__':
-    from animation_button import Increase, Impuls
-    pg.init()
-    screen = pg.display.set_mode((800, 600))
-    screen.fill((25, 25, 25)) 
-
-    clock = pg.time.Clock()
-    s = AnimationButton(screen, (100, 100), (50, 50), animation = Increase(0.5, seze = 5), width_stroke_panel=1, border_radius=10, collor_button=(100,100,100))
-    sa = AnimationButton(screen, (200, 200), (50, 50), animation = Impuls(0.5), width_stroke_panel=1, border_radius=10, collor_button=(100,100,100), accuracy = True)
-    s.draw()
-    clock = pg.time.Clock()
-    pg.display.flip()
-
-
-    running = True
-    while running:
-        screen.fill((25, 25, 25))
-        for event in pg.event.get():
-            if event.type == pg.QUIT:
-                running = False
-            if s.lcm(event):
-                s.efects()
-                print('s')
-            if sa.pcm(event):
-                sa.efects()
-                print('sa')
-        sa.draw()
-        s.draw()
-        clock.tick(60)
-        pg.display.flip()
-    pg.quit()

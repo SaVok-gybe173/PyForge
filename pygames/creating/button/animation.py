@@ -1,6 +1,7 @@
 from pygame import Surface
+from PyForge.tools import PfObject
 
-class FrameAnimationButton:
+class FrameAnimationButton(PfObject):
     # структура посторойки анимациий на кнопки
     def __init__(self):
         # инцилизация
@@ -19,4 +20,7 @@ class FrameAnimationButton:
     def draw(self, screen: Surface):
         # для рисования
         pass
+    def clicking(self):
+        pass
+
     

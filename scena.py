@@ -130,6 +130,6 @@ def save_python(file: str = "*.json"):
     print(start_scena+scena)
     return (start_scena+scena).format(version = __version__, MyScene = s["name"])
 if __name__ == "__main__":
-    print(save_python("PyForge\\creating_a_structure\\scena.json"))
+    print(save_python("PyForge\\examples\\scena.json"))
     
 

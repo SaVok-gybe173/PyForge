@@ -3,10 +3,10 @@ from rich.console import Console
 from termcolor import cprint
 from os import path
 try:
-    from .creating_a_structure.structure import InvalidPageError, CreatingStructure
+    from .examples.structure import InvalidPageError, CreatingStructure
 
 except ImportError:
-    from creating_a_structure.structure import InvalidPageError, CreatingStructure
+    from examples.structure import InvalidPageError, CreatingStructure
 
 console = Console()
 flr = Figlet(font='slant')  # Более стильный шрифт

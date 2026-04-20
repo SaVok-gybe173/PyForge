@@ -2,6 +2,8 @@ import math
 import pygame
 import numpy as np
 
+from PyForge.tools import PfObject
+
 try:
     from .plaer import Camera
 except ImportError:
@@ -49,7 +51,7 @@ def load_obj(filename, texturs = False):
     
     return vertices, faces
 
-class Figure(_Figur):
+class Figure(PfObject, _Figur):
     
     # Вершины куба
     @property

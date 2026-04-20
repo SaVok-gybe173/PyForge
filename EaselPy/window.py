@@ -1,7 +1,7 @@
 try:
-    from .strukture import FrameWindow, Window as _window
+    from .strukture import Window as _window
 except ImportError:
-    from strukture import FrameWindow, Window as _window
+    from strukture import Window as _window
 import os
 from multiprocessing import Process
 
@@ -9,10 +9,12 @@ from multiprocessing import Process
 
 
 class Window(_window):
+    name = None
+    daemon = False
 
     def start(self):
         if self.process is None or not self.process.is_alive():
-            self.process = Process(target=self.run_window)
+            self.process = Process(target=self.run_window, name=self.name, daemon=self.daemon)
             self.process.start()
     def is_alive(self):
         if self.process is None:
@@ -22,7 +24,12 @@ class Window(_window):
     def join(self):
         if self.process is not None:
             self.process.join()
-            
+    def kill(self):
+        try:
+            super().kill()
+        except Exception as e:
+            print("[ERROR] [KILL]", e)
+        self.process.kill()
             
 if __name__ == '__main__':
     import multiprocessing, sys

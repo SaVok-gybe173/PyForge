@@ -1,7 +1,7 @@
 import importlib.util as util
 import os
 
-from .EaselPy.strukture import Window, T, extract_tb
+from .easel.strukture import Window, T, extract_tb
 try:
     from .mods.mod import FrameMod
 except ImportError:

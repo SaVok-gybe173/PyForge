@@ -1,99 +1,101 @@
-# PyForge (2D и 3D движок/фреймворк)
+# PyForge (2D and 3D engine/framework)
 
-PyForge — это движок для создания 2D- и 3D-игр, а также графических оболочек.  
-**Преимущества:**  
-- Создание окна и рабочей области за пару кликов.  
-- Упаковка всех зависимостей в один файл (`.pyz` или `.exe`).  
-- Использование OpenGL.
+PyForge is an engine for creating 2D and 3D games, as well as graphical environments.
+**Advantages:**
+- Create a window and workspace in a couple of clicks.
+- Package all dependencies into a single file (`.pyz` or `.exe`).
+- Use OpenGL.
 
-## Установка зависимостей
+## Installing Dependencies
 
 ```bash```
-pip3 install pygame numpy          # минимальный набор
-pip3 install PyOpenGL              # для полной работы с 3D
+- pip3 install pygame numpy # minimal set
+- pip3 install PyOpenGL # for full 3D support
 
-## Защита скриптов
+## Script Protection
 
-Для защиты Python-скриптов от взлома рекомендуется использовать:
+To protect Python scripts from hacking, we recommend using:
 ```bash```
-pyarmor pack -e "--onefile" скрипт.py
+- pyarmor pack -e "--onefile" script.py
 
+## Project Structure:
 
-## Структура проекта:
+main.py — Create a project using the engine.
+update.py — Update the engine to a new version.
+info.py — engine information (version, logo, etc.).
+init.py — imports all other engine modules.
+game_object.py — the Game class for building the engine (runs in the main process).
 
-main.py — создание проекта с использованием движка.
-update.py — обновление движка до новой версии.
-info.py — информация о движке (версия, логотип и т.д.).
-init.py — импорт всех остальных модулей движка.
-game_object.py — класс Game для построения движка (выполняется в основном процессе).
+## Folders:
 
-## Папки:
+pygames/ — tools for drawing and creating objects using Pygame (CPU computing).
+OpenGL/ — tools for drawing and creating objects using OpenGL (GPU). Recommended for 3D objects with textures.
 
-pygames/ — инструменты для рисования, создания объектов с использованием Pygame (вычисления на CPU).
-OpenGL/ — инструменты для рисования и создания объектов с использованием OpenGL (GPU). Рекомендуется для 3D-объектов с текстурами.
+## Error codes:
 
+Import and initialization (100–109)
+- 100 Error importing and initializing
+- 101 Error importing a module
+- 102 Error importing Pygame
+- 103 Error importing NumPy
+- 104 Error importing OpenGL
+- 105 Error importing .pyd modules
+- 106 Error importing .so module
+- 107 Error importing dependencies
+- 108 Error importing MoviePy
+- 109 Error importing OpenCV (cv2)
 
-## Коды ошибок:
+Runtime errors (200–201)
+- 200 Error during runtime
+- 201 Error searching for icon
 
-Импорт и инициализация (100–109)
-100	Ошибка при импорте и инициализации
-101	Ошибка при импорте какого-либо модуля
-102	Ошибка при импорте Pygame
-103	Ошибка при импорте NumPy
-104	Ошибка при импорте OpenGL
-105	Ошибка при импорте модулей .pyd
-106	Ошибка при импорте модуля .so
-107	Ошибка при импорте зависимостей
-108	Ошибка при импорте MoviePy
-109	Ошибка при импорте OpenCV (cv2)
+## Version history
 
-Ошибки во время работы (200–201)
-200	Ошибка во время работы
-201	Ошибка при поиске иконки
+```0.1.1```
+File name and data structure changes.
+Temporarily removed game_client (for future modifications)
 
-## История версий
+```0.1.0```
+Added separate modules for import (to avoid overloading the engine).
+Example of import changes:
+from PyForge.button import Button instead of from PyForge import Button.
+The new imports contain the GL version.
+The coordinate_transformation function has been added to tools.py to convert coordinates from the range [-1, 1] to screen pixel coordinates.
 
-# 0.1.0
-Добавлены отдельные модули для импорта (чтобы не перегружать движок).
-Пример изменения импорта:
-from PyForge.button import Button вместо from PyForge import Button.
-Новые импорты содержат версию GL.
-В tools.py добавлена функция coordinate_transformation для преобразования координат из диапазона [-1, 1] в пиксельные координаты экрана.
+``0.0.4```
+(no details)
 
-# 0.0.4
-(нет подробностей)
+```0.0.4.beta-1```
+Streams have been added to speed up startup (each scene is loaded separately).
+Folder names have been changed.
+The first beta version has been released, with scene loading from a JSON file.
+Version 0.0.4 is planned to include a server architecture and changes to many classes.
+The Button classes and InputLine initializer have been changed.
+A camera, free movement within the scene, and rotation have been added to 3D. The shape math class has been changed and recompiled.
 
-# 0.0.4.beta-1
-Для ускорения запуска добавлены потоки (каждая сцена загружается отдельно).
-Изменены названия папок.
-Выпущена первая бета-версия с загрузкой сцен из JSON-файла.
-В версии 0.0.4 планируется серверная архитектура и изменение многих классов.
-Изменены классы Button и инициализатор InputLine.
-В 3D добавлена камера, свободное перемещение по сцене, поворот. Изменён и перекомпилирован математический класс фигуры.
+```0.0.3```
+Bugs from the previous version have been fixed.
+New error codes have been added (108, 109, etc.).
+Sound handling and the ability to extract sound from video have been added.
+New class for playing video with sound.
+Separate class for working with sound.
+The pougc module has been added to pygames for creating 2D top-down games.
+A tools file has been added for debugging and speeding up development (a class and function for working with the mouse).
+An installer folder has been created for a custom installer (currently only works with Yandex.Disk; future support will include adding programs to the registry, creating shortcuts, etc.).
+The window_transparency module has been added to EaselPy (Windows only) with the set_window_transparency function.
+A camera module and model have been added to pygames.
+Bugs have been fixed.
+Coming soon: a class for working with video and an installer.
 
-# 0.0.3
-Исправлены ошибки предыдущей версии.
-Добавлены новые коды ошибок (108, 109...).
-Добавлена работа со звуком и функция извлечения звука из видео.
-Новый класс для воспроизведения видео со звуком.
-Отдельный класс для работы со звуком.
-В pygames добавлен модуль pougc для создания 2D-игр с видом сверху.
-Добавлен файл tools для отладки и ускорения разработки (класс и функция для работы с мышью).
-Создана папка installer для собственного инсталлятора (пока работает только с Яндекс.Диском; в будущем — добавление программ в реестр, создание ярлыков и др.).
-В EaselPy добавлен модуль window_transparency (только для Windows) с функцией set_window_transparency.
-Добавлены модуль камеры и модель в pygames.
-Исправлены ошибки.
-В будущем: класс для работы с видео и установщик.
+```0.0.2```
+Reworked main Window class.
+Now each scene is executed separately, eliminating the need to create scenes manually.
+Scenes can be made dependent on each other.
+_scene: list[T | Scene] — stores all scenes.
+condition = 0 — active scene number.
+The add_scene(*args) function adds scenes at program startup (to the end of the list).
+Added set_icon(icon: pg.Surface | str) and set_caption(caption: str | object) methods (separate functions for title and icon removed).
+Completely reworked main class, slightly modified Game class.
 
-# 0.0.2
-Переработка основного класса Window.
-Теперь каждая сцена выполняется отдельно, не требуется создавать сцены вручную.
-Сцены можно сделать зависимыми друг от друга.
- _scene: list[T | Scene] — хранятся все сцены.
- condition = 0 — номер активной сцены.
-Функция add_scene(*args) добавляет сцены во время запуска программы (в конец списка).
-Добавлены методы set_icon(icon: pg.Surface | str) и set_caption(caption: str | object) (убраны отдельные функции для названия и иконки).
-Полностью переработан основной класс, слегка изменён класс Game.
-
-# 0.0.1
-Первый бета-релиз.
+``0.0.1```
+First beta release.

@@ -20,7 +20,7 @@ def copin(r, w):
     print(f"Папка '{w}' успешно создана.")
 
 class CreatingStructure:
-    def __init__(self, page: str, name: str = 'MyProject', developer = 'main', main_file =  'src/{developer}/{name}', version: str = '0.0.1'):
+    def __init__(self, page: str, name: str = 'MyProject', developer = 'main', main_file =  os.path.join('src', '{developer}', '{name}'), version: str = '0.0.1'):
         self.page = page
         self.developer = developer
         self.diricrori = os.path.join(self.page, name)

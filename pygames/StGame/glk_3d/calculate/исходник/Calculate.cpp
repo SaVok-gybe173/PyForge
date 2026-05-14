@@ -8,6 +8,7 @@
 #include <pybind11/stl.h>
 
 using namespace std;
+using arr = std::array<float, 3>;
 namespace py = pybind11;
 
 double degrees_to_radians(float deg) {
@@ -16,16 +17,16 @@ double degrees_to_radians(float deg) {
 
 class _Figur {
 public:
-    _Figur(short width_, short height_, const std::array<float, 3>& position_ = { 0.0f, 0.0f, 0.0f }) :
+    _Figur(short width_, short height_, const arr& position_ = { 0.0f, 0.0f, 0.0f }) :
         width(width_), height(height_), position(position_)
     {}
 
     int fov = 5;
     short height, width;
-    std::array<float, 3> position = { 0.0f, 0.0f, 0.0f };
+    arr position = { 0.0f, 0.0f, 0.0f };
 
-    std::vector<std::array<float, 3>> _vertices;
-    std::vector<std::array<float, 3>> rot_vertices;
+    std::vector<arr> _vertices;
+    std::vector<arr> rot_vertices;
 
     std::vector<std::array<short, 2>> edges;
     std::vector<std::array<int, 2>> projected_vertices;
@@ -39,15 +40,15 @@ public:
         int fov = _fov;
     }
 
-    void set_position(std::array<float,3> positions = {0.0f, 0.0f, 0.0f}){
+    void set_position(arr positions = {0.0f, 0.0f, 0.0f}){
         for (size_t i = 0; i < rot_vertices.size(); ++i) {
             rot_vertices[i][0] = rot_vertices[i][0] +  positions[0];
             rot_vertices[i][1] = rot_vertices[i][1] +  positions[1];
             rot_vertices[i][2] = rot_vertices[i][2] +  positions[2];
         }
     }
-    void update(float distans = 0.0f, std::array<float,3> positions = {0.0f, 0.0f, 0.0f}) {
-    //void update(float distans = 0.0f, std::array<float, 3>& positions = { 0.0f, 0.0f, 0.0f }) {
+    void update(float distans = 0.0f, arr positions = {0.0f, 0.0f, 0.0f}) {
+    //void update(float distans = 0.0f, arr& positions = { 0.0f, 0.0f, 0.0f }) {
         projected_vertices.clear();
 
         for (size_t i = 0; i < rot_vertices.size(); ++i) {
@@ -154,7 +155,7 @@ PYBIND11_MODULE(Calculate, m) {
     m.doc() = "вычисления для скорости на с++";
 
     py::class_<_Figur>(m, "_Figur")
-        .def(py::init<short, short, const std::array<float, 3>&>())
+        .def(py::init<short, short, const arr&>())
         .def("class_draw", &_Figur::_draw)
         .def("draw", &_Figur::draw)
         .def("update", &_Figur::update)

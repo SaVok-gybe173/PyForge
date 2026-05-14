@@ -39,25 +39,28 @@ def is_admin():
 
 '''
 if _multiprocessing_activ:
-    import EaselPy.window
+    import easel.window
 else:
-    import EaselPy.strukture as window
+    import easel.strukture as window
 '''
 if _multiprocessing_activ:
     try:
-        from .EaselPy.window import Window
+        from .easel.window import Window
     except ImportError:
-        from EaselPy.window import Window
+        from easel.window import Window
 else:
     try:
-        from .EaselPy.strukture import Window
+        from .easel.strukture import Window
     except ImportError:
-        from EaselPy.strukture import Window
+        from easel.strukture import Window
+
 
 try:
     from .game_object import Game
 except ImportError:
     from PyForge.game_object import Game
+
+    
 
 try:
     from .mods.mod import FrameMod
@@ -66,7 +69,7 @@ except ImportError:
 
 # используйте пути для импорта
 
-from .EaselPy.strukture import Scene
+from .easel.strukture import Scene
 
 from .pygames.creating.colisions import point_in_rounded_rect, check_rounded_rect_collision
 from .pygames.creating.image import get_none_image, round_image, resize_image_with_aspect_ratio, extract_square_fast, extract_square

@@ -30,6 +30,12 @@ class RGB:
     b: int
 
 @dataclass
+class RGBA:
+    r: int
+    g: int
+    b: int
+
+@dataclass
 class CMYK:
     c: int
     m: int

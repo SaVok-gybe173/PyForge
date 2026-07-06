@@ -1,9 +1,4 @@
-try:
-    from .list_of_items import ListOfItems, ListItems, Governance
-except ImportError:
-    from list_of_items import ListOfItems, ListItems, Governance
+
+from .list_of_items import ListOfItems
+
     
-try:
-    from .structure import FrameListItems
-except ImportError:
-    from structure import FrameListItems

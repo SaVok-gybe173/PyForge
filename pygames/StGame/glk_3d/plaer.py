@@ -8,7 +8,7 @@ def degrees_to_radians(deg: int):
 def none(*args, **kargs):
             return None
 
-# ---------- Camera (orbit) ----------
+
 class _Camera(PfObject):
     mouse_pressed = False
     fun_turn_x = none

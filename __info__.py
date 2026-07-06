@@ -1,4 +1,5 @@
 from typing import Final
+import os
 
-__version__: Final[str] = '0.1.0'
-__logotip__: Final[str] = "PyForge/image/logotip/20250928_1928_image.png"
+__version__: Final[str] = '0.5.0'
+__logotip__: Final[str] = os.path.join("PyForge", "textures", "image", "logotip.png")

@@ -5,6 +5,10 @@ def cordinate_transformation(fraction: tuple[float]) -> tuple[int]:
     size = pygame.display.get_window_size()
     return size[0]/2*(fraction[0]+1), size[1]/2*(-fraction[1]+1)
 
+def relationship_transformation(fraction: tuple[int]) -> tuple[float]:
+    size = pygame.display.get_window_size()
+    return fraction[0]/(size[0]/2)-1, fraction[1]/(size[1]/2)-1
+
 def cord(event: pygame.event.Event, i = 1):
     """
     coordinate output function
@@ -49,5 +53,3 @@ class PfObject:
         pass
     def copy(self):
         return deepcopy(self)
-
-    

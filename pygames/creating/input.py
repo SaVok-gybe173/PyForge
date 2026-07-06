@@ -1,7 +1,11 @@
 import pygame as pg
 from functools import wraps
 from typing import Callable
+from typing_extensions import (
+    deprecated,  # added in 3.13
+)
 from PyForge.tools import PfObject
+from ...button import Button
 
 def set_txt_bufer(text_string):
     """
@@ -26,9 +30,15 @@ def ger_txt_bufer():
         raise TypeError("Буфер обмена не инициализирован, не удалось поместить текст.")
 
 class InputLine(PfObject):
-    _log_txt_func: list 
-    _log_delte_func: list
+    _log_txt_func: list[Callable]
+    _log_delte_func: list[Callable]
+    _log_click_func: list[Callable]
+    _log_key_func: list[Callable]
+    _log_index_func: list[Callable]
+
     active: bool = False # активен ли ввод
+
+    index = -1
 
     def __init__(self, left_top: list[int], surfase: pg.Surface , text: str='', color = (255,255,255), font: pg.font.Font = None, fps: int= 60, line_time: int | float = 1):
         '''
@@ -44,8 +54,9 @@ class InputLine(PfObject):
             left_text, top_text = left, top - размещение текста
             active - активно ли окно для ввода
         '''
-        self._left, self._top = left_top
-        self.left_text, self.top_text = left_top
+        self.button = Button(left_top, surfase)
+        self.button.cursor_hand = pg.SYSTEM_CURSOR_IBEAM
+        self.left_text, self.top_text = 0, 0
         self.surfase = surfase # фон
         self.color = color # цвет текста
         self.font = pg.font.Font(None, 32) if font is None else font # шрифт
@@ -55,6 +66,7 @@ class InputLine(PfObject):
         self._log_delte_func = [] #
         self._log_click_func = [] #
         self._log_key_func = []
+        self._log_index_func = []
 
         self.line_update = True # обновление строки анимации
         self.line_time = line_time #
@@ -69,18 +81,15 @@ class InputLine(PfObject):
     def text(self, t):
         self._text = t
         self.txt_surface = self.font.render(self._text, True, self.color).convert_alpha()
-    def clic_window(self, e):
-        if e.type == pg.MOUSEBUTTONDOWN:
-            return self.surfase.get_rect(left = self._left, top = self._top).collidepoint(e.pos)
-        return False
 
     def event(self, event):
+        self.button.event(event)
         if event.type == pg.MOUSEBUTTONDOWN:
-            if self.clic_window(event):
+            if self.button.collidepoint(event.pos):
                 self.active = not self.active
             else:
                 if self.line_aktiv:
-                    self.text = self.text[:-1]
+                    self.del_index(self.index)
                 self.active = self.line_aktiv = False
             for f in self._log_click_func:
                 f(self.text)
@@ -88,10 +97,10 @@ class InputLine(PfObject):
         if event.type == pg.KEYDOWN:
             if self.active:
                 if self.line_aktiv:
-                    self._text = self._text[:-1]
+                    self.del_index(self.index)
                 if event.key == pg.K_v and (pg.key.get_mods() & pg.KMOD_CTRL):
                     
-                    self.text += ger_txt_bufer()
+                    self.add_index(ger_txt_bufer(), self.index)
                     for f in self._log_key_func:
                         f(self.text)
                 elif event.key == pg.K_c and (pg.key.get_mods() & pg.KMOD_CTRL):
@@ -99,18 +108,36 @@ class InputLine(PfObject):
                 elif event.key == pg.K_RETURN:  
                     for f in self._log_txt_func:
                         f(self.text)
-                elif event.key == pg.K_BACKSPACE:  
-                    self.text = self.text[:-1]
-                    for f in self._log_delte_func:
-                        f(self.text)
+                elif event.key == pg.K_BACKSPACE: 
+                    if len(self.text)+self.index+1 > 0:
+                        self.del_index(self.index)
+                        for f in self._log_delte_func:
+                            f(self.text)
+                elif event.key == 1073741903:
+                    self.index += 1
+                    if self.index > -1:
+                        self.index = -1
+                    else:
+                        self.line_out = 0
+                        self.line_aktiv = True
+                    for f in self._log_index_func:
+                            f(self.index)
+                elif event.key == 1073741904:
+                    if len(self.text)+self.index+1 > 0:
+                        self.index -= 1
+                    self.line_out = 0
+                    self.line_aktiv = True
+                    for f in self._log_index_func:
+                            f(self.index)
                 else:
-                    self.text += event.unicode
+                    self.add_index(event.unicode, self.index)
                     for f in self._log_key_func:
                         f(self.text)
                 if self.line_aktiv:
-                    self.text += '|'
+                    self.add_index('|', self.index)
     
     def update(self):
+        self.button.update()
         if self.active:
             if self.line_update:
                 if self.line_time > self.line_out:
@@ -119,41 +146,80 @@ class InputLine(PfObject):
                     self.line_out = 0
                     self.line_aktiv = not self.line_aktiv
                     if self.line_aktiv:
-                        self.text += '|'
+                        self.add_index('|', self.index)
                     else:
-                        self.text = self.text[:-1]
+                        self.del_index(self.index)
+    
+    def add_index(self, text, index: int):
+        if index<0:
+            index=len(self.text)+index+1
+        self.text = self.text[:index] + text + self.text[index:]
+
+    def del_index(self, index: int, lens=1):
+        if index<0:
+            index=len(self.text)+index+1
+        self.text = self.text[:index-1] + self.text[index+lens-1:]
+
     def draw(self, screen: pg.Surface):
-        screen.blit(self.surfase, (self._left, self._top))
-        screen.blit(self.txt_surface, (self.left_text, self.top_text))
+        sur = self.surfase.copy()
+        sur.blit(self.txt_surface, (self.left_text, self.top_text))
+        screen.blit(sur, (self.left, self.top))
         
     # дикораторы
     def log_enter(self, func: Callable):
-        """вызывается при нажании энтр"""
+        """вызывается при нажании энтр fun(text)"""
         self._log_txt_func.append(func)
-        @wraps(func)
-        def wrapper(*args, **kwargs):
-            return func(self.text)
-        return wrapper
+        return func
     def log_delte(self, func: Callable):
-        """вызывается при нажатии кнопки удалить"""
+        """вызывается при нажатии кнопки удалить fun(text)"""
         self._log_delte_func.append(func)
-        @wraps(func)
-        def wrapper(*args, **kwargs):
-            return func(self.text)
-        return wrapper
+        return func
     def log_key(self, func: Callable):
-        """вызывается при нажатии на кнопку"""
+        """вызывается при нажатии на кнопку fun(text)"""
         self._log_key_func.append(func)
-        @wraps(func)
-        def wrapper(*args, **kwargs):
-            return func(self.text)
-        return wrapper
+        return func
     def log_clik(self, func: Callable):
+        """вызывается при нажатии fun(text)"""
         self._log_click_func.append(func)
-        @wraps(func)
-        def wrapper(*args, **kwargs):
-            return func(self.text)
-        return wrapper
+        return func
+    def log_index(self, func: Callable):
+        """вызывается при смещении"""
+        self._log_index_func.append(func)
+        return func
+    
+    @property
+    def top(self):
+        return self.button._rect.top
+    @top.setter
+    def top(self, top):
+        self.button._rect.top = top
+
+    @property
+    def left(self):
+        return self.button._rect.left
+    @left.setter
+    def left(self, left):
+        self.button._rect.left = left
+
+
+    
+    @property
+    @deprecated("устаревший метод")
+    def _top(self):
+        return self.button._rect.top
+    @_top.setter
+    @deprecated("устаревший метод")
+    def _top(self, top):
+        self.button._rect.top = top
+
+    @property
+    @deprecated("устаревший метод")
+    def _left(self):
+        return self.button._rect.left
+    @_left.setter
+    @deprecated("устаревший метод")
+    def _left(self, left):
+        self.button._rect.left = left
 
 if __name__ == "__main__":
     pg.init()

@@ -28,6 +28,9 @@ class ButtonClick:
 class Button(PfObject):
     _event = None
     
+    cursor_hand = pg.SYSTEM_CURSOR_HAND
+    cursor_arrow = pg.SYSTEM_CURSOR_ARROW
+
     def __init__(self, left_top: list[int, int], image: pg.Surface, *, is_mask: bool = False, alpha: int = 0, is_clicking: bool = True):
         '''
         инцилизация!
@@ -46,17 +49,18 @@ class Button(PfObject):
         self.image = image
         self.is_clicking = is_clicking
         self._is_clicking = False
+
     def update(self): pass
     def event(self, event):
         if self.is_clicking and event.type == pg.MOUSEMOTION:
             if self._rect.collidepoint(event.pos):
                 self._is_clicking = True
-                pg.mouse.set_cursor(pg.SYSTEM_CURSOR_HAND)
+                pg.mouse.set_cursor(self.cursor_hand)
                 self.clicking()
             else:
                 if self._is_clicking:
                     self._is_clicking = False
-                    pg.mouse.set_cursor(pg.SYSTEM_CURSOR_ARROW)
+                    pg.mouse.set_cursor(self.cursor_arrow)
 
     def draw(self, screen: pg.Surface):
         screen.blit(self.image, (self._rect.x, self._rect.y))
@@ -117,7 +121,7 @@ class Button(PfObject):
     def y(self, y: int | float):
         self._rect.y = y
         
-    @deprecated("Функция перенагружает систему, лучше использовать стандарт")
+    @deprecated("Функция перенагружает систему, лучше использовать collidepoint")
     def retention(self):
         return self._rect.collidepoint(pg.mouse.get_pos())
     

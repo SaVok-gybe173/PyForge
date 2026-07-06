@@ -1,7 +1,7 @@
 import importlib.util as util
 import os
 
-from .easel.strukture import Window, T, extract_tb
+from .easel.strukture import Window, T, extract_tb, Scene
 try:
     from .mods.mod import FrameMod
 except ImportError:
@@ -16,7 +16,7 @@ class Game(Window):
     mod_load = [".py", ".pyc", ".pyd"]
     
     
-    def __init__(self, size=(400, 300), color=(255, 255, 255),scene: list[type[T]] = [], *, fps=60, mods_dir=None, _mod = True, flags = None, zi = []):
+    def __init__(self, size=(400, 300), color=(255, 255, 255),scene: list[type[T]] = [Scene], *, fps=60, mods_dir=None, _mod = True, flags = None, zi = []):
         self.mods_dir = mods_dir or os.path.join(os.path.dirname(os.path.abspath(__file__)), 'mods')
         self._mod = _mod
         super().__init__( size, color, fps=fps,flags = flags, zi_set_mode = zi, scene= scene)
@@ -25,6 +25,7 @@ class Game(Window):
             self.load_mods()
             for mod in self.mods_list:
                 mod.start()
+
 
     def start(self):
         super().start()
@@ -44,20 +45,6 @@ class Game(Window):
         for i in self.mods_list:
             i.close()
         
-    def _load_mods_old(self):
-        # Получаем список файлов в директории модов
-        for filename in os.listdir(self.mods_dir):
-            if max([filename.endswith(obf) for obf in self.mod_load]):
-                spec = util.spec_from_file_location(f"mods.{filename[:-3]}", os.path.join(self.mods_dir, filename))
-                mod = util.module_from_spec(spec)
-                spec.loader.exec_module(mod)
-                if hasattr(mod, 'Main'):
-                    try:
-                        stucture: FrameMod = mod.Main(self)
-                        self.mods_list.append(stucture)
-                    except Exception as e:
-                        for frame in extract_tb(e.__traceback__):
-                            self.logger("\033[31m"+ f" [ERROR] [{mod.__name__}] [{frame.name}] {e}" + "\033[0m")
     def load_mods(self):
         # Получаем список файлов в директории модов
         for filename in os.listdir(self.mods_dir):
@@ -72,6 +59,9 @@ class Game(Window):
                     except Exception as e:
                         for frame in extract_tb(e.__traceback__):
                             self.logger("\033[31m"+ f" [ERROR] [{mod.__name__}] [{frame.name}] {e}" + "\033[0m")
+
+
+
 if __name__ == '__main__':
     import multiprocessing
     import sys

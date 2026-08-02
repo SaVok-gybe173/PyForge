@@ -53,3 +53,6 @@ class PfObject:
         pass
     def copy(self):
         return deepcopy(self)
+    
+    def __bool__(self):
+        return False

@@ -132,7 +132,7 @@ def createTexture(testur: Texture):
     """
     создает список команд из текстур
     """
-    f = []
+    f: list[tile] = []
     for k, i in makeSheet(testur).items():
         if type(i) is pg.Surface:
             f.append(createTextureSur(i, k))

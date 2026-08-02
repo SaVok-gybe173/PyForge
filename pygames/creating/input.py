@@ -1,9 +1,16 @@
 import pygame as pg
 from functools import wraps
 from typing import Callable
-from typing_extensions import (
-    deprecated,  # added in 3.13
-)
+try:
+    from typing_extensions import (
+        deprecated,  # added in 3.13
+    )
+except ModuleNotFoundError:
+    def deprecated(mess):
+        def wrap(fun):
+            return fun
+        return wrap
+    
 from PyForge.tools import PfObject
 from ...button import Button
 
@@ -39,6 +46,9 @@ class InputLine(PfObject):
     active: bool = False # активен ли ввод
 
     index = -1
+
+    def __bool__(self):
+        return bool(self.active)
 
     def __init__(self, left_top: list[int], surfase: pg.Surface , text: str='', color = (255,255,255), font: pg.font.Font = None, fps: int= 60, line_time: int | float = 1):
         '''
@@ -87,6 +97,10 @@ class InputLine(PfObject):
         if event.type == pg.MOUSEBUTTONDOWN:
             if self.button.collidepoint(event.pos):
                 self.active = not self.active
+                if self.line_aktiv:
+                    self.del_index(self.index)
+                    self.line_aktiv = False
+
             else:
                 if self.line_aktiv:
                     self.del_index(self.index)

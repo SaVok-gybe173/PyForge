@@ -59,8 +59,11 @@ class Button(PfObject):
                 self.clicking()
             else:
                 if self._is_clicking:
-                    self._is_clicking = False
-                    pg.mouse.set_cursor(self.cursor_arrow)
+                    self.stop()
+
+    def stop(self):
+        self._is_clicking = False
+        pg.mouse.set_cursor(self.cursor_arrow)
 
     def draw(self, screen: pg.Surface):
         screen.blit(self.image, (self._rect.x, self._rect.y))
@@ -141,8 +144,8 @@ class AnimationButton(Button):
             
             left_top - кординаты
             image: pg.Surface - изображение (размеры)
-            
             animation: FrameAnimationButton - класс анимации
+            
             is_mask: bool - использовать маску для точной колизии
             alpha: int - прозрачность для маски
             is_clicking: bool - показывать облость нажатия

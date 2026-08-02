@@ -11,8 +11,6 @@ try:
 except (ImportError, ModuleNotFoundError):
         
         imag_d = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-
-        # Добавляем 'root' в sys.path, если его там еще нет
         if imag_d not in sys.path:
             sys.path.insert(0, imag_d)
         from image.tools import round_corners_alternative

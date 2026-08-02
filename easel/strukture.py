@@ -64,8 +64,8 @@ class Window(Scene):
         self.__size = size
     
     def add_scene(self, *scene: T | Scene):
-        for s in scene:
-            self._scene.append(s(self.win))
+        for sc in scene:
+            self._scene.append(sc(self.win))
 
     def set_icon(self, icon: pg.Surface | str, permission = (32, 32)):
         if type(icon) is str:

@@ -9,7 +9,7 @@ def init():
     cap = cv2.VideoCapture(0)  # 0 обычно означает основную камеру
 
     if not cap.isOpened():
-        raise pg.error("нету камер")
+        raise pg.error("нету камеры")
     else: IS_INIT = True
 
 def list_cameras():
@@ -25,7 +25,7 @@ def list_cameras():
             capture.release()
             index += 1
         return cameras
-    raise pg.error("нету инцилизации camera.init()")
+    raise pg.error("нет инцилизации camera.init")
 
 
 class Camera(PfObject):

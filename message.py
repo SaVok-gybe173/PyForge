@@ -94,7 +94,7 @@ class MessageWindow(Window):
         for i, cf in enumerate(self.rects):
             self.rect.append(pg.Rect(cf.left, cf.top, cf.width, cf.height))
 
-        pg.display.set_window_position(self.pos)
+        pg.display.set_window_position(self.pos) # pip3 install pygame-ce
 
         threading.Thread(target=self.updatemess, daemon=True,).start()
 

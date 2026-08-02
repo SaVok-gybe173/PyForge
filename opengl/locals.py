@@ -59,7 +59,8 @@ try:
     IS_IMPORT_GL, _ = check_opengl_with_pygame()
 except (ModuleNotFoundError, ImportError) as e:
     IS_IMPORT_GL = False
-
+    
+    GL_COLOR_BUFFER_BIT = 0
 
 def set_import_gl(_is: bool):
     """Ручное изменение флага доступности OpenGL"""

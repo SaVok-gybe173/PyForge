@@ -7,8 +7,7 @@ def cmyk_to_rgb(cmyk: "CMYK") -> "RGB":
 def rgb_to_cmyk(rgb: "RGB") -> "CMYK":
     """r,g,b 0-255 -> (c,m,y,k) в процентах 0-100"""
     k = 1 - max(rgb.r / 255.0, rgb.g / 255.0, rgb.b / 255.0)
-    if k == 1:
-        return CMYK(0, 0, 0, 100)
+    if k == 1: return CMYK(0, 0, 0, 100)
     return CMYK(int(round((1 - rgb.r / 255.0 - k) / (1 - k) * 100)), int(round((1 - rgb.g / 255.0 - k) / (1 - k) * 100)), int(round((1 - rgb.b / 255.0 - k) / (1 - k) * 100)), int(round(k * 100)))
 
 def rgb_to_hsv(rgb: "RGB") -> "HSV":
@@ -34,6 +33,7 @@ class RGBA:
     r: int
     g: int
     b: int
+    a: int
 
 @dataclass
 class CMYK:

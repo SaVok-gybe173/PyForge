@@ -2,7 +2,7 @@ import pygame as pg
 from PyForge.tools import PfObject
 from dataclasses import dataclass
 from typing import Tuple, Any
-from ...._core.creating.listing import CoreListOfItems 
+from ...._core.creating.listing.list_of_items import CoreListOfItems 
 
 
 class ListOfItems(CoreListOfItems):

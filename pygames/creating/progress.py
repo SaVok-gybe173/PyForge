@@ -3,4 +3,4 @@ import pygame as pg
 
 class ProgressBar(_ProgressBar):
     def draw(self, sceen):
-        pg.draw.rect(sceen, self.color)
+        pg.draw.rect(sceen, self.color, self.rect)

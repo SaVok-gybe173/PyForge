@@ -1,4 +1,3 @@
-
 class ProgressBarCalc:
     _is_quantity: bool = False
     _quantity_main: int = 100

@@ -5,6 +5,7 @@ from PyForge.lad import start, load
 from PyForge.list import ListItems, ListOfItems
 from PyForge.input import InputLine
 from PyForge.installer.conductor import select_folder
+from PyForge.progress import ProgressBar
 try:
     from .theme import TEMA, get_TEMA
     from .language import TRANSLATION, get_TRANSLATION
@@ -20,12 +21,15 @@ except (ModuleNotFoundError, ImportError):
 
 try:
     from .options import _Options
+    from .installclass import ModelInstall
 except:
     from PyForge.installer.pattern.options import _Options
+    from PyForge.installer.pattern.installclass import ModelInstall
 
+import subprocess
 import threading
 import pygame as pg
-
+import os
 
 class InstallerScene(Scene):
     def _set_main(self, main_class: "_Installer"):
@@ -40,7 +44,7 @@ class InstallerScene(Scene):
 
     def get_tema(self):
         return TEMA[get_TEMA()]
-    def get_translation(self):
+    def get_translation(self) -> dict[str, dict[str, str]]:
         return TRANSLATION[get_TRANSLATION()]
     
     def draw(self, screen):
@@ -227,7 +231,8 @@ def ChoosingPath(len_byts=1024):
                     elif self._Bfurther.lcm(event):
                         self._Bfurther.efects()
                         self._Bfurther.stop()
-                        self.main.condition += 1
+                        if os.path.isdir(self.main.path) and not self.threading_activ:
+                            self.main.condition += 1
                     elif self._Bcancellation.lcm(event):
                         self._Bcancellation.efects()
                         self._Bcancellation.stop()
@@ -283,6 +288,7 @@ def AdditionalOptions(options: list[_Options]):
     class AdditionalOptions(InstallerScene):
         def init(self):
             super().init()
+            self.main.options = options
             self._Bcancellation= _create_gray_button(self.get_translation()["cancellation"], (self.main.size[0]-90, 15+332), self.get_tema()["text"])
             self._Bfurther = _create_blue_button(self.get_translation()["further"], (self._Bcancellation.x-90, 15+332), self.get_tema()["text"])
             self._Bback = _create_gray_button(self.get_translation()["back"], (self._Bfurther.x-80, 15+332), self.get_tema()["text"])
@@ -401,7 +407,7 @@ def Confirmation():
     return Confirmation
 
 
-def InstallationProcess():
+def InstallationProcess(install: ModelInstall):
     """
     6.
 
@@ -411,6 +417,10 @@ def InstallationProcess():
     Возможность отмены
     """
     class InstallationProcess(InstallerScene):
+        _is = True
+        def update_fun(self, p):
+            self.progress.set_percent(p)
+
         def init(self):
             super().init()
             self._Bcancellation= _create_blue_button(self.get_translation()["cancellation"], (self.main.size[0]-90, 15+332), self.get_tema()["text"])
@@ -418,6 +428,10 @@ def InstallationProcess():
             self.installation = pg.font.Font(r"C:\Windows\Fonts\Arialbd.ttf", 14).render(self.get_translation()["installation"], True, self.get_tema()["text"])
             self.installation_info = pg.font.Font(r"C:\Windows\Fonts\Arial.ttf", 12).render(self.get_translation()["installation_info"].format(name=self.main.name), True, self.get_tema()["text"])
             self.installation_agree = _render(self.get_translation()["installation_agree-install"].format(name=self.main.name), pg.font.Font(r"C:\Windows\Fonts\Arial.ttf", 12), 450, color=self.get_tema()["text"])
+
+            self.progress = ProgressBar((40, 120), (410, 20), (14, 181, 42))
+            self.progress_fon = pg.Surface(self.progress.width_height, pg.SRCALPHA)
+            pg.draw.rect(self.progress_fon, (200, 200, 200), self.progress_fon.get_rect(), 1)
             
         def event(self, event):
             self._Bcancellation.event(event)
@@ -425,14 +439,26 @@ def InstallationProcess():
                 self._Bcancellation.efects()
                 self._Bcancellation.stop()
                 self.main.close()          
-                
+            
         def update(self):
+            if self._is:
+                install.install_threading(self.update_fun, self.main.path)
+                self._is = False
             self._Bcancellation.update()
-        
+            self.progress.update()
+
+            if self.progress.get_percent() >= 100:
+                self.main.condition += 1
+                for i in self.main.options:
+                    i.start(self.main)
+
         def draw(self, screen: pg.Surface):
             super().draw(screen)
             self._Bcancellation.draw(screen)
-        
+
+            self.progress.draw(screen)
+            screen.blit(self.progress_fon, self.progress.left_top)
+
             screen.blit(self.installation, (20, 15))
             screen.blit(self.installation_info, (40, 34))
             screen.blit(self.installation_agree, (40, 70))
@@ -440,7 +466,7 @@ def InstallationProcess():
     return InstallationProcess
 
 
-def FinalScreen():
+def FinalScreen(start=True):
     """
     7.
 
@@ -450,7 +476,48 @@ def FinalScreen():
     Кнопка "Готово"
     """
     class FinalScreen(InstallerScene):
-        pass
+        def init(self):
+            super().init()
+            
+            if start:
+                def option(activ):
+                    self._activ = activ
+                self.options = _Options((40, 290), self.get_translation()["completion-icon"].format(name=self.main.name), lambda: None)
+                self.options.set_switch(option)
+            self._Bfurther = _create_blue_button(self.get_translation()["complete"], (self.main.size[0]-180, 15+332), self.get_tema()["text"])
+                    
+            self.completion = pg.font.Font(r"C:\Windows\Fonts\Arialbd.ttf", 14).render(self.get_translation()["completion"].format(name=self.main.name), True, self.get_tema()["text"])
+            self.completion_info = pg.font.Font(r"C:\Windows\Fonts\Arial.ttf", 12).render(self.get_translation()["completion_info"].format(name=self.main.name), True, self.get_tema()["text"])
+            self.completion_agree = _render(self.get_translation()["completion_agree"].format(name=self.main.name), pg.font.Font(r"C:\Windows\Fonts\Arial.ttf", 12), 450, color=self.get_tema()["text"])
+                    
+        def event(self, event):
+            self._Bfurther.event(event)
+            if start:
+                self.options.event(event)
+
+            if self._Bfurther.lcm(event):
+                self._Bfurther.efects()
+                self._Bfurther.stop()
+                if start:
+                    if self._activ:
+                        work_dir = os.path.join(self.main.path, self.main.name)  # папка с exe
+                        exe_path = os.path.join(work_dir, self.main.name + ".exe")
+                        threading.Thread(target=subprocess.run, args=(f'cd /d "{work_dir}" && "{exe_path}"', ), kwargs={"shell": True}).start()
+                        #subprocess.run( f'cd /d "{work_dir}" && "{exe_path}"', shell=True)
+                self.main.close()        
+                        
+        def update(self):
+            self._Bfurther.update()
+            if start:
+                self.options.update()
+        def draw(self, screen: pg.Surface):
+            super().draw(screen)
+            self._Bfurther.draw(screen)
+            screen.blit(self.completion, (20, 15))
+            screen.blit(self.completion_info, (40, 34))
+            screen.blit(self.completion_agree, (40, 70))
+            if start:
+                self.options.draw(screen)
 
     return FinalScreen
 
@@ -459,16 +526,16 @@ class _Installer(Window):
         super().__init__(size, color, scene, fps=fps, flags=flags, zi_set_mode=zi_set_mode)
         self.name = name
         self.img = img
-
         self.path = path
 
     def init(self, win):
         self.set_caption(f"Installation - {self.name}")
+        self.set_icon(self.img)
         for sc in self._scene:
             sc._set_main(self)
             sc.init()
 
-def run(name: str,img, scene: list[InstallerScene], url: str, path: str = r"C:\Program Files"):
+def run(name: str,img, scene: list[InstallerScene], path: str = r"C:\Program Files"):
     install = _Installer(name, img, path, scene=scene, color=TEMA[get_TEMA()]["fon"])
     install.start()
     install.join()

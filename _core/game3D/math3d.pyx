@@ -1,11 +1,17 @@
 # math3d.pyx
 # Исправленная версия со всеми объявлениями cdef в начале функций
 
-from libc.math cimport sqrt, cos, sin, tan
+from libc.math cimport sqrt, cos, sin, tan, pi
 
-# ============================================================================
+def degrees_to_radians(int deg):
+    # из градуса в радиант
+    return deg * pi / 180.0
+
+def radians_to_degrees(float deg):
+    # из радианта в градус
+    return int((deg / pi) * 180)
+
 # 1. Базовые структуры (с массивами)
-# ============================================================================
 
 cdef struct Vec2:
     float v[2]
@@ -25,9 +31,7 @@ cdef struct Quat:
 cdef struct FrustumPlanes:
     Vec4 planes[6]       # left, right, bottom, top, near, far
 
-# ============================================================================
 # 2. Вспомогательные конструкторы
-# ============================================================================
 
 cdef inline Vec2 vec2(float x, float y):
     cdef Vec2 r
@@ -49,9 +53,7 @@ cdef inline Quat quat(float x, float y, float z, float w):
     r.q[0] = x; r.q[1] = y; r.q[2] = z; r.q[3] = w
     return r
 
-# ============================================================================
 # 3. Векторные операции
-# ============================================================================
 
 cdef inline Vec2 vec2_add(Vec2 a, Vec2 b):
     return vec2(a.v[0] + b.v[0], a.v[1] + b.v[1])
@@ -109,9 +111,7 @@ cdef inline Vec4 vec4_mul(Vec4 v, float s):
 cdef inline Vec4 vec3_to_vec4(Vec3 v, float w):
     return vec4(v.v[0], v.v[1], v.v[2], w)
 
-# ============================================================================
 # 4. Матрицы 4x4
-# ============================================================================
 
 cdef inline Mat4 mat4_identity():
     cdef Mat4 M
@@ -217,9 +217,7 @@ cdef inline Mat4 mat4_inverse(Mat4 M):
         inv.m[i] = b[i]
     return inv
 
-# ============================================================================
 # 5. Кватернионы
-# ============================================================================
 
 cdef inline Quat quat_identity():
     return quat(0, 0, 0, 1)
@@ -270,9 +268,7 @@ cdef inline Mat4 quat_to_mat4(Quat q):
     M.m[10] = 1 - 2*(xx + yy)
     return M
 
-# ============================================================================
 # 6. Функции проекций
-# ============================================================================
 
 cdef inline Mat4 mat4_perspective(float fov_rad, float aspect, float near, float far):
     cdef float tan_half_fov = tan(fov_rad / 2.0)
@@ -295,27 +291,19 @@ cdef inline Mat4 mat4_ortho(float left, float right, float bottom, float top, fl
     M.m[14] = -(far + near) / (far - near)
     return M
 
-# ============================================================================
 # 7. Отсечение (Frustum Culling)
-# ============================================================================
 
 cdef inline FrustumPlanes frustum_from_matrix(Mat4 MVP):
     cdef FrustumPlanes fp
     cdef float *m = MVP.m
     cdef int i
     cdef float norm_len
-    # Левая
-    fp.planes[0] = vec4(m[3] + m[0], m[7] + m[4], m[11] + m[8], m[15] + m[12])
-    # Правая
-    fp.planes[1] = vec4(m[3] - m[0], m[7] - m[4], m[11] - m[8], m[15] - m[12])
-    # Нижняя
-    fp.planes[2] = vec4(m[3] + m[1], m[7] + m[5], m[11] + m[9], m[15] + m[13])
-    # Верхняя
-    fp.planes[3] = vec4(m[3] - m[1], m[7] - m[5], m[11] - m[9], m[15] - m[13])
-    # Ближняя
-    fp.planes[4] = vec4(m[3] + m[2], m[7] + m[6], m[11] + m[10], m[15] + m[14])
-    # Дальняя
-    fp.planes[5] = vec4(m[3] - m[2], m[7] - m[6], m[11] - m[10], m[15] - m[14])
+    fp.planes[0] = vec4(m[3] + m[0], m[7] + m[4], m[11] + m[8], m[15] + m[12]) # Левая
+    fp.planes[1] = vec4(m[3] - m[0], m[7] - m[4], m[11] - m[8], m[15] - m[12]) # Правая
+    fp.planes[2] = vec4(m[3] + m[1], m[7] + m[5], m[11] + m[9], m[15] + m[13]) # Нижняя
+    fp.planes[3] = vec4(m[3] - m[1], m[7] - m[5], m[11] - m[9], m[15] - m[13]) # Верхняя
+    fp.planes[4] = vec4(m[3] + m[2], m[7] + m[6], m[11] + m[10], m[15] + m[14]) # Ближняя
+    fp.planes[5] = vec4(m[3] - m[2], m[7] - m[6], m[11] - m[10], m[15] - m[14]) # Дальняя
     # Нормализация всех плоскостей
     for i in range(6):
         norm_len = sqrt(fp.planes[i].v[0]*fp.planes[i].v[0] +
@@ -347,9 +335,7 @@ cdef inline bint is_sphere_in_frustum(FrustumPlanes fp, Vec3 center, float radiu
             return False
     return True
 
-# ============================================================================
 # 8. Преобразование координат (мировые -> экранные)
-# ============================================================================
 
 cdef inline Vec3 world_to_screen(Mat4 MVP, Vec3 world_point,
                                  int viewport_width, int viewport_height):

@@ -46,7 +46,7 @@ class Game(Window):
             i.close()
         
     def load_mods(self):
-        # Получаем список файлов в директории модов
+
         for filename in os.listdir(self.mods_dir):
             if max([filename.endswith(obf) for obf in self.mod_load]):
                 spec = util.spec_from_file_location(f"{filename[:-3]}", os.path.join(self.mods_dir, filename))

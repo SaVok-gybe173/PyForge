@@ -1,7 +1,7 @@
 try:
-    from .pygames.creating.listitng import ListOfItems, ListItems
+    from .list import ListOfItems, ListItems
 except:
-    from pygames.creating.listitng import ListOfItems, ListItems
+    from PyForge.list import ListOfItems, ListItems
 from dataclasses import dataclass
 from threading import Thread
 import os
@@ -16,7 +16,7 @@ except ImportError as e:
 try:
     from .__info__ import __version__
 except ImportError:
-    from __info__ import __version__
+    from PyForge.__info__ import __version__
 
 class NewListItems(ListItems):
     @property

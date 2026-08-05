@@ -1,0 +1,3 @@
+
+class Rect3D:
+    def __init__(self, vertices_list: list[tuple[int, int, int]], indices_list: tuple[int], normals_list=None, uvs_list=None, colors_list=None): ...

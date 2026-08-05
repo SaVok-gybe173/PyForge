@@ -1,6 +1,6 @@
 import os, sys
 from typing import Final
-
+sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), "_core", "game3D"))
 try:
     from pygame import OPENGL, DOUBLEBUF
 except ImportError as e:

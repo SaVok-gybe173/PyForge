@@ -1,3 +1,11 @@
 
 class Rect3D:
-    def __init__(self, vertices_list: list[tuple[int, int, int]], indices_list: tuple[int], normals_list=None, uvs_list=None, colors_list=None): ...
+    def __init__(self, vertices_list: list[tuple[int, int, int]], indices_list: tuple[int], normals_list=None, uvs_list=None, colors_list=None):
+        """
+        Инцилизация
+        """
+
+    def rotate(self, ax: float, ay: float, az: float):
+        """
+        поворот всего обьекта вокруг своей оси
+        """

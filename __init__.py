@@ -73,11 +73,3 @@ from .easel.strukture import Scene
 
 from .pygames.creating.colisions import point_in_rounded_rect, check_rounded_rect_collision
 from .pygames.creating.image import get_none_image, round_image, resize_image_with_aspect_ratio, extract_square_fast, extract_square
-
-
-
-try:
-    from .pygames.StGame.glk_3d.scene import degrees_to_radians, load_obj, Figure, get_figyre, Camera
-except (ImportError , Exception) as e:
-    print("101 - error:", e)
-

@@ -20,3 +20,7 @@ $PY_VERSION setup.py build_ext --inplace
 cd "$SCRIPT_DIR"
 cd _core/creating/listing
 $PY_VERSION setup.py build_ext --inplace
+
+cd "$SCRIPT_DIR"
+cd _core/game3D
+$PY_VERSION setup.py build_ext --inplace

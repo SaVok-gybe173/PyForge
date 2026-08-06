@@ -71,5 +71,5 @@ except ImportError:
 
 from .easel.strukture import Scene
 
-from .pygames.creating.colisions import point_in_rounded_rect, check_rounded_rect_collision
-from .pygames.creating.image import get_none_image, round_image, resize_image_with_aspect_ratio, extract_square_fast, extract_square
+from .cpu.creating.colisions import point_in_rounded_rect, check_rounded_rect_collision
+from .cpu.creating.image import get_none_image, round_image, resize_image_with_aspect_ratio, extract_square_fast, extract_square

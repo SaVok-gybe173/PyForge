@@ -1,6 +1,5 @@
 from math3d cimport *
 import numpy as np
-from libc.math cimport sqrt, cos, sin, tan
 
 cdef class Rect3D:
     cdef float[:, :] vertices
@@ -62,7 +61,7 @@ cdef class Rect3D:
                 aabb[2] <= y <= aabb[3] and
                 aabb[4] <= z <= aabb[5])
 
-    def colliderect(self, other):
+    def colliderect(self, Rect3D other):
         """Проверяет пересечение AABB текущего объекта с другим объектом."""
         a = self.get_aabb()
         b = other.get_aabb()

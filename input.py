@@ -1,4 +1,4 @@
-from .pygames.creating.input import InputLine, ger_txt_bufer, set_txt_bufer
+from .cpu.creating.input import InputLine, ger_txt_bufer, set_txt_bufer
 
 
 __all__ = [

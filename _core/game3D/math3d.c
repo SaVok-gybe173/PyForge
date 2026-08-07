@@ -1586,7 +1586,7 @@ struct __pyx_t_6math3d_Quat {
   float q[4];
 };
 
-/* "math3d.pyx":33
+/* "math3d.pyx":31
  *     float q[4]           # x, y, z, w
  * 
  * cdef struct FrustumPlanes:             # <<<<<<<<<<<<<<
@@ -2687,7 +2687,7 @@ static PyObject *__pyx_pf_6math3d_2radians_to_degrees(CYTHON_UNUSED PyObject *__
  *     #
  *     return int((deg / pi) * 180)             # <<<<<<<<<<<<<<
  * 
- * # ============================================================================
+ * # 1.   ( )
 */
   __Pyx_XDECREF(__pyx_r);
   if (unlikely(M_PI == 0)) {
@@ -2719,8 +2719,8 @@ static PyObject *__pyx_pf_6math3d_2radians_to_degrees(CYTHON_UNUSED PyObject *__
   return __pyx_r;
 }
 
-/* "math3d.pyx":40
- * # ============================================================================
+/* "math3d.pyx":36
+ * # 2.
  * 
  * cdef inline Vec2 vec2(float x, float y):             # <<<<<<<<<<<<<<
  *     cdef Vec2 r
@@ -2731,7 +2731,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Vec2 __pyx_f_6math3d_vec2(float __py
   struct __pyx_t_6math3d_Vec2 __pyx_v_r;
   struct __pyx_t_6math3d_Vec2 __pyx_r;
 
-  /* "math3d.pyx":42
+  /* "math3d.pyx":38
  * cdef inline Vec2 vec2(float x, float y):
  *     cdef Vec2 r
  *     r.v[0] = x; r.v[1] = y             # <<<<<<<<<<<<<<
@@ -2741,7 +2741,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Vec2 __pyx_f_6math3d_vec2(float __py
   (__pyx_v_r.v[0]) = __pyx_v_x;
   (__pyx_v_r.v[1]) = __pyx_v_y;
 
-  /* "math3d.pyx":43
+  /* "math3d.pyx":39
  *     cdef Vec2 r
  *     r.v[0] = x; r.v[1] = y
  *     return r             # <<<<<<<<<<<<<<
@@ -2751,8 +2751,8 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Vec2 __pyx_f_6math3d_vec2(float __py
   __pyx_r = __pyx_v_r;
   goto __pyx_L0;
 
-  /* "math3d.pyx":40
- * # ============================================================================
+  /* "math3d.pyx":36
+ * # 2.
  * 
  * cdef inline Vec2 vec2(float x, float y):             # <<<<<<<<<<<<<<
  *     cdef Vec2 r
@@ -2764,7 +2764,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Vec2 __pyx_f_6math3d_vec2(float __py
   return __pyx_r;
 }
 
-/* "math3d.pyx":45
+/* "math3d.pyx":41
  *     return r
  * 
  * cdef inline Vec3 vec3(float x, float y, float z):             # <<<<<<<<<<<<<<
@@ -2776,7 +2776,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Vec3 __pyx_f_6math3d_vec3(float __py
   struct __pyx_t_6math3d_Vec3 __pyx_v_r;
   struct __pyx_t_6math3d_Vec3 __pyx_r;
 
-  /* "math3d.pyx":47
+  /* "math3d.pyx":43
  * cdef inline Vec3 vec3(float x, float y, float z):
  *     cdef Vec3 r
  *     r.v[0] = x; r.v[1] = y; r.v[2] = z             # <<<<<<<<<<<<<<
@@ -2787,7 +2787,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Vec3 __pyx_f_6math3d_vec3(float __py
   (__pyx_v_r.v[1]) = __pyx_v_y;
   (__pyx_v_r.v[2]) = __pyx_v_z;
 
-  /* "math3d.pyx":48
+  /* "math3d.pyx":44
  *     cdef Vec3 r
  *     r.v[0] = x; r.v[1] = y; r.v[2] = z
  *     return r             # <<<<<<<<<<<<<<
@@ -2797,7 +2797,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Vec3 __pyx_f_6math3d_vec3(float __py
   __pyx_r = __pyx_v_r;
   goto __pyx_L0;
 
-  /* "math3d.pyx":45
+  /* "math3d.pyx":41
  *     return r
  * 
  * cdef inline Vec3 vec3(float x, float y, float z):             # <<<<<<<<<<<<<<
@@ -2810,7 +2810,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Vec3 __pyx_f_6math3d_vec3(float __py
   return __pyx_r;
 }
 
-/* "math3d.pyx":50
+/* "math3d.pyx":46
  *     return r
  * 
  * cdef inline Vec4 vec4(float x, float y, float z, float w):             # <<<<<<<<<<<<<<
@@ -2822,7 +2822,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Vec4 __pyx_f_6math3d_vec4(float __py
   struct __pyx_t_6math3d_Vec4 __pyx_v_r;
   struct __pyx_t_6math3d_Vec4 __pyx_r;
 
-  /* "math3d.pyx":52
+  /* "math3d.pyx":48
  * cdef inline Vec4 vec4(float x, float y, float z, float w):
  *     cdef Vec4 r
  *     r.v[0] = x; r.v[1] = y; r.v[2] = z; r.v[3] = w             # <<<<<<<<<<<<<<
@@ -2834,7 +2834,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Vec4 __pyx_f_6math3d_vec4(float __py
   (__pyx_v_r.v[2]) = __pyx_v_z;
   (__pyx_v_r.v[3]) = __pyx_v_w;
 
-  /* "math3d.pyx":53
+  /* "math3d.pyx":49
  *     cdef Vec4 r
  *     r.v[0] = x; r.v[1] = y; r.v[2] = z; r.v[3] = w
  *     return r             # <<<<<<<<<<<<<<
@@ -2844,7 +2844,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Vec4 __pyx_f_6math3d_vec4(float __py
   __pyx_r = __pyx_v_r;
   goto __pyx_L0;
 
-  /* "math3d.pyx":50
+  /* "math3d.pyx":46
  *     return r
  * 
  * cdef inline Vec4 vec4(float x, float y, float z, float w):             # <<<<<<<<<<<<<<
@@ -2857,7 +2857,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Vec4 __pyx_f_6math3d_vec4(float __py
   return __pyx_r;
 }
 
-/* "math3d.pyx":55
+/* "math3d.pyx":51
  *     return r
  * 
  * cdef inline Quat quat(float x, float y, float z, float w):             # <<<<<<<<<<<<<<
@@ -2869,7 +2869,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Quat __pyx_f_6math3d_quat(float __py
   struct __pyx_t_6math3d_Quat __pyx_v_r;
   struct __pyx_t_6math3d_Quat __pyx_r;
 
-  /* "math3d.pyx":57
+  /* "math3d.pyx":53
  * cdef inline Quat quat(float x, float y, float z, float w):
  *     cdef Quat r
  *     r.q[0] = x; r.q[1] = y; r.q[2] = z; r.q[3] = w             # <<<<<<<<<<<<<<
@@ -2881,17 +2881,17 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Quat __pyx_f_6math3d_quat(float __py
   (__pyx_v_r.q[2]) = __pyx_v_z;
   (__pyx_v_r.q[3]) = __pyx_v_w;
 
-  /* "math3d.pyx":58
+  /* "math3d.pyx":54
  *     cdef Quat r
  *     r.q[0] = x; r.q[1] = y; r.q[2] = z; r.q[3] = w
  *     return r             # <<<<<<<<<<<<<<
  * 
- * # ============================================================================
+ * # 3.
 */
   __pyx_r = __pyx_v_r;
   goto __pyx_L0;
 
-  /* "math3d.pyx":55
+  /* "math3d.pyx":51
  *     return r
  * 
  * cdef inline Quat quat(float x, float y, float z, float w):             # <<<<<<<<<<<<<<
@@ -2904,8 +2904,8 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Quat __pyx_f_6math3d_quat(float __py
   return __pyx_r;
 }
 
-/* "math3d.pyx":64
- * # ============================================================================
+/* "math3d.pyx":58
+ * # 3.
  * 
  * cdef inline Vec2 vec2_add(Vec2 a, Vec2 b):             # <<<<<<<<<<<<<<
  *     return vec2(a.v[0] + b.v[0], a.v[1] + b.v[1])
@@ -2919,19 +2919,19 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Vec2 __pyx_f_6math3d_vec2_add(struct
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
 
-  /* "math3d.pyx":65
+  /* "math3d.pyx":59
  * 
  * cdef inline Vec2 vec2_add(Vec2 a, Vec2 b):
  *     return vec2(a.v[0] + b.v[0], a.v[1] + b.v[1])             # <<<<<<<<<<<<<<
  * 
  * cdef inline Vec2 vec2_sub(Vec2 a, Vec2 b):
 */
-  __pyx_t_1 = __pyx_f_6math3d_vec2(((__pyx_v_a.v[0]) + (__pyx_v_b.v[0])), ((__pyx_v_a.v[1]) + (__pyx_v_b.v[1]))); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 65, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_6math3d_vec2(((__pyx_v_a.v[0]) + (__pyx_v_b.v[0])), ((__pyx_v_a.v[1]) + (__pyx_v_b.v[1]))); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 59, __pyx_L1_error)
   __pyx_r = __pyx_t_1;
   goto __pyx_L0;
 
-  /* "math3d.pyx":64
- * # ============================================================================
+  /* "math3d.pyx":58
+ * # 3.
  * 
  * cdef inline Vec2 vec2_add(Vec2 a, Vec2 b):             # <<<<<<<<<<<<<<
  *     return vec2(a.v[0] + b.v[0], a.v[1] + b.v[1])
@@ -2946,7 +2946,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Vec2 __pyx_f_6math3d_vec2_add(struct
   return __pyx_r;
 }
 
-/* "math3d.pyx":67
+/* "math3d.pyx":61
  *     return vec2(a.v[0] + b.v[0], a.v[1] + b.v[1])
  * 
  * cdef inline Vec2 vec2_sub(Vec2 a, Vec2 b):             # <<<<<<<<<<<<<<
@@ -2961,18 +2961,18 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Vec2 __pyx_f_6math3d_vec2_sub(struct
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
 
-  /* "math3d.pyx":68
+  /* "math3d.pyx":62
  * 
  * cdef inline Vec2 vec2_sub(Vec2 a, Vec2 b):
  *     return vec2(a.v[0] - b.v[0], a.v[1] - b.v[1])             # <<<<<<<<<<<<<<
  * 
  * cdef inline Vec2 vec2_mul(Vec2 v, float s):
 */
-  __pyx_t_1 = __pyx_f_6math3d_vec2(((__pyx_v_a.v[0]) - (__pyx_v_b.v[0])), ((__pyx_v_a.v[1]) - (__pyx_v_b.v[1]))); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 68, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_6math3d_vec2(((__pyx_v_a.v[0]) - (__pyx_v_b.v[0])), ((__pyx_v_a.v[1]) - (__pyx_v_b.v[1]))); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 62, __pyx_L1_error)
   __pyx_r = __pyx_t_1;
   goto __pyx_L0;
 
-  /* "math3d.pyx":67
+  /* "math3d.pyx":61
  *     return vec2(a.v[0] + b.v[0], a.v[1] + b.v[1])
  * 
  * cdef inline Vec2 vec2_sub(Vec2 a, Vec2 b):             # <<<<<<<<<<<<<<
@@ -2988,7 +2988,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Vec2 __pyx_f_6math3d_vec2_sub(struct
   return __pyx_r;
 }
 
-/* "math3d.pyx":70
+/* "math3d.pyx":64
  *     return vec2(a.v[0] - b.v[0], a.v[1] - b.v[1])
  * 
  * cdef inline Vec2 vec2_mul(Vec2 v, float s):             # <<<<<<<<<<<<<<
@@ -3003,18 +3003,18 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Vec2 __pyx_f_6math3d_vec2_mul(struct
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
 
-  /* "math3d.pyx":71
+  /* "math3d.pyx":65
  * 
  * cdef inline Vec2 vec2_mul(Vec2 v, float s):
  *     return vec2(v.v[0] * s, v.v[1] * s)             # <<<<<<<<<<<<<<
  * 
  * cdef inline float vec2_dot(Vec2 a, Vec2 b):
 */
-  __pyx_t_1 = __pyx_f_6math3d_vec2(((__pyx_v_v.v[0]) * __pyx_v_s), ((__pyx_v_v.v[1]) * __pyx_v_s)); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 71, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_6math3d_vec2(((__pyx_v_v.v[0]) * __pyx_v_s), ((__pyx_v_v.v[1]) * __pyx_v_s)); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 65, __pyx_L1_error)
   __pyx_r = __pyx_t_1;
   goto __pyx_L0;
 
-  /* "math3d.pyx":70
+  /* "math3d.pyx":64
  *     return vec2(a.v[0] - b.v[0], a.v[1] - b.v[1])
  * 
  * cdef inline Vec2 vec2_mul(Vec2 v, float s):             # <<<<<<<<<<<<<<
@@ -3030,7 +3030,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Vec2 __pyx_f_6math3d_vec2_mul(struct
   return __pyx_r;
 }
 
-/* "math3d.pyx":73
+/* "math3d.pyx":67
  *     return vec2(v.v[0] * s, v.v[1] * s)
  * 
  * cdef inline float vec2_dot(Vec2 a, Vec2 b):             # <<<<<<<<<<<<<<
@@ -3041,7 +3041,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Vec2 __pyx_f_6math3d_vec2_mul(struct
 static CYTHON_INLINE float __pyx_f_6math3d_vec2_dot(struct __pyx_t_6math3d_Vec2 __pyx_v_a, struct __pyx_t_6math3d_Vec2 __pyx_v_b) {
   float __pyx_r;
 
-  /* "math3d.pyx":74
+  /* "math3d.pyx":68
  * 
  * cdef inline float vec2_dot(Vec2 a, Vec2 b):
  *     return a.v[0] * b.v[0] + a.v[1] * b.v[1]             # <<<<<<<<<<<<<<
@@ -3051,7 +3051,7 @@ static CYTHON_INLINE float __pyx_f_6math3d_vec2_dot(struct __pyx_t_6math3d_Vec2 
   __pyx_r = (((__pyx_v_a.v[0]) * (__pyx_v_b.v[0])) + ((__pyx_v_a.v[1]) * (__pyx_v_b.v[1])));
   goto __pyx_L0;
 
-  /* "math3d.pyx":73
+  /* "math3d.pyx":67
  *     return vec2(v.v[0] * s, v.v[1] * s)
  * 
  * cdef inline float vec2_dot(Vec2 a, Vec2 b):             # <<<<<<<<<<<<<<
@@ -3064,7 +3064,7 @@ static CYTHON_INLINE float __pyx_f_6math3d_vec2_dot(struct __pyx_t_6math3d_Vec2 
   return __pyx_r;
 }
 
-/* "math3d.pyx":76
+/* "math3d.pyx":70
  *     return a.v[0] * b.v[0] + a.v[1] * b.v[1]
  * 
  * cdef inline float vec2_len(Vec2 v):             # <<<<<<<<<<<<<<
@@ -3075,7 +3075,7 @@ static CYTHON_INLINE float __pyx_f_6math3d_vec2_dot(struct __pyx_t_6math3d_Vec2 
 static CYTHON_INLINE float __pyx_f_6math3d_vec2_len(struct __pyx_t_6math3d_Vec2 __pyx_v_v) {
   float __pyx_r;
 
-  /* "math3d.pyx":77
+  /* "math3d.pyx":71
  * 
  * cdef inline float vec2_len(Vec2 v):
  *     return sqrt(v.v[0] * v.v[0] + v.v[1] * v.v[1])             # <<<<<<<<<<<<<<
@@ -3085,7 +3085,7 @@ static CYTHON_INLINE float __pyx_f_6math3d_vec2_len(struct __pyx_t_6math3d_Vec2 
   __pyx_r = sqrt((((__pyx_v_v.v[0]) * (__pyx_v_v.v[0])) + ((__pyx_v_v.v[1]) * (__pyx_v_v.v[1]))));
   goto __pyx_L0;
 
-  /* "math3d.pyx":76
+  /* "math3d.pyx":70
  *     return a.v[0] * b.v[0] + a.v[1] * b.v[1]
  * 
  * cdef inline float vec2_len(Vec2 v):             # <<<<<<<<<<<<<<
@@ -3098,7 +3098,7 @@ static CYTHON_INLINE float __pyx_f_6math3d_vec2_len(struct __pyx_t_6math3d_Vec2 
   return __pyx_r;
 }
 
-/* "math3d.pyx":79
+/* "math3d.pyx":73
  *     return sqrt(v.v[0] * v.v[0] + v.v[1] * v.v[1])
  * 
  * cdef inline Vec2 vec2_normalize(Vec2 v):             # <<<<<<<<<<<<<<
@@ -3116,17 +3116,17 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Vec2 __pyx_f_6math3d_vec2_normalize(
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
 
-  /* "math3d.pyx":80
+  /* "math3d.pyx":74
  * 
  * cdef inline Vec2 vec2_normalize(Vec2 v):
  *     cdef float l = vec2_len(v)             # <<<<<<<<<<<<<<
  *     if l == 0: return vec2(0, 0)
  *     return vec2(v.v[0] / l, v.v[1] / l)
 */
-  __pyx_t_1 = __pyx_f_6math3d_vec2_len(__pyx_v_v); if (unlikely(__pyx_t_1 == ((float)-1) && PyErr_Occurred())) __PYX_ERR(0, 80, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_6math3d_vec2_len(__pyx_v_v); if (unlikely(__pyx_t_1 == ((float)-1) && PyErr_Occurred())) __PYX_ERR(0, 74, __pyx_L1_error)
   __pyx_v_l = __pyx_t_1;
 
-  /* "math3d.pyx":81
+  /* "math3d.pyx":75
  * cdef inline Vec2 vec2_normalize(Vec2 v):
  *     cdef float l = vec2_len(v)
  *     if l == 0: return vec2(0, 0)             # <<<<<<<<<<<<<<
@@ -3135,12 +3135,12 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Vec2 __pyx_f_6math3d_vec2_normalize(
 */
   __pyx_t_2 = (__pyx_v_l == 0.0);
   if (__pyx_t_2) {
-    __pyx_t_3 = __pyx_f_6math3d_vec2(0.0, 0.0); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 81, __pyx_L1_error)
+    __pyx_t_3 = __pyx_f_6math3d_vec2(0.0, 0.0); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 75, __pyx_L1_error)
     __pyx_r = __pyx_t_3;
     goto __pyx_L0;
   }
 
-  /* "math3d.pyx":82
+  /* "math3d.pyx":76
  *     cdef float l = vec2_len(v)
  *     if l == 0: return vec2(0, 0)
  *     return vec2(v.v[0] / l, v.v[1] / l)             # <<<<<<<<<<<<<<
@@ -3149,17 +3149,17 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Vec2 __pyx_f_6math3d_vec2_normalize(
 */
   if (unlikely(__pyx_v_l == 0)) {
     PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-    __PYX_ERR(0, 82, __pyx_L1_error)
+    __PYX_ERR(0, 76, __pyx_L1_error)
   }
   if (unlikely(__pyx_v_l == 0)) {
     PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-    __PYX_ERR(0, 82, __pyx_L1_error)
+    __PYX_ERR(0, 76, __pyx_L1_error)
   }
-  __pyx_t_3 = __pyx_f_6math3d_vec2(((__pyx_v_v.v[0]) / __pyx_v_l), ((__pyx_v_v.v[1]) / __pyx_v_l)); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 82, __pyx_L1_error)
+  __pyx_t_3 = __pyx_f_6math3d_vec2(((__pyx_v_v.v[0]) / __pyx_v_l), ((__pyx_v_v.v[1]) / __pyx_v_l)); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 76, __pyx_L1_error)
   __pyx_r = __pyx_t_3;
   goto __pyx_L0;
 
-  /* "math3d.pyx":79
+  /* "math3d.pyx":73
  *     return sqrt(v.v[0] * v.v[0] + v.v[1] * v.v[1])
  * 
  * cdef inline Vec2 vec2_normalize(Vec2 v):             # <<<<<<<<<<<<<<
@@ -3175,7 +3175,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Vec2 __pyx_f_6math3d_vec2_normalize(
   return __pyx_r;
 }
 
-/* "math3d.pyx":85
+/* "math3d.pyx":79
  * 
  * 
  * cdef inline Vec3 vec3_add(Vec3 a, Vec3 b):             # <<<<<<<<<<<<<<
@@ -3190,18 +3190,18 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Vec3 __pyx_f_6math3d_vec3_add(struct
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
 
-  /* "math3d.pyx":86
+  /* "math3d.pyx":80
  * 
  * cdef inline Vec3 vec3_add(Vec3 a, Vec3 b):
  *     return vec3(a.v[0] + b.v[0], a.v[1] + b.v[1], a.v[2] + b.v[2])             # <<<<<<<<<<<<<<
  * 
  * cdef inline Vec3 vec3_sub(Vec3 a, Vec3 b):
 */
-  __pyx_t_1 = __pyx_f_6math3d_vec3(((__pyx_v_a.v[0]) + (__pyx_v_b.v[0])), ((__pyx_v_a.v[1]) + (__pyx_v_b.v[1])), ((__pyx_v_a.v[2]) + (__pyx_v_b.v[2]))); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 86, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_6math3d_vec3(((__pyx_v_a.v[0]) + (__pyx_v_b.v[0])), ((__pyx_v_a.v[1]) + (__pyx_v_b.v[1])), ((__pyx_v_a.v[2]) + (__pyx_v_b.v[2]))); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 80, __pyx_L1_error)
   __pyx_r = __pyx_t_1;
   goto __pyx_L0;
 
-  /* "math3d.pyx":85
+  /* "math3d.pyx":79
  * 
  * 
  * cdef inline Vec3 vec3_add(Vec3 a, Vec3 b):             # <<<<<<<<<<<<<<
@@ -3217,7 +3217,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Vec3 __pyx_f_6math3d_vec3_add(struct
   return __pyx_r;
 }
 
-/* "math3d.pyx":88
+/* "math3d.pyx":82
  *     return vec3(a.v[0] + b.v[0], a.v[1] + b.v[1], a.v[2] + b.v[2])
  * 
  * cdef inline Vec3 vec3_sub(Vec3 a, Vec3 b):             # <<<<<<<<<<<<<<
@@ -3232,18 +3232,18 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Vec3 __pyx_f_6math3d_vec3_sub(struct
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
 
-  /* "math3d.pyx":89
+  /* "math3d.pyx":83
  * 
  * cdef inline Vec3 vec3_sub(Vec3 a, Vec3 b):
  *     return vec3(a.v[0] - b.v[0], a.v[1] - b.v[1], a.v[2] - b.v[2])             # <<<<<<<<<<<<<<
  * 
  * cdef inline Vec3 vec3_mul(Vec3 v, float s):
 */
-  __pyx_t_1 = __pyx_f_6math3d_vec3(((__pyx_v_a.v[0]) - (__pyx_v_b.v[0])), ((__pyx_v_a.v[1]) - (__pyx_v_b.v[1])), ((__pyx_v_a.v[2]) - (__pyx_v_b.v[2]))); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 89, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_6math3d_vec3(((__pyx_v_a.v[0]) - (__pyx_v_b.v[0])), ((__pyx_v_a.v[1]) - (__pyx_v_b.v[1])), ((__pyx_v_a.v[2]) - (__pyx_v_b.v[2]))); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 83, __pyx_L1_error)
   __pyx_r = __pyx_t_1;
   goto __pyx_L0;
 
-  /* "math3d.pyx":88
+  /* "math3d.pyx":82
  *     return vec3(a.v[0] + b.v[0], a.v[1] + b.v[1], a.v[2] + b.v[2])
  * 
  * cdef inline Vec3 vec3_sub(Vec3 a, Vec3 b):             # <<<<<<<<<<<<<<
@@ -3259,7 +3259,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Vec3 __pyx_f_6math3d_vec3_sub(struct
   return __pyx_r;
 }
 
-/* "math3d.pyx":91
+/* "math3d.pyx":85
  *     return vec3(a.v[0] - b.v[0], a.v[1] - b.v[1], a.v[2] - b.v[2])
  * 
  * cdef inline Vec3 vec3_mul(Vec3 v, float s):             # <<<<<<<<<<<<<<
@@ -3274,18 +3274,18 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Vec3 __pyx_f_6math3d_vec3_mul(struct
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
 
-  /* "math3d.pyx":92
+  /* "math3d.pyx":86
  * 
  * cdef inline Vec3 vec3_mul(Vec3 v, float s):
  *     return vec3(v.v[0] * s, v.v[1] * s, v.v[2] * s)             # <<<<<<<<<<<<<<
  * 
  * cdef inline float vec3_dot(Vec3 a, Vec3 b):
 */
-  __pyx_t_1 = __pyx_f_6math3d_vec3(((__pyx_v_v.v[0]) * __pyx_v_s), ((__pyx_v_v.v[1]) * __pyx_v_s), ((__pyx_v_v.v[2]) * __pyx_v_s)); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 92, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_6math3d_vec3(((__pyx_v_v.v[0]) * __pyx_v_s), ((__pyx_v_v.v[1]) * __pyx_v_s), ((__pyx_v_v.v[2]) * __pyx_v_s)); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 86, __pyx_L1_error)
   __pyx_r = __pyx_t_1;
   goto __pyx_L0;
 
-  /* "math3d.pyx":91
+  /* "math3d.pyx":85
  *     return vec3(a.v[0] - b.v[0], a.v[1] - b.v[1], a.v[2] - b.v[2])
  * 
  * cdef inline Vec3 vec3_mul(Vec3 v, float s):             # <<<<<<<<<<<<<<
@@ -3301,7 +3301,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Vec3 __pyx_f_6math3d_vec3_mul(struct
   return __pyx_r;
 }
 
-/* "math3d.pyx":94
+/* "math3d.pyx":88
  *     return vec3(v.v[0] * s, v.v[1] * s, v.v[2] * s)
  * 
  * cdef inline float vec3_dot(Vec3 a, Vec3 b):             # <<<<<<<<<<<<<<
@@ -3312,7 +3312,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Vec3 __pyx_f_6math3d_vec3_mul(struct
 static CYTHON_INLINE float __pyx_f_6math3d_vec3_dot(struct __pyx_t_6math3d_Vec3 __pyx_v_a, struct __pyx_t_6math3d_Vec3 __pyx_v_b) {
   float __pyx_r;
 
-  /* "math3d.pyx":95
+  /* "math3d.pyx":89
  * 
  * cdef inline float vec3_dot(Vec3 a, Vec3 b):
  *     return a.v[0] * b.v[0] + a.v[1] * b.v[1] + a.v[2] * b.v[2]             # <<<<<<<<<<<<<<
@@ -3322,7 +3322,7 @@ static CYTHON_INLINE float __pyx_f_6math3d_vec3_dot(struct __pyx_t_6math3d_Vec3 
   __pyx_r = ((((__pyx_v_a.v[0]) * (__pyx_v_b.v[0])) + ((__pyx_v_a.v[1]) * (__pyx_v_b.v[1]))) + ((__pyx_v_a.v[2]) * (__pyx_v_b.v[2])));
   goto __pyx_L0;
 
-  /* "math3d.pyx":94
+  /* "math3d.pyx":88
  *     return vec3(v.v[0] * s, v.v[1] * s, v.v[2] * s)
  * 
  * cdef inline float vec3_dot(Vec3 a, Vec3 b):             # <<<<<<<<<<<<<<
@@ -3335,7 +3335,7 @@ static CYTHON_INLINE float __pyx_f_6math3d_vec3_dot(struct __pyx_t_6math3d_Vec3 
   return __pyx_r;
 }
 
-/* "math3d.pyx":97
+/* "math3d.pyx":91
  *     return a.v[0] * b.v[0] + a.v[1] * b.v[1] + a.v[2] * b.v[2]
  * 
  * cdef inline Vec3 vec3_cross(Vec3 a, Vec3 b):             # <<<<<<<<<<<<<<
@@ -3350,18 +3350,18 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Vec3 __pyx_f_6math3d_vec3_cross(stru
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
 
-  /* "math3d.pyx":98
+  /* "math3d.pyx":92
  * 
  * cdef inline Vec3 vec3_cross(Vec3 a, Vec3 b):
  *     return vec3(a.v[1] * b.v[2] - a.v[2] * b.v[1],             # <<<<<<<<<<<<<<
  *                 a.v[2] * b.v[0] - a.v[0] * b.v[2],
  *                 a.v[0] * b.v[1] - a.v[1] * b.v[0])
 */
-  __pyx_t_1 = __pyx_f_6math3d_vec3((((__pyx_v_a.v[1]) * (__pyx_v_b.v[2])) - ((__pyx_v_a.v[2]) * (__pyx_v_b.v[1]))), (((__pyx_v_a.v[2]) * (__pyx_v_b.v[0])) - ((__pyx_v_a.v[0]) * (__pyx_v_b.v[2]))), (((__pyx_v_a.v[0]) * (__pyx_v_b.v[1])) - ((__pyx_v_a.v[1]) * (__pyx_v_b.v[0])))); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 98, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_6math3d_vec3((((__pyx_v_a.v[1]) * (__pyx_v_b.v[2])) - ((__pyx_v_a.v[2]) * (__pyx_v_b.v[1]))), (((__pyx_v_a.v[2]) * (__pyx_v_b.v[0])) - ((__pyx_v_a.v[0]) * (__pyx_v_b.v[2]))), (((__pyx_v_a.v[0]) * (__pyx_v_b.v[1])) - ((__pyx_v_a.v[1]) * (__pyx_v_b.v[0])))); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 92, __pyx_L1_error)
   __pyx_r = __pyx_t_1;
   goto __pyx_L0;
 
-  /* "math3d.pyx":97
+  /* "math3d.pyx":91
  *     return a.v[0] * b.v[0] + a.v[1] * b.v[1] + a.v[2] * b.v[2]
  * 
  * cdef inline Vec3 vec3_cross(Vec3 a, Vec3 b):             # <<<<<<<<<<<<<<
@@ -3377,7 +3377,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Vec3 __pyx_f_6math3d_vec3_cross(stru
   return __pyx_r;
 }
 
-/* "math3d.pyx":102
+/* "math3d.pyx":96
  *                 a.v[0] * b.v[1] - a.v[1] * b.v[0])
  * 
  * cdef inline float vec3_len(Vec3 v):             # <<<<<<<<<<<<<<
@@ -3388,7 +3388,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Vec3 __pyx_f_6math3d_vec3_cross(stru
 static CYTHON_INLINE float __pyx_f_6math3d_vec3_len(struct __pyx_t_6math3d_Vec3 __pyx_v_v) {
   float __pyx_r;
 
-  /* "math3d.pyx":103
+  /* "math3d.pyx":97
  * 
  * cdef inline float vec3_len(Vec3 v):
  *     return sqrt(v.v[0] * v.v[0] + v.v[1] * v.v[1] + v.v[2] * v.v[2])             # <<<<<<<<<<<<<<
@@ -3398,7 +3398,7 @@ static CYTHON_INLINE float __pyx_f_6math3d_vec3_len(struct __pyx_t_6math3d_Vec3 
   __pyx_r = sqrt(((((__pyx_v_v.v[0]) * (__pyx_v_v.v[0])) + ((__pyx_v_v.v[1]) * (__pyx_v_v.v[1]))) + ((__pyx_v_v.v[2]) * (__pyx_v_v.v[2]))));
   goto __pyx_L0;
 
-  /* "math3d.pyx":102
+  /* "math3d.pyx":96
  *                 a.v[0] * b.v[1] - a.v[1] * b.v[0])
  * 
  * cdef inline float vec3_len(Vec3 v):             # <<<<<<<<<<<<<<
@@ -3411,7 +3411,7 @@ static CYTHON_INLINE float __pyx_f_6math3d_vec3_len(struct __pyx_t_6math3d_Vec3 
   return __pyx_r;
 }
 
-/* "math3d.pyx":105
+/* "math3d.pyx":99
  *     return sqrt(v.v[0] * v.v[0] + v.v[1] * v.v[1] + v.v[2] * v.v[2])
  * 
  * cdef inline Vec3 vec3_normalize(Vec3 v):             # <<<<<<<<<<<<<<
@@ -3429,17 +3429,17 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Vec3 __pyx_f_6math3d_vec3_normalize(
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
 
-  /* "math3d.pyx":106
+  /* "math3d.pyx":100
  * 
  * cdef inline Vec3 vec3_normalize(Vec3 v):
  *     cdef float l = vec3_len(v)             # <<<<<<<<<<<<<<
  *     if l == 0: return vec3(0, 0, 0)
  *     return vec3(v.v[0] / l, v.v[1] / l, v.v[2] / l)
 */
-  __pyx_t_1 = __pyx_f_6math3d_vec3_len(__pyx_v_v); if (unlikely(__pyx_t_1 == ((float)-1) && PyErr_Occurred())) __PYX_ERR(0, 106, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_6math3d_vec3_len(__pyx_v_v); if (unlikely(__pyx_t_1 == ((float)-1) && PyErr_Occurred())) __PYX_ERR(0, 100, __pyx_L1_error)
   __pyx_v_l = __pyx_t_1;
 
-  /* "math3d.pyx":107
+  /* "math3d.pyx":101
  * cdef inline Vec3 vec3_normalize(Vec3 v):
  *     cdef float l = vec3_len(v)
  *     if l == 0: return vec3(0, 0, 0)             # <<<<<<<<<<<<<<
@@ -3448,12 +3448,12 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Vec3 __pyx_f_6math3d_vec3_normalize(
 */
   __pyx_t_2 = (__pyx_v_l == 0.0);
   if (__pyx_t_2) {
-    __pyx_t_3 = __pyx_f_6math3d_vec3(0.0, 0.0, 0.0); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 107, __pyx_L1_error)
+    __pyx_t_3 = __pyx_f_6math3d_vec3(0.0, 0.0, 0.0); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 101, __pyx_L1_error)
     __pyx_r = __pyx_t_3;
     goto __pyx_L0;
   }
 
-  /* "math3d.pyx":108
+  /* "math3d.pyx":102
  *     cdef float l = vec3_len(v)
  *     if l == 0: return vec3(0, 0, 0)
  *     return vec3(v.v[0] / l, v.v[1] / l, v.v[2] / l)             # <<<<<<<<<<<<<<
@@ -3462,21 +3462,21 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Vec3 __pyx_f_6math3d_vec3_normalize(
 */
   if (unlikely(__pyx_v_l == 0)) {
     PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-    __PYX_ERR(0, 108, __pyx_L1_error)
+    __PYX_ERR(0, 102, __pyx_L1_error)
   }
   if (unlikely(__pyx_v_l == 0)) {
     PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-    __PYX_ERR(0, 108, __pyx_L1_error)
+    __PYX_ERR(0, 102, __pyx_L1_error)
   }
   if (unlikely(__pyx_v_l == 0)) {
     PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-    __PYX_ERR(0, 108, __pyx_L1_error)
+    __PYX_ERR(0, 102, __pyx_L1_error)
   }
-  __pyx_t_3 = __pyx_f_6math3d_vec3(((__pyx_v_v.v[0]) / __pyx_v_l), ((__pyx_v_v.v[1]) / __pyx_v_l), ((__pyx_v_v.v[2]) / __pyx_v_l)); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 108, __pyx_L1_error)
+  __pyx_t_3 = __pyx_f_6math3d_vec3(((__pyx_v_v.v[0]) / __pyx_v_l), ((__pyx_v_v.v[1]) / __pyx_v_l), ((__pyx_v_v.v[2]) / __pyx_v_l)); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 102, __pyx_L1_error)
   __pyx_r = __pyx_t_3;
   goto __pyx_L0;
 
-  /* "math3d.pyx":105
+  /* "math3d.pyx":99
  *     return sqrt(v.v[0] * v.v[0] + v.v[1] * v.v[1] + v.v[2] * v.v[2])
  * 
  * cdef inline Vec3 vec3_normalize(Vec3 v):             # <<<<<<<<<<<<<<
@@ -3492,7 +3492,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Vec3 __pyx_f_6math3d_vec3_normalize(
   return __pyx_r;
 }
 
-/* "math3d.pyx":111
+/* "math3d.pyx":105
  * 
  * 
  * cdef inline Vec4 vec4_add(Vec4 a, Vec4 b):             # <<<<<<<<<<<<<<
@@ -3507,18 +3507,18 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Vec4 __pyx_f_6math3d_vec4_add(struct
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
 
-  /* "math3d.pyx":112
+  /* "math3d.pyx":106
  * 
  * cdef inline Vec4 vec4_add(Vec4 a, Vec4 b):
  *     return vec4(a.v[0] + b.v[0], a.v[1] + b.v[1], a.v[2] + b.v[2], a.v[3] + b.v[3])             # <<<<<<<<<<<<<<
  * 
  * cdef inline Vec4 vec4_mul(Vec4 v, float s):
 */
-  __pyx_t_1 = __pyx_f_6math3d_vec4(((__pyx_v_a.v[0]) + (__pyx_v_b.v[0])), ((__pyx_v_a.v[1]) + (__pyx_v_b.v[1])), ((__pyx_v_a.v[2]) + (__pyx_v_b.v[2])), ((__pyx_v_a.v[3]) + (__pyx_v_b.v[3]))); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 112, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_6math3d_vec4(((__pyx_v_a.v[0]) + (__pyx_v_b.v[0])), ((__pyx_v_a.v[1]) + (__pyx_v_b.v[1])), ((__pyx_v_a.v[2]) + (__pyx_v_b.v[2])), ((__pyx_v_a.v[3]) + (__pyx_v_b.v[3]))); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 106, __pyx_L1_error)
   __pyx_r = __pyx_t_1;
   goto __pyx_L0;
 
-  /* "math3d.pyx":111
+  /* "math3d.pyx":105
  * 
  * 
  * cdef inline Vec4 vec4_add(Vec4 a, Vec4 b):             # <<<<<<<<<<<<<<
@@ -3534,7 +3534,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Vec4 __pyx_f_6math3d_vec4_add(struct
   return __pyx_r;
 }
 
-/* "math3d.pyx":114
+/* "math3d.pyx":108
  *     return vec4(a.v[0] + b.v[0], a.v[1] + b.v[1], a.v[2] + b.v[2], a.v[3] + b.v[3])
  * 
  * cdef inline Vec4 vec4_mul(Vec4 v, float s):             # <<<<<<<<<<<<<<
@@ -3549,18 +3549,18 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Vec4 __pyx_f_6math3d_vec4_mul(struct
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
 
-  /* "math3d.pyx":115
+  /* "math3d.pyx":109
  * 
  * cdef inline Vec4 vec4_mul(Vec4 v, float s):
  *     return vec4(v.v[0] * s, v.v[1] * s, v.v[2] * s, v.v[3] * s)             # <<<<<<<<<<<<<<
  * 
  * cdef inline Vec4 vec3_to_vec4(Vec3 v, float w):
 */
-  __pyx_t_1 = __pyx_f_6math3d_vec4(((__pyx_v_v.v[0]) * __pyx_v_s), ((__pyx_v_v.v[1]) * __pyx_v_s), ((__pyx_v_v.v[2]) * __pyx_v_s), ((__pyx_v_v.v[3]) * __pyx_v_s)); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 115, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_6math3d_vec4(((__pyx_v_v.v[0]) * __pyx_v_s), ((__pyx_v_v.v[1]) * __pyx_v_s), ((__pyx_v_v.v[2]) * __pyx_v_s), ((__pyx_v_v.v[3]) * __pyx_v_s)); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 109, __pyx_L1_error)
   __pyx_r = __pyx_t_1;
   goto __pyx_L0;
 
-  /* "math3d.pyx":114
+  /* "math3d.pyx":108
  *     return vec4(a.v[0] + b.v[0], a.v[1] + b.v[1], a.v[2] + b.v[2], a.v[3] + b.v[3])
  * 
  * cdef inline Vec4 vec4_mul(Vec4 v, float s):             # <<<<<<<<<<<<<<
@@ -3576,7 +3576,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Vec4 __pyx_f_6math3d_vec4_mul(struct
   return __pyx_r;
 }
 
-/* "math3d.pyx":117
+/* "math3d.pyx":111
  *     return vec4(v.v[0] * s, v.v[1] * s, v.v[2] * s, v.v[3] * s)
  * 
  * cdef inline Vec4 vec3_to_vec4(Vec3 v, float w):             # <<<<<<<<<<<<<<
@@ -3591,18 +3591,18 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Vec4 __pyx_f_6math3d_vec3_to_vec4(st
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
 
-  /* "math3d.pyx":118
+  /* "math3d.pyx":112
  * 
  * cdef inline Vec4 vec3_to_vec4(Vec3 v, float w):
  *     return vec4(v.v[0], v.v[1], v.v[2], w)             # <<<<<<<<<<<<<<
  * 
- * # ============================================================================
+ * # 4.  4x4
 */
-  __pyx_t_1 = __pyx_f_6math3d_vec4((__pyx_v_v.v[0]), (__pyx_v_v.v[1]), (__pyx_v_v.v[2]), __pyx_v_w); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 118, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_6math3d_vec4((__pyx_v_v.v[0]), (__pyx_v_v.v[1]), (__pyx_v_v.v[2]), __pyx_v_w); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 112, __pyx_L1_error)
   __pyx_r = __pyx_t_1;
   goto __pyx_L0;
 
-  /* "math3d.pyx":117
+  /* "math3d.pyx":111
  *     return vec4(v.v[0] * s, v.v[1] * s, v.v[2] * s, v.v[3] * s)
  * 
  * cdef inline Vec4 vec3_to_vec4(Vec3 v, float w):             # <<<<<<<<<<<<<<
@@ -3618,8 +3618,8 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Vec4 __pyx_f_6math3d_vec3_to_vec4(st
   return __pyx_r;
 }
 
-/* "math3d.pyx":124
- * # ============================================================================
+/* "math3d.pyx":116
+ * # 4.  4x4
  * 
  * cdef inline Mat4 mat4_identity():             # <<<<<<<<<<<<<<
  *     cdef Mat4 M
@@ -3632,7 +3632,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_identity(v
   struct __pyx_t_6math3d_Mat4 __pyx_r;
   int __pyx_t_1;
 
-  /* "math3d.pyx":127
+  /* "math3d.pyx":119
  *     cdef Mat4 M
  *     cdef int i
  *     for i in range(16): M.m[i] = 0.0             # <<<<<<<<<<<<<<
@@ -3644,7 +3644,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_identity(v
     (__pyx_v_M.m[__pyx_v_i]) = 0.0;
   }
 
-  /* "math3d.pyx":128
+  /* "math3d.pyx":120
  *     cdef int i
  *     for i in range(16): M.m[i] = 0.0
  *     M.m[0] = M.m[5] = M.m[10] = M.m[15] = 1.0             # <<<<<<<<<<<<<<
@@ -3656,7 +3656,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_identity(v
   (__pyx_v_M.m[10]) = 1.0;
   (__pyx_v_M.m[15]) = 1.0;
 
-  /* "math3d.pyx":129
+  /* "math3d.pyx":121
  *     for i in range(16): M.m[i] = 0.0
  *     M.m[0] = M.m[5] = M.m[10] = M.m[15] = 1.0
  *     return M             # <<<<<<<<<<<<<<
@@ -3666,8 +3666,8 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_identity(v
   __pyx_r = __pyx_v_M;
   goto __pyx_L0;
 
-  /* "math3d.pyx":124
- * # ============================================================================
+  /* "math3d.pyx":116
+ * # 4.  4x4
  * 
  * cdef inline Mat4 mat4_identity():             # <<<<<<<<<<<<<<
  *     cdef Mat4 M
@@ -3679,7 +3679,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_identity(v
   return __pyx_r;
 }
 
-/* "math3d.pyx":131
+/* "math3d.pyx":123
  *     return M
  * 
  * cdef inline Mat4 mat4_mul(Mat4 A, Mat4 B):             # <<<<<<<<<<<<<<
@@ -3698,7 +3698,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_mul(struct
   int __pyx_t_3;
   long __pyx_t_4;
 
-  /* "math3d.pyx":134
+  /* "math3d.pyx":126
  *     cdef Mat4 C
  *     cdef int i, j, k
  *     for i in range(4):             # <<<<<<<<<<<<<<
@@ -3708,7 +3708,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_mul(struct
   for (__pyx_t_1 = 0; __pyx_t_1 < 4; __pyx_t_1+=1) {
     __pyx_v_i = __pyx_t_1;
 
-    /* "math3d.pyx":135
+    /* "math3d.pyx":127
  *     cdef int i, j, k
  *     for i in range(4):
  *         for j in range(4):             # <<<<<<<<<<<<<<
@@ -3718,7 +3718,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_mul(struct
     for (__pyx_t_2 = 0; __pyx_t_2 < 4; __pyx_t_2+=1) {
       __pyx_v_j = __pyx_t_2;
 
-      /* "math3d.pyx":136
+      /* "math3d.pyx":128
  *     for i in range(4):
  *         for j in range(4):
  *             C.m[i*4 + j] = 0.0             # <<<<<<<<<<<<<<
@@ -3727,7 +3727,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_mul(struct
 */
       (__pyx_v_C.m[((__pyx_v_i * 4) + __pyx_v_j)]) = 0.0;
 
-      /* "math3d.pyx":137
+      /* "math3d.pyx":129
  *         for j in range(4):
  *             C.m[i*4 + j] = 0.0
  *             for k in range(4):             # <<<<<<<<<<<<<<
@@ -3737,7 +3737,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_mul(struct
       for (__pyx_t_3 = 0; __pyx_t_3 < 4; __pyx_t_3+=1) {
         __pyx_v_k = __pyx_t_3;
 
-        /* "math3d.pyx":138
+        /* "math3d.pyx":130
  *             C.m[i*4 + j] = 0.0
  *             for k in range(4):
  *                 C.m[i*4 + j] += A.m[i*4 + k] * B.m[k*4 + j]             # <<<<<<<<<<<<<<
@@ -3750,7 +3750,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_mul(struct
     }
   }
 
-  /* "math3d.pyx":139
+  /* "math3d.pyx":131
  *             for k in range(4):
  *                 C.m[i*4 + j] += A.m[i*4 + k] * B.m[k*4 + j]
  *     return C             # <<<<<<<<<<<<<<
@@ -3760,7 +3760,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_mul(struct
   __pyx_r = __pyx_v_C;
   goto __pyx_L0;
 
-  /* "math3d.pyx":131
+  /* "math3d.pyx":123
  *     return M
  * 
  * cdef inline Mat4 mat4_mul(Mat4 A, Mat4 B):             # <<<<<<<<<<<<<<
@@ -3773,7 +3773,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_mul(struct
   return __pyx_r;
 }
 
-/* "math3d.pyx":141
+/* "math3d.pyx":133
  *     return C
  * 
  * cdef inline Vec4 mat4_mul_vec4(Mat4 M, Vec4 v):             # <<<<<<<<<<<<<<
@@ -3785,7 +3785,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Vec4 __pyx_f_6math3d_mat4_mul_vec4(s
   struct __pyx_t_6math3d_Vec4 __pyx_v_r;
   struct __pyx_t_6math3d_Vec4 __pyx_r;
 
-  /* "math3d.pyx":143
+  /* "math3d.pyx":135
  * cdef inline Vec4 mat4_mul_vec4(Mat4 M, Vec4 v):
  *     cdef Vec4 r
  *     r.v[0] = M.m[0]*v.v[0] + M.m[4]*v.v[1] + M.m[8]*v.v[2] + M.m[12]*v.v[3]             # <<<<<<<<<<<<<<
@@ -3794,7 +3794,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Vec4 __pyx_f_6math3d_mat4_mul_vec4(s
 */
   (__pyx_v_r.v[0]) = (((((__pyx_v_M.m[0]) * (__pyx_v_v.v[0])) + ((__pyx_v_M.m[4]) * (__pyx_v_v.v[1]))) + ((__pyx_v_M.m[8]) * (__pyx_v_v.v[2]))) + ((__pyx_v_M.m[12]) * (__pyx_v_v.v[3])));
 
-  /* "math3d.pyx":144
+  /* "math3d.pyx":136
  *     cdef Vec4 r
  *     r.v[0] = M.m[0]*v.v[0] + M.m[4]*v.v[1] + M.m[8]*v.v[2] + M.m[12]*v.v[3]
  *     r.v[1] = M.m[1]*v.v[0] + M.m[5]*v.v[1] + M.m[9]*v.v[2] + M.m[13]*v.v[3]             # <<<<<<<<<<<<<<
@@ -3803,7 +3803,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Vec4 __pyx_f_6math3d_mat4_mul_vec4(s
 */
   (__pyx_v_r.v[1]) = (((((__pyx_v_M.m[1]) * (__pyx_v_v.v[0])) + ((__pyx_v_M.m[5]) * (__pyx_v_v.v[1]))) + ((__pyx_v_M.m[9]) * (__pyx_v_v.v[2]))) + ((__pyx_v_M.m[13]) * (__pyx_v_v.v[3])));
 
-  /* "math3d.pyx":145
+  /* "math3d.pyx":137
  *     r.v[0] = M.m[0]*v.v[0] + M.m[4]*v.v[1] + M.m[8]*v.v[2] + M.m[12]*v.v[3]
  *     r.v[1] = M.m[1]*v.v[0] + M.m[5]*v.v[1] + M.m[9]*v.v[2] + M.m[13]*v.v[3]
  *     r.v[2] = M.m[2]*v.v[0] + M.m[6]*v.v[1] + M.m[10]*v.v[2] + M.m[14]*v.v[3]             # <<<<<<<<<<<<<<
@@ -3812,7 +3812,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Vec4 __pyx_f_6math3d_mat4_mul_vec4(s
 */
   (__pyx_v_r.v[2]) = (((((__pyx_v_M.m[2]) * (__pyx_v_v.v[0])) + ((__pyx_v_M.m[6]) * (__pyx_v_v.v[1]))) + ((__pyx_v_M.m[10]) * (__pyx_v_v.v[2]))) + ((__pyx_v_M.m[14]) * (__pyx_v_v.v[3])));
 
-  /* "math3d.pyx":146
+  /* "math3d.pyx":138
  *     r.v[1] = M.m[1]*v.v[0] + M.m[5]*v.v[1] + M.m[9]*v.v[2] + M.m[13]*v.v[3]
  *     r.v[2] = M.m[2]*v.v[0] + M.m[6]*v.v[1] + M.m[10]*v.v[2] + M.m[14]*v.v[3]
  *     r.v[3] = M.m[3]*v.v[0] + M.m[7]*v.v[1] + M.m[11]*v.v[2] + M.m[15]*v.v[3]             # <<<<<<<<<<<<<<
@@ -3821,7 +3821,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Vec4 __pyx_f_6math3d_mat4_mul_vec4(s
 */
   (__pyx_v_r.v[3]) = (((((__pyx_v_M.m[3]) * (__pyx_v_v.v[0])) + ((__pyx_v_M.m[7]) * (__pyx_v_v.v[1]))) + ((__pyx_v_M.m[11]) * (__pyx_v_v.v[2]))) + ((__pyx_v_M.m[15]) * (__pyx_v_v.v[3])));
 
-  /* "math3d.pyx":147
+  /* "math3d.pyx":139
  *     r.v[2] = M.m[2]*v.v[0] + M.m[6]*v.v[1] + M.m[10]*v.v[2] + M.m[14]*v.v[3]
  *     r.v[3] = M.m[3]*v.v[0] + M.m[7]*v.v[1] + M.m[11]*v.v[2] + M.m[15]*v.v[3]
  *     return r             # <<<<<<<<<<<<<<
@@ -3831,7 +3831,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Vec4 __pyx_f_6math3d_mat4_mul_vec4(s
   __pyx_r = __pyx_v_r;
   goto __pyx_L0;
 
-  /* "math3d.pyx":141
+  /* "math3d.pyx":133
  *     return C
  * 
  * cdef inline Vec4 mat4_mul_vec4(Mat4 M, Vec4 v):             # <<<<<<<<<<<<<<
@@ -3844,7 +3844,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Vec4 __pyx_f_6math3d_mat4_mul_vec4(s
   return __pyx_r;
 }
 
-/* "math3d.pyx":150
+/* "math3d.pyx":142
  * 
  * 
  * cdef inline Mat4 mat4_translation(Vec3 t):             # <<<<<<<<<<<<<<
@@ -3860,17 +3860,17 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_translatio
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
 
-  /* "math3d.pyx":151
+  /* "math3d.pyx":143
  * 
  * cdef inline Mat4 mat4_translation(Vec3 t):
  *     cdef Mat4 M = mat4_identity()             # <<<<<<<<<<<<<<
  *     M.m[12] = t.v[0]
  *     M.m[13] = t.v[1]
 */
-  __pyx_t_1 = __pyx_f_6math3d_mat4_identity(); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 151, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_6math3d_mat4_identity(); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 143, __pyx_L1_error)
   __pyx_v_M = __pyx_t_1;
 
-  /* "math3d.pyx":152
+  /* "math3d.pyx":144
  * cdef inline Mat4 mat4_translation(Vec3 t):
  *     cdef Mat4 M = mat4_identity()
  *     M.m[12] = t.v[0]             # <<<<<<<<<<<<<<
@@ -3879,7 +3879,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_translatio
 */
   (__pyx_v_M.m[12]) = (__pyx_v_t.v[0]);
 
-  /* "math3d.pyx":153
+  /* "math3d.pyx":145
  *     cdef Mat4 M = mat4_identity()
  *     M.m[12] = t.v[0]
  *     M.m[13] = t.v[1]             # <<<<<<<<<<<<<<
@@ -3888,7 +3888,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_translatio
 */
   (__pyx_v_M.m[13]) = (__pyx_v_t.v[1]);
 
-  /* "math3d.pyx":154
+  /* "math3d.pyx":146
  *     M.m[12] = t.v[0]
  *     M.m[13] = t.v[1]
  *     M.m[14] = t.v[2]             # <<<<<<<<<<<<<<
@@ -3897,7 +3897,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_translatio
 */
   (__pyx_v_M.m[14]) = (__pyx_v_t.v[2]);
 
-  /* "math3d.pyx":155
+  /* "math3d.pyx":147
  *     M.m[13] = t.v[1]
  *     M.m[14] = t.v[2]
  *     return M             # <<<<<<<<<<<<<<
@@ -3907,7 +3907,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_translatio
   __pyx_r = __pyx_v_M;
   goto __pyx_L0;
 
-  /* "math3d.pyx":150
+  /* "math3d.pyx":142
  * 
  * 
  * cdef inline Mat4 mat4_translation(Vec3 t):             # <<<<<<<<<<<<<<
@@ -3923,7 +3923,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_translatio
   return __pyx_r;
 }
 
-/* "math3d.pyx":157
+/* "math3d.pyx":149
  *     return M
  * 
  * cdef inline Mat4 mat4_scale(Vec3 s):             # <<<<<<<<<<<<<<
@@ -3939,17 +3939,17 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_scale(stru
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
 
-  /* "math3d.pyx":158
+  /* "math3d.pyx":150
  * 
  * cdef inline Mat4 mat4_scale(Vec3 s):
  *     cdef Mat4 M = mat4_identity()             # <<<<<<<<<<<<<<
  *     M.m[0] = s.v[0]
  *     M.m[5] = s.v[1]
 */
-  __pyx_t_1 = __pyx_f_6math3d_mat4_identity(); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 158, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_6math3d_mat4_identity(); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 150, __pyx_L1_error)
   __pyx_v_M = __pyx_t_1;
 
-  /* "math3d.pyx":159
+  /* "math3d.pyx":151
  * cdef inline Mat4 mat4_scale(Vec3 s):
  *     cdef Mat4 M = mat4_identity()
  *     M.m[0] = s.v[0]             # <<<<<<<<<<<<<<
@@ -3958,7 +3958,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_scale(stru
 */
   (__pyx_v_M.m[0]) = (__pyx_v_s.v[0]);
 
-  /* "math3d.pyx":160
+  /* "math3d.pyx":152
  *     cdef Mat4 M = mat4_identity()
  *     M.m[0] = s.v[0]
  *     M.m[5] = s.v[1]             # <<<<<<<<<<<<<<
@@ -3967,7 +3967,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_scale(stru
 */
   (__pyx_v_M.m[5]) = (__pyx_v_s.v[1]);
 
-  /* "math3d.pyx":161
+  /* "math3d.pyx":153
  *     M.m[0] = s.v[0]
  *     M.m[5] = s.v[1]
  *     M.m[10] = s.v[2]             # <<<<<<<<<<<<<<
@@ -3976,7 +3976,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_scale(stru
 */
   (__pyx_v_M.m[10]) = (__pyx_v_s.v[2]);
 
-  /* "math3d.pyx":162
+  /* "math3d.pyx":154
  *     M.m[5] = s.v[1]
  *     M.m[10] = s.v[2]
  *     return M             # <<<<<<<<<<<<<<
@@ -3986,7 +3986,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_scale(stru
   __pyx_r = __pyx_v_M;
   goto __pyx_L0;
 
-  /* "math3d.pyx":157
+  /* "math3d.pyx":149
  *     return M
  * 
  * cdef inline Mat4 mat4_scale(Vec3 s):             # <<<<<<<<<<<<<<
@@ -4002,7 +4002,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_scale(stru
   return __pyx_r;
 }
 
-/* "math3d.pyx":164
+/* "math3d.pyx":156
  *     return M
  * 
  * cdef inline Mat4 mat4_rotation_x(float angle):             # <<<<<<<<<<<<<<
@@ -4020,7 +4020,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_rotation_x
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
 
-  /* "math3d.pyx":165
+  /* "math3d.pyx":157
  * 
  * cdef inline Mat4 mat4_rotation_x(float angle):
  *     cdef float c = cos(angle), s = sin(angle)             # <<<<<<<<<<<<<<
@@ -4030,17 +4030,17 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_rotation_x
   __pyx_v_c = cos(__pyx_v_angle);
   __pyx_v_s = sin(__pyx_v_angle);
 
-  /* "math3d.pyx":166
+  /* "math3d.pyx":158
  * cdef inline Mat4 mat4_rotation_x(float angle):
  *     cdef float c = cos(angle), s = sin(angle)
  *     cdef Mat4 M = mat4_identity()             # <<<<<<<<<<<<<<
  *     M.m[5] = c; M.m[9] = -s
  *     M.m[6] = s; M.m[10] = c
 */
-  __pyx_t_1 = __pyx_f_6math3d_mat4_identity(); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 166, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_6math3d_mat4_identity(); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 158, __pyx_L1_error)
   __pyx_v_M = __pyx_t_1;
 
-  /* "math3d.pyx":167
+  /* "math3d.pyx":159
  *     cdef float c = cos(angle), s = sin(angle)
  *     cdef Mat4 M = mat4_identity()
  *     M.m[5] = c; M.m[9] = -s             # <<<<<<<<<<<<<<
@@ -4050,7 +4050,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_rotation_x
   (__pyx_v_M.m[5]) = __pyx_v_c;
   (__pyx_v_M.m[9]) = (-__pyx_v_s);
 
-  /* "math3d.pyx":168
+  /* "math3d.pyx":160
  *     cdef Mat4 M = mat4_identity()
  *     M.m[5] = c; M.m[9] = -s
  *     M.m[6] = s; M.m[10] = c             # <<<<<<<<<<<<<<
@@ -4060,7 +4060,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_rotation_x
   (__pyx_v_M.m[6]) = __pyx_v_s;
   (__pyx_v_M.m[10]) = __pyx_v_c;
 
-  /* "math3d.pyx":169
+  /* "math3d.pyx":161
  *     M.m[5] = c; M.m[9] = -s
  *     M.m[6] = s; M.m[10] = c
  *     return M             # <<<<<<<<<<<<<<
@@ -4070,7 +4070,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_rotation_x
   __pyx_r = __pyx_v_M;
   goto __pyx_L0;
 
-  /* "math3d.pyx":164
+  /* "math3d.pyx":156
  *     return M
  * 
  * cdef inline Mat4 mat4_rotation_x(float angle):             # <<<<<<<<<<<<<<
@@ -4086,7 +4086,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_rotation_x
   return __pyx_r;
 }
 
-/* "math3d.pyx":171
+/* "math3d.pyx":163
  *     return M
  * 
  * cdef inline Mat4 mat4_rotation_y(float angle):             # <<<<<<<<<<<<<<
@@ -4104,7 +4104,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_rotation_y
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
 
-  /* "math3d.pyx":172
+  /* "math3d.pyx":164
  * 
  * cdef inline Mat4 mat4_rotation_y(float angle):
  *     cdef float c = cos(angle), s = sin(angle)             # <<<<<<<<<<<<<<
@@ -4114,17 +4114,17 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_rotation_y
   __pyx_v_c = cos(__pyx_v_angle);
   __pyx_v_s = sin(__pyx_v_angle);
 
-  /* "math3d.pyx":173
+  /* "math3d.pyx":165
  * cdef inline Mat4 mat4_rotation_y(float angle):
  *     cdef float c = cos(angle), s = sin(angle)
  *     cdef Mat4 M = mat4_identity()             # <<<<<<<<<<<<<<
  *     M.m[0] = c; M.m[8] = s
  *     M.m[2] = -s; M.m[10] = c
 */
-  __pyx_t_1 = __pyx_f_6math3d_mat4_identity(); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 173, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_6math3d_mat4_identity(); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 165, __pyx_L1_error)
   __pyx_v_M = __pyx_t_1;
 
-  /* "math3d.pyx":174
+  /* "math3d.pyx":166
  *     cdef float c = cos(angle), s = sin(angle)
  *     cdef Mat4 M = mat4_identity()
  *     M.m[0] = c; M.m[8] = s             # <<<<<<<<<<<<<<
@@ -4134,7 +4134,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_rotation_y
   (__pyx_v_M.m[0]) = __pyx_v_c;
   (__pyx_v_M.m[8]) = __pyx_v_s;
 
-  /* "math3d.pyx":175
+  /* "math3d.pyx":167
  *     cdef Mat4 M = mat4_identity()
  *     M.m[0] = c; M.m[8] = s
  *     M.m[2] = -s; M.m[10] = c             # <<<<<<<<<<<<<<
@@ -4144,7 +4144,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_rotation_y
   (__pyx_v_M.m[2]) = (-__pyx_v_s);
   (__pyx_v_M.m[10]) = __pyx_v_c;
 
-  /* "math3d.pyx":176
+  /* "math3d.pyx":168
  *     M.m[0] = c; M.m[8] = s
  *     M.m[2] = -s; M.m[10] = c
  *     return M             # <<<<<<<<<<<<<<
@@ -4154,7 +4154,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_rotation_y
   __pyx_r = __pyx_v_M;
   goto __pyx_L0;
 
-  /* "math3d.pyx":171
+  /* "math3d.pyx":163
  *     return M
  * 
  * cdef inline Mat4 mat4_rotation_y(float angle):             # <<<<<<<<<<<<<<
@@ -4170,7 +4170,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_rotation_y
   return __pyx_r;
 }
 
-/* "math3d.pyx":178
+/* "math3d.pyx":170
  *     return M
  * 
  * cdef inline Mat4 mat4_rotation_z(float angle):             # <<<<<<<<<<<<<<
@@ -4188,7 +4188,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_rotation_z
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
 
-  /* "math3d.pyx":179
+  /* "math3d.pyx":171
  * 
  * cdef inline Mat4 mat4_rotation_z(float angle):
  *     cdef float c = cos(angle), s = sin(angle)             # <<<<<<<<<<<<<<
@@ -4198,17 +4198,17 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_rotation_z
   __pyx_v_c = cos(__pyx_v_angle);
   __pyx_v_s = sin(__pyx_v_angle);
 
-  /* "math3d.pyx":180
+  /* "math3d.pyx":172
  * cdef inline Mat4 mat4_rotation_z(float angle):
  *     cdef float c = cos(angle), s = sin(angle)
  *     cdef Mat4 M = mat4_identity()             # <<<<<<<<<<<<<<
  *     M.m[0] = c; M.m[4] = -s
  *     M.m[1] = s; M.m[5] = c
 */
-  __pyx_t_1 = __pyx_f_6math3d_mat4_identity(); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 180, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_6math3d_mat4_identity(); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 172, __pyx_L1_error)
   __pyx_v_M = __pyx_t_1;
 
-  /* "math3d.pyx":181
+  /* "math3d.pyx":173
  *     cdef float c = cos(angle), s = sin(angle)
  *     cdef Mat4 M = mat4_identity()
  *     M.m[0] = c; M.m[4] = -s             # <<<<<<<<<<<<<<
@@ -4218,7 +4218,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_rotation_z
   (__pyx_v_M.m[0]) = __pyx_v_c;
   (__pyx_v_M.m[4]) = (-__pyx_v_s);
 
-  /* "math3d.pyx":182
+  /* "math3d.pyx":174
  *     cdef Mat4 M = mat4_identity()
  *     M.m[0] = c; M.m[4] = -s
  *     M.m[1] = s; M.m[5] = c             # <<<<<<<<<<<<<<
@@ -4228,7 +4228,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_rotation_z
   (__pyx_v_M.m[1]) = __pyx_v_s;
   (__pyx_v_M.m[5]) = __pyx_v_c;
 
-  /* "math3d.pyx":183
+  /* "math3d.pyx":175
  *     M.m[0] = c; M.m[4] = -s
  *     M.m[1] = s; M.m[5] = c
  *     return M             # <<<<<<<<<<<<<<
@@ -4238,7 +4238,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_rotation_z
   __pyx_r = __pyx_v_M;
   goto __pyx_L0;
 
-  /* "math3d.pyx":178
+  /* "math3d.pyx":170
  *     return M
  * 
  * cdef inline Mat4 mat4_rotation_z(float angle):             # <<<<<<<<<<<<<<
@@ -4254,7 +4254,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_rotation_z
   return __pyx_r;
 }
 
-/* "math3d.pyx":186
+/* "math3d.pyx":178
  * 
  * 
  * cdef inline Mat4 mat4_look_at(Vec3 eye, Vec3 target, Vec3 up):             # <<<<<<<<<<<<<<
@@ -4276,49 +4276,49 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_look_at(st
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
 
-  /* "math3d.pyx":187
+  /* "math3d.pyx":179
  * 
  * cdef inline Mat4 mat4_look_at(Vec3 eye, Vec3 target, Vec3 up):
  *     cdef Vec3 f = vec3_normalize(vec3_sub(target, eye))             # <<<<<<<<<<<<<<
  *     cdef Vec3 s = vec3_normalize(vec3_cross(f, up))
  *     cdef Vec3 u = vec3_cross(s, f)
 */
-  __pyx_t_1 = __pyx_f_6math3d_vec3_sub(__pyx_v_target, __pyx_v_eye); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 187, __pyx_L1_error)
-  __pyx_t_2 = __pyx_f_6math3d_vec3_normalize(__pyx_t_1); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 187, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_6math3d_vec3_sub(__pyx_v_target, __pyx_v_eye); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 179, __pyx_L1_error)
+  __pyx_t_2 = __pyx_f_6math3d_vec3_normalize(__pyx_t_1); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 179, __pyx_L1_error)
   __pyx_v_f = __pyx_t_2;
 
-  /* "math3d.pyx":188
+  /* "math3d.pyx":180
  * cdef inline Mat4 mat4_look_at(Vec3 eye, Vec3 target, Vec3 up):
  *     cdef Vec3 f = vec3_normalize(vec3_sub(target, eye))
  *     cdef Vec3 s = vec3_normalize(vec3_cross(f, up))             # <<<<<<<<<<<<<<
  *     cdef Vec3 u = vec3_cross(s, f)
  *     cdef Mat4 M = mat4_identity()
 */
-  __pyx_t_2 = __pyx_f_6math3d_vec3_cross(__pyx_v_f, __pyx_v_up); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 188, __pyx_L1_error)
-  __pyx_t_1 = __pyx_f_6math3d_vec3_normalize(__pyx_t_2); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 188, __pyx_L1_error)
+  __pyx_t_2 = __pyx_f_6math3d_vec3_cross(__pyx_v_f, __pyx_v_up); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 180, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_6math3d_vec3_normalize(__pyx_t_2); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 180, __pyx_L1_error)
   __pyx_v_s = __pyx_t_1;
 
-  /* "math3d.pyx":189
+  /* "math3d.pyx":181
  *     cdef Vec3 f = vec3_normalize(vec3_sub(target, eye))
  *     cdef Vec3 s = vec3_normalize(vec3_cross(f, up))
  *     cdef Vec3 u = vec3_cross(s, f)             # <<<<<<<<<<<<<<
  *     cdef Mat4 M = mat4_identity()
  *     M.m[0] = s.v[0]; M.m[4] = s.v[1]; M.m[8] = s.v[2]; M.m[12] = -vec3_dot(s, eye)
 */
-  __pyx_t_1 = __pyx_f_6math3d_vec3_cross(__pyx_v_s, __pyx_v_f); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 189, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_6math3d_vec3_cross(__pyx_v_s, __pyx_v_f); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 181, __pyx_L1_error)
   __pyx_v_u = __pyx_t_1;
 
-  /* "math3d.pyx":190
+  /* "math3d.pyx":182
  *     cdef Vec3 s = vec3_normalize(vec3_cross(f, up))
  *     cdef Vec3 u = vec3_cross(s, f)
  *     cdef Mat4 M = mat4_identity()             # <<<<<<<<<<<<<<
  *     M.m[0] = s.v[0]; M.m[4] = s.v[1]; M.m[8] = s.v[2]; M.m[12] = -vec3_dot(s, eye)
  *     M.m[1] = u.v[0]; M.m[5] = u.v[1]; M.m[9] = u.v[2]; M.m[13] = -vec3_dot(u, eye)
 */
-  __pyx_t_3 = __pyx_f_6math3d_mat4_identity(); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 190, __pyx_L1_error)
+  __pyx_t_3 = __pyx_f_6math3d_mat4_identity(); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 182, __pyx_L1_error)
   __pyx_v_M = __pyx_t_3;
 
-  /* "math3d.pyx":191
+  /* "math3d.pyx":183
  *     cdef Vec3 u = vec3_cross(s, f)
  *     cdef Mat4 M = mat4_identity()
  *     M.m[0] = s.v[0]; M.m[4] = s.v[1]; M.m[8] = s.v[2]; M.m[12] = -vec3_dot(s, eye)             # <<<<<<<<<<<<<<
@@ -4328,10 +4328,10 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_look_at(st
   (__pyx_v_M.m[0]) = (__pyx_v_s.v[0]);
   (__pyx_v_M.m[4]) = (__pyx_v_s.v[1]);
   (__pyx_v_M.m[8]) = (__pyx_v_s.v[2]);
-  __pyx_t_4 = __pyx_f_6math3d_vec3_dot(__pyx_v_s, __pyx_v_eye); if (unlikely(__pyx_t_4 == ((float)-1) && PyErr_Occurred())) __PYX_ERR(0, 191, __pyx_L1_error)
+  __pyx_t_4 = __pyx_f_6math3d_vec3_dot(__pyx_v_s, __pyx_v_eye); if (unlikely(__pyx_t_4 == ((float)-1) && PyErr_Occurred())) __PYX_ERR(0, 183, __pyx_L1_error)
   (__pyx_v_M.m[12]) = (-__pyx_t_4);
 
-  /* "math3d.pyx":192
+  /* "math3d.pyx":184
  *     cdef Mat4 M = mat4_identity()
  *     M.m[0] = s.v[0]; M.m[4] = s.v[1]; M.m[8] = s.v[2]; M.m[12] = -vec3_dot(s, eye)
  *     M.m[1] = u.v[0]; M.m[5] = u.v[1]; M.m[9] = u.v[2]; M.m[13] = -vec3_dot(u, eye)             # <<<<<<<<<<<<<<
@@ -4341,10 +4341,10 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_look_at(st
   (__pyx_v_M.m[1]) = (__pyx_v_u.v[0]);
   (__pyx_v_M.m[5]) = (__pyx_v_u.v[1]);
   (__pyx_v_M.m[9]) = (__pyx_v_u.v[2]);
-  __pyx_t_4 = __pyx_f_6math3d_vec3_dot(__pyx_v_u, __pyx_v_eye); if (unlikely(__pyx_t_4 == ((float)-1) && PyErr_Occurred())) __PYX_ERR(0, 192, __pyx_L1_error)
+  __pyx_t_4 = __pyx_f_6math3d_vec3_dot(__pyx_v_u, __pyx_v_eye); if (unlikely(__pyx_t_4 == ((float)-1) && PyErr_Occurred())) __PYX_ERR(0, 184, __pyx_L1_error)
   (__pyx_v_M.m[13]) = (-__pyx_t_4);
 
-  /* "math3d.pyx":193
+  /* "math3d.pyx":185
  *     M.m[0] = s.v[0]; M.m[4] = s.v[1]; M.m[8] = s.v[2]; M.m[12] = -vec3_dot(s, eye)
  *     M.m[1] = u.v[0]; M.m[5] = u.v[1]; M.m[9] = u.v[2]; M.m[13] = -vec3_dot(u, eye)
  *     M.m[2] = -f.v[0]; M.m[6] = -f.v[1]; M.m[10] = -f.v[2]; M.m[14] = vec3_dot(f, eye)             # <<<<<<<<<<<<<<
@@ -4354,10 +4354,10 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_look_at(st
   (__pyx_v_M.m[2]) = (-(__pyx_v_f.v[0]));
   (__pyx_v_M.m[6]) = (-(__pyx_v_f.v[1]));
   (__pyx_v_M.m[10]) = (-(__pyx_v_f.v[2]));
-  __pyx_t_4 = __pyx_f_6math3d_vec3_dot(__pyx_v_f, __pyx_v_eye); if (unlikely(__pyx_t_4 == ((float)-1) && PyErr_Occurred())) __PYX_ERR(0, 193, __pyx_L1_error)
+  __pyx_t_4 = __pyx_f_6math3d_vec3_dot(__pyx_v_f, __pyx_v_eye); if (unlikely(__pyx_t_4 == ((float)-1) && PyErr_Occurred())) __PYX_ERR(0, 185, __pyx_L1_error)
   (__pyx_v_M.m[14]) = __pyx_t_4;
 
-  /* "math3d.pyx":194
+  /* "math3d.pyx":186
  *     M.m[1] = u.v[0]; M.m[5] = u.v[1]; M.m[9] = u.v[2]; M.m[13] = -vec3_dot(u, eye)
  *     M.m[2] = -f.v[0]; M.m[6] = -f.v[1]; M.m[10] = -f.v[2]; M.m[14] = vec3_dot(f, eye)
  *     return M             # <<<<<<<<<<<<<<
@@ -4367,7 +4367,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_look_at(st
   __pyx_r = __pyx_v_M;
   goto __pyx_L0;
 
-  /* "math3d.pyx":186
+  /* "math3d.pyx":178
  * 
  * 
  * cdef inline Mat4 mat4_look_at(Vec3 eye, Vec3 target, Vec3 up):             # <<<<<<<<<<<<<<
@@ -4383,7 +4383,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_look_at(st
   return __pyx_r;
 }
 
-/* "math3d.pyx":197
+/* "math3d.pyx":189
  * 
  * 
  * cdef inline Mat4 mat4_inverse(Mat4 M):             # <<<<<<<<<<<<<<
@@ -4413,17 +4413,17 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_inverse(st
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
 
-  /* "math3d.pyx":198
+  /* "math3d.pyx":190
  * 
  * cdef inline Mat4 mat4_inverse(Mat4 M):
  *     cdef Mat4 inv = mat4_identity()             # <<<<<<<<<<<<<<
  *     cdef float a[16], b[16]
  *     cdef int i, j, k
 */
-  __pyx_t_1 = __pyx_f_6math3d_mat4_identity(); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 198, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_6math3d_mat4_identity(); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 190, __pyx_L1_error)
   __pyx_v_inv = __pyx_t_1;
 
-  /* "math3d.pyx":202
+  /* "math3d.pyx":194
  *     cdef int i, j, k
  *     cdef float pivot, factor
  *     for i in range(16):             # <<<<<<<<<<<<<<
@@ -4433,7 +4433,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_inverse(st
   for (__pyx_t_2 = 0; __pyx_t_2 < 16; __pyx_t_2+=1) {
     __pyx_v_i = __pyx_t_2;
 
-    /* "math3d.pyx":203
+    /* "math3d.pyx":195
  *     cdef float pivot, factor
  *     for i in range(16):
  *         a[i] = M.m[i]             # <<<<<<<<<<<<<<
@@ -4442,7 +4442,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_inverse(st
 */
     (__pyx_v_a[__pyx_v_i]) = (__pyx_v_M.m[__pyx_v_i]);
 
-    /* "math3d.pyx":204
+    /* "math3d.pyx":196
  *     for i in range(16):
  *         a[i] = M.m[i]
  *         b[i] = inv.m[i]             # <<<<<<<<<<<<<<
@@ -4452,7 +4452,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_inverse(st
     (__pyx_v_b[__pyx_v_i]) = (__pyx_v_inv.m[__pyx_v_i]);
   }
 
-  /* "math3d.pyx":205
+  /* "math3d.pyx":197
  *         a[i] = M.m[i]
  *         b[i] = inv.m[i]
  *     for i in range(4):             # <<<<<<<<<<<<<<
@@ -4462,7 +4462,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_inverse(st
   for (__pyx_t_2 = 0; __pyx_t_2 < 4; __pyx_t_2+=1) {
     __pyx_v_i = __pyx_t_2;
 
-    /* "math3d.pyx":206
+    /* "math3d.pyx":198
  *         b[i] = inv.m[i]
  *     for i in range(4):
  *         pivot = a[i*4 + i]             # <<<<<<<<<<<<<<
@@ -4471,7 +4471,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_inverse(st
 */
     __pyx_v_pivot = (__pyx_v_a[((__pyx_v_i * 4) + __pyx_v_i)]);
 
-    /* "math3d.pyx":207
+    /* "math3d.pyx":199
  *     for i in range(4):
  *         pivot = a[i*4 + i]
  *         if pivot == 0:             # <<<<<<<<<<<<<<
@@ -4481,7 +4481,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_inverse(st
     __pyx_t_3 = (__pyx_v_pivot == 0.0);
     if (__pyx_t_3) {
 
-      /* "math3d.pyx":208
+      /* "math3d.pyx":200
  *         pivot = a[i*4 + i]
  *         if pivot == 0:
  *             for j in range(i+1, 4):             # <<<<<<<<<<<<<<
@@ -4491,7 +4491,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_inverse(st
       for (__pyx_t_4 = (__pyx_v_i + 1); __pyx_t_4 < 4; __pyx_t_4+=1) {
         __pyx_v_j = __pyx_t_4;
 
-        /* "math3d.pyx":209
+        /* "math3d.pyx":201
  *         if pivot == 0:
  *             for j in range(i+1, 4):
  *                 if a[j*4 + i] != 0:             # <<<<<<<<<<<<<<
@@ -4501,7 +4501,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_inverse(st
         __pyx_t_3 = ((__pyx_v_a[((__pyx_v_j * 4) + __pyx_v_i)]) != 0.0);
         if (__pyx_t_3) {
 
-          /* "math3d.pyx":210
+          /* "math3d.pyx":202
  *             for j in range(i+1, 4):
  *                 if a[j*4 + i] != 0:
  *                     for k in range(4):             # <<<<<<<<<<<<<<
@@ -4511,7 +4511,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_inverse(st
           for (__pyx_t_5 = 0; __pyx_t_5 < 4; __pyx_t_5+=1) {
             __pyx_v_k = __pyx_t_5;
 
-            /* "math3d.pyx":211
+            /* "math3d.pyx":203
  *                 if a[j*4 + i] != 0:
  *                     for k in range(4):
  *                         a[i*4 + k], a[j*4 + k] = a[j*4 + k], a[i*4 + k]             # <<<<<<<<<<<<<<
@@ -4523,7 +4523,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_inverse(st
             (__pyx_v_a[((__pyx_v_i * 4) + __pyx_v_k)]) = __pyx_t_6;
             (__pyx_v_a[((__pyx_v_j * 4) + __pyx_v_k)]) = __pyx_t_7;
 
-            /* "math3d.pyx":212
+            /* "math3d.pyx":204
  *                     for k in range(4):
  *                         a[i*4 + k], a[j*4 + k] = a[j*4 + k], a[i*4 + k]
  *                         b[i*4 + k], b[j*4 + k] = b[j*4 + k], b[i*4 + k]             # <<<<<<<<<<<<<<
@@ -4536,7 +4536,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_inverse(st
             (__pyx_v_b[((__pyx_v_j * 4) + __pyx_v_k)]) = __pyx_t_6;
           }
 
-          /* "math3d.pyx":213
+          /* "math3d.pyx":205
  *                         a[i*4 + k], a[j*4 + k] = a[j*4 + k], a[i*4 + k]
  *                         b[i*4 + k], b[j*4 + k] = b[j*4 + k], b[i*4 + k]
  *                     pivot = a[i*4 + i]             # <<<<<<<<<<<<<<
@@ -4545,7 +4545,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_inverse(st
 */
           __pyx_v_pivot = (__pyx_v_a[((__pyx_v_i * 4) + __pyx_v_i)]);
 
-          /* "math3d.pyx":214
+          /* "math3d.pyx":206
  *                         b[i*4 + k], b[j*4 + k] = b[j*4 + k], b[i*4 + k]
  *                     pivot = a[i*4 + i]
  *                     break             # <<<<<<<<<<<<<<
@@ -4554,7 +4554,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_inverse(st
 */
           goto __pyx_L9_break;
 
-          /* "math3d.pyx":209
+          /* "math3d.pyx":201
  *         if pivot == 0:
  *             for j in range(i+1, 4):
  *                 if a[j*4 + i] != 0:             # <<<<<<<<<<<<<<
@@ -4565,7 +4565,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_inverse(st
       }
       __pyx_L9_break:;
 
-      /* "math3d.pyx":207
+      /* "math3d.pyx":199
  *     for i in range(4):
  *         pivot = a[i*4 + i]
  *         if pivot == 0:             # <<<<<<<<<<<<<<
@@ -4574,7 +4574,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_inverse(st
 */
     }
 
-    /* "math3d.pyx":215
+    /* "math3d.pyx":207
  *                     pivot = a[i*4 + i]
  *                     break
  *         for j in range(4):             # <<<<<<<<<<<<<<
@@ -4584,7 +4584,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_inverse(st
     for (__pyx_t_4 = 0; __pyx_t_4 < 4; __pyx_t_4+=1) {
       __pyx_v_j = __pyx_t_4;
 
-      /* "math3d.pyx":216
+      /* "math3d.pyx":208
  *                     break
  *         for j in range(4):
  *             a[i*4 + j] /= pivot             # <<<<<<<<<<<<<<
@@ -4594,11 +4594,11 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_inverse(st
       __pyx_t_8 = ((__pyx_v_i * 4) + __pyx_v_j);
       if (unlikely(__pyx_v_pivot == 0)) {
         PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-        __PYX_ERR(0, 216, __pyx_L1_error)
+        __PYX_ERR(0, 208, __pyx_L1_error)
       }
       (__pyx_v_a[__pyx_t_8]) = ((__pyx_v_a[__pyx_t_8]) / __pyx_v_pivot);
 
-      /* "math3d.pyx":217
+      /* "math3d.pyx":209
  *         for j in range(4):
  *             a[i*4 + j] /= pivot
  *             b[i*4 + j] /= pivot             # <<<<<<<<<<<<<<
@@ -4608,12 +4608,12 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_inverse(st
       __pyx_t_8 = ((__pyx_v_i * 4) + __pyx_v_j);
       if (unlikely(__pyx_v_pivot == 0)) {
         PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-        __PYX_ERR(0, 217, __pyx_L1_error)
+        __PYX_ERR(0, 209, __pyx_L1_error)
       }
       (__pyx_v_b[__pyx_t_8]) = ((__pyx_v_b[__pyx_t_8]) / __pyx_v_pivot);
     }
 
-    /* "math3d.pyx":218
+    /* "math3d.pyx":210
  *             a[i*4 + j] /= pivot
  *             b[i*4 + j] /= pivot
  *         for j in range(4):             # <<<<<<<<<<<<<<
@@ -4623,7 +4623,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_inverse(st
     for (__pyx_t_4 = 0; __pyx_t_4 < 4; __pyx_t_4+=1) {
       __pyx_v_j = __pyx_t_4;
 
-      /* "math3d.pyx":219
+      /* "math3d.pyx":211
  *             b[i*4 + j] /= pivot
  *         for j in range(4):
  *             if j == i: continue             # <<<<<<<<<<<<<<
@@ -4635,7 +4635,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_inverse(st
         goto __pyx_L15_continue;
       }
 
-      /* "math3d.pyx":220
+      /* "math3d.pyx":212
  *         for j in range(4):
  *             if j == i: continue
  *             factor = a[j*4 + i]             # <<<<<<<<<<<<<<
@@ -4644,7 +4644,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_inverse(st
 */
       __pyx_v_factor = (__pyx_v_a[((__pyx_v_j * 4) + __pyx_v_i)]);
 
-      /* "math3d.pyx":221
+      /* "math3d.pyx":213
  *             if j == i: continue
  *             factor = a[j*4 + i]
  *             for k in range(4):             # <<<<<<<<<<<<<<
@@ -4654,7 +4654,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_inverse(st
       for (__pyx_t_5 = 0; __pyx_t_5 < 4; __pyx_t_5+=1) {
         __pyx_v_k = __pyx_t_5;
 
-        /* "math3d.pyx":222
+        /* "math3d.pyx":214
  *             factor = a[j*4 + i]
  *             for k in range(4):
  *                 a[j*4 + k] -= factor * a[i*4 + k]             # <<<<<<<<<<<<<<
@@ -4664,7 +4664,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_inverse(st
         __pyx_t_8 = ((__pyx_v_j * 4) + __pyx_v_k);
         (__pyx_v_a[__pyx_t_8]) = ((__pyx_v_a[__pyx_t_8]) - (__pyx_v_factor * (__pyx_v_a[((__pyx_v_i * 4) + __pyx_v_k)])));
 
-        /* "math3d.pyx":223
+        /* "math3d.pyx":215
  *             for k in range(4):
  *                 a[j*4 + k] -= factor * a[i*4 + k]
  *                 b[j*4 + k] -= factor * b[i*4 + k]             # <<<<<<<<<<<<<<
@@ -4678,7 +4678,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_inverse(st
     }
   }
 
-  /* "math3d.pyx":224
+  /* "math3d.pyx":216
  *                 a[j*4 + k] -= factor * a[i*4 + k]
  *                 b[j*4 + k] -= factor * b[i*4 + k]
  *     for i in range(16):             # <<<<<<<<<<<<<<
@@ -4688,7 +4688,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_inverse(st
   for (__pyx_t_2 = 0; __pyx_t_2 < 16; __pyx_t_2+=1) {
     __pyx_v_i = __pyx_t_2;
 
-    /* "math3d.pyx":225
+    /* "math3d.pyx":217
  *                 b[j*4 + k] -= factor * b[i*4 + k]
  *     for i in range(16):
  *         inv.m[i] = b[i]             # <<<<<<<<<<<<<<
@@ -4698,17 +4698,17 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_inverse(st
     (__pyx_v_inv.m[__pyx_v_i]) = (__pyx_v_b[__pyx_v_i]);
   }
 
-  /* "math3d.pyx":226
+  /* "math3d.pyx":218
  *     for i in range(16):
  *         inv.m[i] = b[i]
  *     return inv             # <<<<<<<<<<<<<<
  * 
- * # ============================================================================
+ * # 5.
 */
   __pyx_r = __pyx_v_inv;
   goto __pyx_L0;
 
-  /* "math3d.pyx":197
+  /* "math3d.pyx":189
  * 
  * 
  * cdef inline Mat4 mat4_inverse(Mat4 M):             # <<<<<<<<<<<<<<
@@ -4724,8 +4724,8 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_inverse(st
   return __pyx_r;
 }
 
-/* "math3d.pyx":232
- * # ============================================================================
+/* "math3d.pyx":222
+ * # 5.
  * 
  * cdef inline Quat quat_identity():             # <<<<<<<<<<<<<<
  *     return quat(0, 0, 0, 1)
@@ -4739,19 +4739,19 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Quat __pyx_f_6math3d_quat_identity(v
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
 
-  /* "math3d.pyx":233
+  /* "math3d.pyx":223
  * 
  * cdef inline Quat quat_identity():
  *     return quat(0, 0, 0, 1)             # <<<<<<<<<<<<<<
  * 
  * cdef inline Quat quat_mul(Quat q1, Quat q2):
 */
-  __pyx_t_1 = __pyx_f_6math3d_quat(0.0, 0.0, 0.0, 1.0); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 233, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_6math3d_quat(0.0, 0.0, 0.0, 1.0); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 223, __pyx_L1_error)
   __pyx_r = __pyx_t_1;
   goto __pyx_L0;
 
-  /* "math3d.pyx":232
- * # ============================================================================
+  /* "math3d.pyx":222
+ * # 5.
  * 
  * cdef inline Quat quat_identity():             # <<<<<<<<<<<<<<
  *     return quat(0, 0, 0, 1)
@@ -4766,7 +4766,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Quat __pyx_f_6math3d_quat_identity(v
   return __pyx_r;
 }
 
-/* "math3d.pyx":235
+/* "math3d.pyx":225
  *     return quat(0, 0, 0, 1)
  * 
  * cdef inline Quat quat_mul(Quat q1, Quat q2):             # <<<<<<<<<<<<<<
@@ -4781,18 +4781,18 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Quat __pyx_f_6math3d_quat_mul(struct
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
 
-  /* "math3d.pyx":236
+  /* "math3d.pyx":226
  * 
  * cdef inline Quat quat_mul(Quat q1, Quat q2):
  *     return quat(             # <<<<<<<<<<<<<<
  *         q1.q[3]*q2.q[0] + q1.q[0]*q2.q[3] + q1.q[1]*q2.q[2] - q1.q[2]*q2.q[1],
  *         q1.q[3]*q2.q[1] - q1.q[0]*q2.q[2] + q1.q[1]*q2.q[3] + q1.q[2]*q2.q[0],
 */
-  __pyx_t_1 = __pyx_f_6math3d_quat((((((__pyx_v_q1.q[3]) * (__pyx_v_q2.q[0])) + ((__pyx_v_q1.q[0]) * (__pyx_v_q2.q[3]))) + ((__pyx_v_q1.q[1]) * (__pyx_v_q2.q[2]))) - ((__pyx_v_q1.q[2]) * (__pyx_v_q2.q[1]))), (((((__pyx_v_q1.q[3]) * (__pyx_v_q2.q[1])) - ((__pyx_v_q1.q[0]) * (__pyx_v_q2.q[2]))) + ((__pyx_v_q1.q[1]) * (__pyx_v_q2.q[3]))) + ((__pyx_v_q1.q[2]) * (__pyx_v_q2.q[0]))), (((((__pyx_v_q1.q[3]) * (__pyx_v_q2.q[2])) + ((__pyx_v_q1.q[0]) * (__pyx_v_q2.q[1]))) - ((__pyx_v_q1.q[1]) * (__pyx_v_q2.q[0]))) + ((__pyx_v_q1.q[2]) * (__pyx_v_q2.q[3]))), (((((__pyx_v_q1.q[3]) * (__pyx_v_q2.q[3])) - ((__pyx_v_q1.q[0]) * (__pyx_v_q2.q[0]))) - ((__pyx_v_q1.q[1]) * (__pyx_v_q2.q[1]))) - ((__pyx_v_q1.q[2]) * (__pyx_v_q2.q[2])))); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 236, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_6math3d_quat((((((__pyx_v_q1.q[3]) * (__pyx_v_q2.q[0])) + ((__pyx_v_q1.q[0]) * (__pyx_v_q2.q[3]))) + ((__pyx_v_q1.q[1]) * (__pyx_v_q2.q[2]))) - ((__pyx_v_q1.q[2]) * (__pyx_v_q2.q[1]))), (((((__pyx_v_q1.q[3]) * (__pyx_v_q2.q[1])) - ((__pyx_v_q1.q[0]) * (__pyx_v_q2.q[2]))) + ((__pyx_v_q1.q[1]) * (__pyx_v_q2.q[3]))) + ((__pyx_v_q1.q[2]) * (__pyx_v_q2.q[0]))), (((((__pyx_v_q1.q[3]) * (__pyx_v_q2.q[2])) + ((__pyx_v_q1.q[0]) * (__pyx_v_q2.q[1]))) - ((__pyx_v_q1.q[1]) * (__pyx_v_q2.q[0]))) + ((__pyx_v_q1.q[2]) * (__pyx_v_q2.q[3]))), (((((__pyx_v_q1.q[3]) * (__pyx_v_q2.q[3])) - ((__pyx_v_q1.q[0]) * (__pyx_v_q2.q[0]))) - ((__pyx_v_q1.q[1]) * (__pyx_v_q2.q[1]))) - ((__pyx_v_q1.q[2]) * (__pyx_v_q2.q[2])))); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 226, __pyx_L1_error)
   __pyx_r = __pyx_t_1;
   goto __pyx_L0;
 
-  /* "math3d.pyx":235
+  /* "math3d.pyx":225
  *     return quat(0, 0, 0, 1)
  * 
  * cdef inline Quat quat_mul(Quat q1, Quat q2):             # <<<<<<<<<<<<<<
@@ -4808,7 +4808,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Quat __pyx_f_6math3d_quat_mul(struct
   return __pyx_r;
 }
 
-/* "math3d.pyx":243
+/* "math3d.pyx":233
  *     )
  * 
  * cdef inline Quat quat_conjugate(Quat q):             # <<<<<<<<<<<<<<
@@ -4823,18 +4823,18 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Quat __pyx_f_6math3d_quat_conjugate(
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
 
-  /* "math3d.pyx":244
+  /* "math3d.pyx":234
  * 
  * cdef inline Quat quat_conjugate(Quat q):
  *     return quat(-q.q[0], -q.q[1], -q.q[2], q.q[3])             # <<<<<<<<<<<<<<
  * 
  * cdef inline float quat_norm(Quat q):
 */
-  __pyx_t_1 = __pyx_f_6math3d_quat((-(__pyx_v_q.q[0])), (-(__pyx_v_q.q[1])), (-(__pyx_v_q.q[2])), (__pyx_v_q.q[3])); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 244, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_6math3d_quat((-(__pyx_v_q.q[0])), (-(__pyx_v_q.q[1])), (-(__pyx_v_q.q[2])), (__pyx_v_q.q[3])); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 234, __pyx_L1_error)
   __pyx_r = __pyx_t_1;
   goto __pyx_L0;
 
-  /* "math3d.pyx":243
+  /* "math3d.pyx":233
  *     )
  * 
  * cdef inline Quat quat_conjugate(Quat q):             # <<<<<<<<<<<<<<
@@ -4850,7 +4850,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Quat __pyx_f_6math3d_quat_conjugate(
   return __pyx_r;
 }
 
-/* "math3d.pyx":246
+/* "math3d.pyx":236
  *     return quat(-q.q[0], -q.q[1], -q.q[2], q.q[3])
  * 
  * cdef inline float quat_norm(Quat q):             # <<<<<<<<<<<<<<
@@ -4861,7 +4861,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Quat __pyx_f_6math3d_quat_conjugate(
 static CYTHON_INLINE float __pyx_f_6math3d_quat_norm(struct __pyx_t_6math3d_Quat __pyx_v_q) {
   float __pyx_r;
 
-  /* "math3d.pyx":247
+  /* "math3d.pyx":237
  * 
  * cdef inline float quat_norm(Quat q):
  *     return sqrt(q.q[0]*q.q[0] + q.q[1]*q.q[1] + q.q[2]*q.q[2] + q.q[3]*q.q[3])             # <<<<<<<<<<<<<<
@@ -4871,7 +4871,7 @@ static CYTHON_INLINE float __pyx_f_6math3d_quat_norm(struct __pyx_t_6math3d_Quat
   __pyx_r = sqrt((((((__pyx_v_q.q[0]) * (__pyx_v_q.q[0])) + ((__pyx_v_q.q[1]) * (__pyx_v_q.q[1]))) + ((__pyx_v_q.q[2]) * (__pyx_v_q.q[2]))) + ((__pyx_v_q.q[3]) * (__pyx_v_q.q[3]))));
   goto __pyx_L0;
 
-  /* "math3d.pyx":246
+  /* "math3d.pyx":236
  *     return quat(-q.q[0], -q.q[1], -q.q[2], q.q[3])
  * 
  * cdef inline float quat_norm(Quat q):             # <<<<<<<<<<<<<<
@@ -4884,7 +4884,7 @@ static CYTHON_INLINE float __pyx_f_6math3d_quat_norm(struct __pyx_t_6math3d_Quat
   return __pyx_r;
 }
 
-/* "math3d.pyx":249
+/* "math3d.pyx":239
  *     return sqrt(q.q[0]*q.q[0] + q.q[1]*q.q[1] + q.q[2]*q.q[2] + q.q[3]*q.q[3])
  * 
  * cdef inline Quat quat_normalize(Quat q):             # <<<<<<<<<<<<<<
@@ -4902,17 +4902,17 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Quat __pyx_f_6math3d_quat_normalize(
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
 
-  /* "math3d.pyx":250
+  /* "math3d.pyx":240
  * 
  * cdef inline Quat quat_normalize(Quat q):
  *     cdef float n = quat_norm(q)             # <<<<<<<<<<<<<<
  *     if n == 0: return quat_identity()
  *     return quat(q.q[0]/n, q.q[1]/n, q.q[2]/n, q.q[3]/n)
 */
-  __pyx_t_1 = __pyx_f_6math3d_quat_norm(__pyx_v_q); if (unlikely(__pyx_t_1 == ((float)-1) && PyErr_Occurred())) __PYX_ERR(0, 250, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_6math3d_quat_norm(__pyx_v_q); if (unlikely(__pyx_t_1 == ((float)-1) && PyErr_Occurred())) __PYX_ERR(0, 240, __pyx_L1_error)
   __pyx_v_n = __pyx_t_1;
 
-  /* "math3d.pyx":251
+  /* "math3d.pyx":241
  * cdef inline Quat quat_normalize(Quat q):
  *     cdef float n = quat_norm(q)
  *     if n == 0: return quat_identity()             # <<<<<<<<<<<<<<
@@ -4921,12 +4921,12 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Quat __pyx_f_6math3d_quat_normalize(
 */
   __pyx_t_2 = (__pyx_v_n == 0.0);
   if (__pyx_t_2) {
-    __pyx_t_3 = __pyx_f_6math3d_quat_identity(); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 251, __pyx_L1_error)
+    __pyx_t_3 = __pyx_f_6math3d_quat_identity(); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 241, __pyx_L1_error)
     __pyx_r = __pyx_t_3;
     goto __pyx_L0;
   }
 
-  /* "math3d.pyx":252
+  /* "math3d.pyx":242
  *     cdef float n = quat_norm(q)
  *     if n == 0: return quat_identity()
  *     return quat(q.q[0]/n, q.q[1]/n, q.q[2]/n, q.q[3]/n)             # <<<<<<<<<<<<<<
@@ -4935,25 +4935,25 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Quat __pyx_f_6math3d_quat_normalize(
 */
   if (unlikely(__pyx_v_n == 0)) {
     PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-    __PYX_ERR(0, 252, __pyx_L1_error)
+    __PYX_ERR(0, 242, __pyx_L1_error)
   }
   if (unlikely(__pyx_v_n == 0)) {
     PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-    __PYX_ERR(0, 252, __pyx_L1_error)
+    __PYX_ERR(0, 242, __pyx_L1_error)
   }
   if (unlikely(__pyx_v_n == 0)) {
     PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-    __PYX_ERR(0, 252, __pyx_L1_error)
+    __PYX_ERR(0, 242, __pyx_L1_error)
   }
   if (unlikely(__pyx_v_n == 0)) {
     PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-    __PYX_ERR(0, 252, __pyx_L1_error)
+    __PYX_ERR(0, 242, __pyx_L1_error)
   }
-  __pyx_t_3 = __pyx_f_6math3d_quat(((__pyx_v_q.q[0]) / __pyx_v_n), ((__pyx_v_q.q[1]) / __pyx_v_n), ((__pyx_v_q.q[2]) / __pyx_v_n), ((__pyx_v_q.q[3]) / __pyx_v_n)); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 252, __pyx_L1_error)
+  __pyx_t_3 = __pyx_f_6math3d_quat(((__pyx_v_q.q[0]) / __pyx_v_n), ((__pyx_v_q.q[1]) / __pyx_v_n), ((__pyx_v_q.q[2]) / __pyx_v_n), ((__pyx_v_q.q[3]) / __pyx_v_n)); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 242, __pyx_L1_error)
   __pyx_r = __pyx_t_3;
   goto __pyx_L0;
 
-  /* "math3d.pyx":249
+  /* "math3d.pyx":239
  *     return sqrt(q.q[0]*q.q[0] + q.q[1]*q.q[1] + q.q[2]*q.q[2] + q.q[3]*q.q[3])
  * 
  * cdef inline Quat quat_normalize(Quat q):             # <<<<<<<<<<<<<<
@@ -4969,7 +4969,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Quat __pyx_f_6math3d_quat_normalize(
   return __pyx_r;
 }
 
-/* "math3d.pyx":254
+/* "math3d.pyx":244
  *     return quat(q.q[0]/n, q.q[1]/n, q.q[2]/n, q.q[3]/n)
  * 
  * cdef inline Quat quat_from_euler(float pitch, float yaw, float roll):             # <<<<<<<<<<<<<<
@@ -4990,7 +4990,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Quat __pyx_f_6math3d_quat_from_euler
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
 
-  /* "math3d.pyx":255
+  /* "math3d.pyx":245
  * 
  * cdef inline Quat quat_from_euler(float pitch, float yaw, float roll):
  *     cdef float cy = cos(yaw*0.5), sy = sin(yaw*0.5)             # <<<<<<<<<<<<<<
@@ -5000,7 +5000,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Quat __pyx_f_6math3d_quat_from_euler
   __pyx_v_cy = cos((__pyx_v_yaw * 0.5));
   __pyx_v_sy = sin((__pyx_v_yaw * 0.5));
 
-  /* "math3d.pyx":256
+  /* "math3d.pyx":246
  * cdef inline Quat quat_from_euler(float pitch, float yaw, float roll):
  *     cdef float cy = cos(yaw*0.5), sy = sin(yaw*0.5)
  *     cdef float cp = cos(pitch*0.5), sp = sin(pitch*0.5)             # <<<<<<<<<<<<<<
@@ -5010,7 +5010,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Quat __pyx_f_6math3d_quat_from_euler
   __pyx_v_cp = cos((__pyx_v_pitch * 0.5));
   __pyx_v_sp = sin((__pyx_v_pitch * 0.5));
 
-  /* "math3d.pyx":257
+  /* "math3d.pyx":247
  *     cdef float cy = cos(yaw*0.5), sy = sin(yaw*0.5)
  *     cdef float cp = cos(pitch*0.5), sp = sin(pitch*0.5)
  *     cdef float cr = cos(roll*0.5), sr = sin(roll*0.5)             # <<<<<<<<<<<<<<
@@ -5020,18 +5020,18 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Quat __pyx_f_6math3d_quat_from_euler
   __pyx_v_cr = cos((__pyx_v_roll * 0.5));
   __pyx_v_sr = sin((__pyx_v_roll * 0.5));
 
-  /* "math3d.pyx":258
+  /* "math3d.pyx":248
  *     cdef float cp = cos(pitch*0.5), sp = sin(pitch*0.5)
  *     cdef float cr = cos(roll*0.5), sr = sin(roll*0.5)
  *     return quat(             # <<<<<<<<<<<<<<
  *         sr*cp*cy - cr*sp*sy,
  *         cr*sp*cy + sr*cp*sy,
 */
-  __pyx_t_1 = __pyx_f_6math3d_quat((((__pyx_v_sr * __pyx_v_cp) * __pyx_v_cy) - ((__pyx_v_cr * __pyx_v_sp) * __pyx_v_sy)), (((__pyx_v_cr * __pyx_v_sp) * __pyx_v_cy) + ((__pyx_v_sr * __pyx_v_cp) * __pyx_v_sy)), (((__pyx_v_cr * __pyx_v_cp) * __pyx_v_sy) - ((__pyx_v_sr * __pyx_v_sp) * __pyx_v_cy)), (((__pyx_v_cr * __pyx_v_cp) * __pyx_v_cy) + ((__pyx_v_sr * __pyx_v_sp) * __pyx_v_sy))); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 258, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_6math3d_quat((((__pyx_v_sr * __pyx_v_cp) * __pyx_v_cy) - ((__pyx_v_cr * __pyx_v_sp) * __pyx_v_sy)), (((__pyx_v_cr * __pyx_v_sp) * __pyx_v_cy) + ((__pyx_v_sr * __pyx_v_cp) * __pyx_v_sy)), (((__pyx_v_cr * __pyx_v_cp) * __pyx_v_sy) - ((__pyx_v_sr * __pyx_v_sp) * __pyx_v_cy)), (((__pyx_v_cr * __pyx_v_cp) * __pyx_v_cy) + ((__pyx_v_sr * __pyx_v_sp) * __pyx_v_sy))); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 248, __pyx_L1_error)
   __pyx_r = __pyx_t_1;
   goto __pyx_L0;
 
-  /* "math3d.pyx":254
+  /* "math3d.pyx":244
  *     return quat(q.q[0]/n, q.q[1]/n, q.q[2]/n, q.q[3]/n)
  * 
  * cdef inline Quat quat_from_euler(float pitch, float yaw, float roll):             # <<<<<<<<<<<<<<
@@ -5047,7 +5047,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Quat __pyx_f_6math3d_quat_from_euler
   return __pyx_r;
 }
 
-/* "math3d.pyx":265
+/* "math3d.pyx":255
  *     )
  * 
  * cdef inline Mat4 quat_to_mat4(Quat q):             # <<<<<<<<<<<<<<
@@ -5072,7 +5072,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_quat_to_mat4(st
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
 
-  /* "math3d.pyx":266
+  /* "math3d.pyx":256
  * 
  * cdef inline Mat4 quat_to_mat4(Quat q):
  *     cdef float xx = q.q[0]*q.q[0], yy = q.q[1]*q.q[1], zz = q.q[2]*q.q[2]             # <<<<<<<<<<<<<<
@@ -5083,7 +5083,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_quat_to_mat4(st
   __pyx_v_yy = ((__pyx_v_q.q[1]) * (__pyx_v_q.q[1]));
   __pyx_v_zz = ((__pyx_v_q.q[2]) * (__pyx_v_q.q[2]));
 
-  /* "math3d.pyx":267
+  /* "math3d.pyx":257
  * cdef inline Mat4 quat_to_mat4(Quat q):
  *     cdef float xx = q.q[0]*q.q[0], yy = q.q[1]*q.q[1], zz = q.q[2]*q.q[2]
  *     cdef float xy = q.q[0]*q.q[1], xz = q.q[0]*q.q[2], yz = q.q[1]*q.q[2]             # <<<<<<<<<<<<<<
@@ -5094,7 +5094,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_quat_to_mat4(st
   __pyx_v_xz = ((__pyx_v_q.q[0]) * (__pyx_v_q.q[2]));
   __pyx_v_yz = ((__pyx_v_q.q[1]) * (__pyx_v_q.q[2]));
 
-  /* "math3d.pyx":268
+  /* "math3d.pyx":258
  *     cdef float xx = q.q[0]*q.q[0], yy = q.q[1]*q.q[1], zz = q.q[2]*q.q[2]
  *     cdef float xy = q.q[0]*q.q[1], xz = q.q[0]*q.q[2], yz = q.q[1]*q.q[2]
  *     cdef float wx = q.q[3]*q.q[0], wy = q.q[3]*q.q[1], wz = q.q[3]*q.q[2]             # <<<<<<<<<<<<<<
@@ -5105,17 +5105,17 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_quat_to_mat4(st
   __pyx_v_wy = ((__pyx_v_q.q[3]) * (__pyx_v_q.q[1]));
   __pyx_v_wz = ((__pyx_v_q.q[3]) * (__pyx_v_q.q[2]));
 
-  /* "math3d.pyx":269
+  /* "math3d.pyx":259
  *     cdef float xy = q.q[0]*q.q[1], xz = q.q[0]*q.q[2], yz = q.q[1]*q.q[2]
  *     cdef float wx = q.q[3]*q.q[0], wy = q.q[3]*q.q[1], wz = q.q[3]*q.q[2]
  *     cdef Mat4 M = mat4_identity()             # <<<<<<<<<<<<<<
  *     M.m[0] = 1 - 2*(yy + zz)
  *     M.m[4] = 2*(xy - wz)
 */
-  __pyx_t_1 = __pyx_f_6math3d_mat4_identity(); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 269, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_6math3d_mat4_identity(); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 259, __pyx_L1_error)
   __pyx_v_M = __pyx_t_1;
 
-  /* "math3d.pyx":270
+  /* "math3d.pyx":260
  *     cdef float wx = q.q[3]*q.q[0], wy = q.q[3]*q.q[1], wz = q.q[3]*q.q[2]
  *     cdef Mat4 M = mat4_identity()
  *     M.m[0] = 1 - 2*(yy + zz)             # <<<<<<<<<<<<<<
@@ -5124,7 +5124,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_quat_to_mat4(st
 */
   (__pyx_v_M.m[0]) = (1.0 - (2.0 * (__pyx_v_yy + __pyx_v_zz)));
 
-  /* "math3d.pyx":271
+  /* "math3d.pyx":261
  *     cdef Mat4 M = mat4_identity()
  *     M.m[0] = 1 - 2*(yy + zz)
  *     M.m[4] = 2*(xy - wz)             # <<<<<<<<<<<<<<
@@ -5133,7 +5133,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_quat_to_mat4(st
 */
   (__pyx_v_M.m[4]) = (2.0 * (__pyx_v_xy - __pyx_v_wz));
 
-  /* "math3d.pyx":272
+  /* "math3d.pyx":262
  *     M.m[0] = 1 - 2*(yy + zz)
  *     M.m[4] = 2*(xy - wz)
  *     M.m[8] = 2*(xz + wy)             # <<<<<<<<<<<<<<
@@ -5142,7 +5142,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_quat_to_mat4(st
 */
   (__pyx_v_M.m[8]) = (2.0 * (__pyx_v_xz + __pyx_v_wy));
 
-  /* "math3d.pyx":273
+  /* "math3d.pyx":263
  *     M.m[4] = 2*(xy - wz)
  *     M.m[8] = 2*(xz + wy)
  *     M.m[1] = 2*(xy + wz)             # <<<<<<<<<<<<<<
@@ -5151,7 +5151,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_quat_to_mat4(st
 */
   (__pyx_v_M.m[1]) = (2.0 * (__pyx_v_xy + __pyx_v_wz));
 
-  /* "math3d.pyx":274
+  /* "math3d.pyx":264
  *     M.m[8] = 2*(xz + wy)
  *     M.m[1] = 2*(xy + wz)
  *     M.m[5] = 1 - 2*(xx + zz)             # <<<<<<<<<<<<<<
@@ -5160,7 +5160,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_quat_to_mat4(st
 */
   (__pyx_v_M.m[5]) = (1.0 - (2.0 * (__pyx_v_xx + __pyx_v_zz)));
 
-  /* "math3d.pyx":275
+  /* "math3d.pyx":265
  *     M.m[1] = 2*(xy + wz)
  *     M.m[5] = 1 - 2*(xx + zz)
  *     M.m[9] = 2*(yz - wx)             # <<<<<<<<<<<<<<
@@ -5169,7 +5169,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_quat_to_mat4(st
 */
   (__pyx_v_M.m[9]) = (2.0 * (__pyx_v_yz - __pyx_v_wx));
 
-  /* "math3d.pyx":276
+  /* "math3d.pyx":266
  *     M.m[5] = 1 - 2*(xx + zz)
  *     M.m[9] = 2*(yz - wx)
  *     M.m[2] = 2*(xz - wy)             # <<<<<<<<<<<<<<
@@ -5178,7 +5178,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_quat_to_mat4(st
 */
   (__pyx_v_M.m[2]) = (2.0 * (__pyx_v_xz - __pyx_v_wy));
 
-  /* "math3d.pyx":277
+  /* "math3d.pyx":267
  *     M.m[9] = 2*(yz - wx)
  *     M.m[2] = 2*(xz - wy)
  *     M.m[6] = 2*(yz + wx)             # <<<<<<<<<<<<<<
@@ -5187,7 +5187,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_quat_to_mat4(st
 */
   (__pyx_v_M.m[6]) = (2.0 * (__pyx_v_yz + __pyx_v_wx));
 
-  /* "math3d.pyx":278
+  /* "math3d.pyx":268
  *     M.m[2] = 2*(xz - wy)
  *     M.m[6] = 2*(yz + wx)
  *     M.m[10] = 1 - 2*(xx + yy)             # <<<<<<<<<<<<<<
@@ -5196,17 +5196,17 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_quat_to_mat4(st
 */
   (__pyx_v_M.m[10]) = (1.0 - (2.0 * (__pyx_v_xx + __pyx_v_yy)));
 
-  /* "math3d.pyx":279
+  /* "math3d.pyx":269
  *     M.m[6] = 2*(yz + wx)
  *     M.m[10] = 1 - 2*(xx + yy)
  *     return M             # <<<<<<<<<<<<<<
  * 
- * # ============================================================================
+ * # 6.
 */
   __pyx_r = __pyx_v_M;
   goto __pyx_L0;
 
-  /* "math3d.pyx":265
+  /* "math3d.pyx":255
  *     )
  * 
  * cdef inline Mat4 quat_to_mat4(Quat q):             # <<<<<<<<<<<<<<
@@ -5222,8 +5222,8 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_quat_to_mat4(st
   return __pyx_r;
 }
 
-/* "math3d.pyx":285
- * # ============================================================================
+/* "math3d.pyx":273
+ * # 6.
  * 
  * cdef inline Mat4 mat4_perspective(float fov_rad, float aspect, float near, float far):             # <<<<<<<<<<<<<<
  *     cdef float tan_half_fov = tan(fov_rad / 2.0)
@@ -5242,7 +5242,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_perspectiv
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
 
-  /* "math3d.pyx":286
+  /* "math3d.pyx":274
  * 
  * cdef inline Mat4 mat4_perspective(float fov_rad, float aspect, float near, float far):
  *     cdef float tan_half_fov = tan(fov_rad / 2.0)             # <<<<<<<<<<<<<<
@@ -5251,17 +5251,17 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_perspectiv
 */
   __pyx_v_tan_half_fov = tan((((double)__pyx_v_fov_rad) / 2.0));
 
-  /* "math3d.pyx":287
+  /* "math3d.pyx":275
  * cdef inline Mat4 mat4_perspective(float fov_rad, float aspect, float near, float far):
  *     cdef float tan_half_fov = tan(fov_rad / 2.0)
  *     cdef Mat4 M = mat4_identity()             # <<<<<<<<<<<<<<
  *     M.m[0] = 1.0 / (aspect * tan_half_fov)
  *     M.m[5] = 1.0 / tan_half_fov
 */
-  __pyx_t_1 = __pyx_f_6math3d_mat4_identity(); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 287, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_6math3d_mat4_identity(); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 275, __pyx_L1_error)
   __pyx_v_M = __pyx_t_1;
 
-  /* "math3d.pyx":288
+  /* "math3d.pyx":276
  *     cdef float tan_half_fov = tan(fov_rad / 2.0)
  *     cdef Mat4 M = mat4_identity()
  *     M.m[0] = 1.0 / (aspect * tan_half_fov)             # <<<<<<<<<<<<<<
@@ -5271,11 +5271,11 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_perspectiv
   __pyx_t_2 = (__pyx_v_aspect * __pyx_v_tan_half_fov);
   if (unlikely(__pyx_t_2 == 0)) {
     PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-    __PYX_ERR(0, 288, __pyx_L1_error)
+    __PYX_ERR(0, 276, __pyx_L1_error)
   }
   (__pyx_v_M.m[0]) = (1.0 / ((double)__pyx_t_2));
 
-  /* "math3d.pyx":289
+  /* "math3d.pyx":277
  *     cdef Mat4 M = mat4_identity()
  *     M.m[0] = 1.0 / (aspect * tan_half_fov)
  *     M.m[5] = 1.0 / tan_half_fov             # <<<<<<<<<<<<<<
@@ -5284,11 +5284,11 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_perspectiv
 */
   if (unlikely(__pyx_v_tan_half_fov == 0)) {
     PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-    __PYX_ERR(0, 289, __pyx_L1_error)
+    __PYX_ERR(0, 277, __pyx_L1_error)
   }
   (__pyx_v_M.m[5]) = (1.0 / ((double)__pyx_v_tan_half_fov));
 
-  /* "math3d.pyx":290
+  /* "math3d.pyx":278
  *     M.m[0] = 1.0 / (aspect * tan_half_fov)
  *     M.m[5] = 1.0 / tan_half_fov
  *     M.m[10] = -(far + near) / (far - near)             # <<<<<<<<<<<<<<
@@ -5299,11 +5299,11 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_perspectiv
   __pyx_t_3 = (__pyx_v_far - __pyx_v_near);
   if (unlikely(__pyx_t_3 == 0)) {
     PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-    __PYX_ERR(0, 290, __pyx_L1_error)
+    __PYX_ERR(0, 278, __pyx_L1_error)
   }
   (__pyx_v_M.m[10]) = (__pyx_t_2 / __pyx_t_3);
 
-  /* "math3d.pyx":291
+  /* "math3d.pyx":279
  *     M.m[5] = 1.0 / tan_half_fov
  *     M.m[10] = -(far + near) / (far - near)
  *     M.m[11] = -1.0             # <<<<<<<<<<<<<<
@@ -5312,7 +5312,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_perspectiv
 */
   (__pyx_v_M.m[11]) = -1.0;
 
-  /* "math3d.pyx":292
+  /* "math3d.pyx":280
  *     M.m[10] = -(far + near) / (far - near)
  *     M.m[11] = -1.0
  *     M.m[14] = -(2.0 * far * near) / (far - near)             # <<<<<<<<<<<<<<
@@ -5323,11 +5323,11 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_perspectiv
   __pyx_t_3 = (__pyx_v_far - __pyx_v_near);
   if (unlikely(__pyx_t_3 == 0)) {
     PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-    __PYX_ERR(0, 292, __pyx_L1_error)
+    __PYX_ERR(0, 280, __pyx_L1_error)
   }
   (__pyx_v_M.m[14]) = (__pyx_t_4 / ((double)__pyx_t_3));
 
-  /* "math3d.pyx":293
+  /* "math3d.pyx":281
  *     M.m[11] = -1.0
  *     M.m[14] = -(2.0 * far * near) / (far - near)
  *     M.m[15] = 0.0             # <<<<<<<<<<<<<<
@@ -5336,7 +5336,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_perspectiv
 */
   (__pyx_v_M.m[15]) = 0.0;
 
-  /* "math3d.pyx":294
+  /* "math3d.pyx":282
  *     M.m[14] = -(2.0 * far * near) / (far - near)
  *     M.m[15] = 0.0
  *     return M             # <<<<<<<<<<<<<<
@@ -5346,8 +5346,8 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_perspectiv
   __pyx_r = __pyx_v_M;
   goto __pyx_L0;
 
-  /* "math3d.pyx":285
- * # ============================================================================
+  /* "math3d.pyx":273
+ * # 6.
  * 
  * cdef inline Mat4 mat4_perspective(float fov_rad, float aspect, float near, float far):             # <<<<<<<<<<<<<<
  *     cdef float tan_half_fov = tan(fov_rad / 2.0)
@@ -5362,7 +5362,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_perspectiv
   return __pyx_r;
 }
 
-/* "math3d.pyx":296
+/* "math3d.pyx":284
  *     return M
  * 
  * cdef inline Mat4 mat4_ortho(float left, float right, float bottom, float top, float near, float far):             # <<<<<<<<<<<<<<
@@ -5380,17 +5380,17 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_ortho(floa
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
 
-  /* "math3d.pyx":297
+  /* "math3d.pyx":285
  * 
  * cdef inline Mat4 mat4_ortho(float left, float right, float bottom, float top, float near, float far):
  *     cdef Mat4 M = mat4_identity()             # <<<<<<<<<<<<<<
  *     M.m[0] = 2.0 / (right - left)
  *     M.m[5] = 2.0 / (top - bottom)
 */
-  __pyx_t_1 = __pyx_f_6math3d_mat4_identity(); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 297, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_6math3d_mat4_identity(); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 285, __pyx_L1_error)
   __pyx_v_M = __pyx_t_1;
 
-  /* "math3d.pyx":298
+  /* "math3d.pyx":286
  * cdef inline Mat4 mat4_ortho(float left, float right, float bottom, float top, float near, float far):
  *     cdef Mat4 M = mat4_identity()
  *     M.m[0] = 2.0 / (right - left)             # <<<<<<<<<<<<<<
@@ -5400,11 +5400,11 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_ortho(floa
   __pyx_t_2 = (__pyx_v_right - __pyx_v_left);
   if (unlikely(__pyx_t_2 == 0)) {
     PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-    __PYX_ERR(0, 298, __pyx_L1_error)
+    __PYX_ERR(0, 286, __pyx_L1_error)
   }
   (__pyx_v_M.m[0]) = (2.0 / ((double)__pyx_t_2));
 
-  /* "math3d.pyx":299
+  /* "math3d.pyx":287
  *     cdef Mat4 M = mat4_identity()
  *     M.m[0] = 2.0 / (right - left)
  *     M.m[5] = 2.0 / (top - bottom)             # <<<<<<<<<<<<<<
@@ -5414,11 +5414,11 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_ortho(floa
   __pyx_t_2 = (__pyx_v_top - __pyx_v_bottom);
   if (unlikely(__pyx_t_2 == 0)) {
     PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-    __PYX_ERR(0, 299, __pyx_L1_error)
+    __PYX_ERR(0, 287, __pyx_L1_error)
   }
   (__pyx_v_M.m[5]) = (2.0 / ((double)__pyx_t_2));
 
-  /* "math3d.pyx":300
+  /* "math3d.pyx":288
  *     M.m[0] = 2.0 / (right - left)
  *     M.m[5] = 2.0 / (top - bottom)
  *     M.m[10] = -2.0 / (far - near)             # <<<<<<<<<<<<<<
@@ -5428,11 +5428,11 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_ortho(floa
   __pyx_t_2 = (__pyx_v_far - __pyx_v_near);
   if (unlikely(__pyx_t_2 == 0)) {
     PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-    __PYX_ERR(0, 300, __pyx_L1_error)
+    __PYX_ERR(0, 288, __pyx_L1_error)
   }
   (__pyx_v_M.m[10]) = (-2.0 / ((double)__pyx_t_2));
 
-  /* "math3d.pyx":301
+  /* "math3d.pyx":289
  *     M.m[5] = 2.0 / (top - bottom)
  *     M.m[10] = -2.0 / (far - near)
  *     M.m[12] = -(right + left) / (right - left)             # <<<<<<<<<<<<<<
@@ -5443,11 +5443,11 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_ortho(floa
   __pyx_t_3 = (__pyx_v_right - __pyx_v_left);
   if (unlikely(__pyx_t_3 == 0)) {
     PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-    __PYX_ERR(0, 301, __pyx_L1_error)
+    __PYX_ERR(0, 289, __pyx_L1_error)
   }
   (__pyx_v_M.m[12]) = (__pyx_t_2 / __pyx_t_3);
 
-  /* "math3d.pyx":302
+  /* "math3d.pyx":290
  *     M.m[10] = -2.0 / (far - near)
  *     M.m[12] = -(right + left) / (right - left)
  *     M.m[13] = -(top + bottom) / (top - bottom)             # <<<<<<<<<<<<<<
@@ -5458,11 +5458,11 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_ortho(floa
   __pyx_t_2 = (__pyx_v_top - __pyx_v_bottom);
   if (unlikely(__pyx_t_2 == 0)) {
     PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-    __PYX_ERR(0, 302, __pyx_L1_error)
+    __PYX_ERR(0, 290, __pyx_L1_error)
   }
   (__pyx_v_M.m[13]) = (__pyx_t_3 / __pyx_t_2);
 
-  /* "math3d.pyx":303
+  /* "math3d.pyx":291
  *     M.m[12] = -(right + left) / (right - left)
  *     M.m[13] = -(top + bottom) / (top - bottom)
  *     M.m[14] = -(far + near) / (far - near)             # <<<<<<<<<<<<<<
@@ -5473,21 +5473,21 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_ortho(floa
   __pyx_t_3 = (__pyx_v_far - __pyx_v_near);
   if (unlikely(__pyx_t_3 == 0)) {
     PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-    __PYX_ERR(0, 303, __pyx_L1_error)
+    __PYX_ERR(0, 291, __pyx_L1_error)
   }
   (__pyx_v_M.m[14]) = (__pyx_t_2 / __pyx_t_3);
 
-  /* "math3d.pyx":304
+  /* "math3d.pyx":292
  *     M.m[13] = -(top + bottom) / (top - bottom)
  *     M.m[14] = -(far + near) / (far - near)
  *     return M             # <<<<<<<<<<<<<<
  * 
- * # ============================================================================
+ * # 7.  (Frustum Culling)
 */
   __pyx_r = __pyx_v_M;
   goto __pyx_L0;
 
-  /* "math3d.pyx":296
+  /* "math3d.pyx":284
  *     return M
  * 
  * cdef inline Mat4 mat4_ortho(float left, float right, float bottom, float top, float near, float far):             # <<<<<<<<<<<<<<
@@ -5503,8 +5503,8 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Mat4 __pyx_f_6math3d_mat4_ortho(floa
   return __pyx_r;
 }
 
-/* "math3d.pyx":310
- * # ============================================================================
+/* "math3d.pyx":296
+ * # 7.  (Frustum Culling)
  * 
  * cdef inline FrustumPlanes frustum_from_matrix(Mat4 MVP):             # <<<<<<<<<<<<<<
  *     cdef FrustumPlanes fp
@@ -5526,7 +5526,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_FrustumPlanes __pyx_f_6math3d_frustu
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
 
-  /* "math3d.pyx":312
+  /* "math3d.pyx":298
  * cdef inline FrustumPlanes frustum_from_matrix(Mat4 MVP):
  *     cdef FrustumPlanes fp
  *     cdef float *m = MVP.m             # <<<<<<<<<<<<<<
@@ -5536,68 +5536,68 @@ static CYTHON_INLINE struct __pyx_t_6math3d_FrustumPlanes __pyx_f_6math3d_frustu
   __pyx_t_1 = __pyx_v_MVP.m;
   __pyx_v_m = __pyx_t_1;
 
-  /* "math3d.pyx":316
+  /* "math3d.pyx":301
+ *     cdef int i
  *     cdef float norm_len
- *     #
- *     fp.planes[0] = vec4(m[3] + m[0], m[7] + m[4], m[11] + m[8], m[15] + m[12])             # <<<<<<<<<<<<<<
- *     #
- *     fp.planes[1] = vec4(m[3] - m[0], m[7] - m[4], m[11] - m[8], m[15] - m[12])
+ *     fp.planes[0] = vec4(m[3] + m[0], m[7] + m[4], m[11] + m[8], m[15] + m[12]) #             # <<<<<<<<<<<<<<
+ *     fp.planes[1] = vec4(m[3] - m[0], m[7] - m[4], m[11] - m[8], m[15] - m[12]) #
+ *     fp.planes[2] = vec4(m[3] + m[1], m[7] + m[5], m[11] + m[9], m[15] + m[13]) #
 */
-  __pyx_t_2 = __pyx_f_6math3d_vec4(((__pyx_v_m[3]) + (__pyx_v_m[0])), ((__pyx_v_m[7]) + (__pyx_v_m[4])), ((__pyx_v_m[11]) + (__pyx_v_m[8])), ((__pyx_v_m[15]) + (__pyx_v_m[12]))); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 316, __pyx_L1_error)
+  __pyx_t_2 = __pyx_f_6math3d_vec4(((__pyx_v_m[3]) + (__pyx_v_m[0])), ((__pyx_v_m[7]) + (__pyx_v_m[4])), ((__pyx_v_m[11]) + (__pyx_v_m[8])), ((__pyx_v_m[15]) + (__pyx_v_m[12]))); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 301, __pyx_L1_error)
   (__pyx_v_fp.planes[0]) = __pyx_t_2;
 
-  /* "math3d.pyx":318
- *     fp.planes[0] = vec4(m[3] + m[0], m[7] + m[4], m[11] + m[8], m[15] + m[12])
- *     #
- *     fp.planes[1] = vec4(m[3] - m[0], m[7] - m[4], m[11] - m[8], m[15] - m[12])             # <<<<<<<<<<<<<<
- *     #
- *     fp.planes[2] = vec4(m[3] + m[1], m[7] + m[5], m[11] + m[9], m[15] + m[13])
+  /* "math3d.pyx":302
+ *     cdef float norm_len
+ *     fp.planes[0] = vec4(m[3] + m[0], m[7] + m[4], m[11] + m[8], m[15] + m[12]) #
+ *     fp.planes[1] = vec4(m[3] - m[0], m[7] - m[4], m[11] - m[8], m[15] - m[12]) #             # <<<<<<<<<<<<<<
+ *     fp.planes[2] = vec4(m[3] + m[1], m[7] + m[5], m[11] + m[9], m[15] + m[13]) #
+ *     fp.planes[3] = vec4(m[3] - m[1], m[7] - m[5], m[11] - m[9], m[15] - m[13]) #
 */
-  __pyx_t_2 = __pyx_f_6math3d_vec4(((__pyx_v_m[3]) - (__pyx_v_m[0])), ((__pyx_v_m[7]) - (__pyx_v_m[4])), ((__pyx_v_m[11]) - (__pyx_v_m[8])), ((__pyx_v_m[15]) - (__pyx_v_m[12]))); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 318, __pyx_L1_error)
+  __pyx_t_2 = __pyx_f_6math3d_vec4(((__pyx_v_m[3]) - (__pyx_v_m[0])), ((__pyx_v_m[7]) - (__pyx_v_m[4])), ((__pyx_v_m[11]) - (__pyx_v_m[8])), ((__pyx_v_m[15]) - (__pyx_v_m[12]))); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 302, __pyx_L1_error)
   (__pyx_v_fp.planes[1]) = __pyx_t_2;
 
-  /* "math3d.pyx":320
- *     fp.planes[1] = vec4(m[3] - m[0], m[7] - m[4], m[11] - m[8], m[15] - m[12])
- *     #
- *     fp.planes[2] = vec4(m[3] + m[1], m[7] + m[5], m[11] + m[9], m[15] + m[13])             # <<<<<<<<<<<<<<
- *     #
- *     fp.planes[3] = vec4(m[3] - m[1], m[7] - m[5], m[11] - m[9], m[15] - m[13])
+  /* "math3d.pyx":303
+ *     fp.planes[0] = vec4(m[3] + m[0], m[7] + m[4], m[11] + m[8], m[15] + m[12]) #
+ *     fp.planes[1] = vec4(m[3] - m[0], m[7] - m[4], m[11] - m[8], m[15] - m[12]) #
+ *     fp.planes[2] = vec4(m[3] + m[1], m[7] + m[5], m[11] + m[9], m[15] + m[13]) #             # <<<<<<<<<<<<<<
+ *     fp.planes[3] = vec4(m[3] - m[1], m[7] - m[5], m[11] - m[9], m[15] - m[13]) #
+ *     fp.planes[4] = vec4(m[3] + m[2], m[7] + m[6], m[11] + m[10], m[15] + m[14]) #
 */
-  __pyx_t_2 = __pyx_f_6math3d_vec4(((__pyx_v_m[3]) + (__pyx_v_m[1])), ((__pyx_v_m[7]) + (__pyx_v_m[5])), ((__pyx_v_m[11]) + (__pyx_v_m[9])), ((__pyx_v_m[15]) + (__pyx_v_m[13]))); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 320, __pyx_L1_error)
+  __pyx_t_2 = __pyx_f_6math3d_vec4(((__pyx_v_m[3]) + (__pyx_v_m[1])), ((__pyx_v_m[7]) + (__pyx_v_m[5])), ((__pyx_v_m[11]) + (__pyx_v_m[9])), ((__pyx_v_m[15]) + (__pyx_v_m[13]))); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 303, __pyx_L1_error)
   (__pyx_v_fp.planes[2]) = __pyx_t_2;
 
-  /* "math3d.pyx":322
- *     fp.planes[2] = vec4(m[3] + m[1], m[7] + m[5], m[11] + m[9], m[15] + m[13])
- *     #
- *     fp.planes[3] = vec4(m[3] - m[1], m[7] - m[5], m[11] - m[9], m[15] - m[13])             # <<<<<<<<<<<<<<
- *     #
- *     fp.planes[4] = vec4(m[3] + m[2], m[7] + m[6], m[11] + m[10], m[15] + m[14])
+  /* "math3d.pyx":304
+ *     fp.planes[1] = vec4(m[3] - m[0], m[7] - m[4], m[11] - m[8], m[15] - m[12]) #
+ *     fp.planes[2] = vec4(m[3] + m[1], m[7] + m[5], m[11] + m[9], m[15] + m[13]) #
+ *     fp.planes[3] = vec4(m[3] - m[1], m[7] - m[5], m[11] - m[9], m[15] - m[13]) #             # <<<<<<<<<<<<<<
+ *     fp.planes[4] = vec4(m[3] + m[2], m[7] + m[6], m[11] + m[10], m[15] + m[14]) #
+ *     fp.planes[5] = vec4(m[3] - m[2], m[7] - m[6], m[11] - m[10], m[15] - m[14]) #
 */
-  __pyx_t_2 = __pyx_f_6math3d_vec4(((__pyx_v_m[3]) - (__pyx_v_m[1])), ((__pyx_v_m[7]) - (__pyx_v_m[5])), ((__pyx_v_m[11]) - (__pyx_v_m[9])), ((__pyx_v_m[15]) - (__pyx_v_m[13]))); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 322, __pyx_L1_error)
+  __pyx_t_2 = __pyx_f_6math3d_vec4(((__pyx_v_m[3]) - (__pyx_v_m[1])), ((__pyx_v_m[7]) - (__pyx_v_m[5])), ((__pyx_v_m[11]) - (__pyx_v_m[9])), ((__pyx_v_m[15]) - (__pyx_v_m[13]))); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 304, __pyx_L1_error)
   (__pyx_v_fp.planes[3]) = __pyx_t_2;
 
-  /* "math3d.pyx":324
- *     fp.planes[3] = vec4(m[3] - m[1], m[7] - m[5], m[11] - m[9], m[15] - m[13])
+  /* "math3d.pyx":305
+ *     fp.planes[2] = vec4(m[3] + m[1], m[7] + m[5], m[11] + m[9], m[15] + m[13]) #
+ *     fp.planes[3] = vec4(m[3] - m[1], m[7] - m[5], m[11] - m[9], m[15] - m[13]) #
+ *     fp.planes[4] = vec4(m[3] + m[2], m[7] + m[6], m[11] + m[10], m[15] + m[14]) #             # <<<<<<<<<<<<<<
+ *     fp.planes[5] = vec4(m[3] - m[2], m[7] - m[6], m[11] - m[10], m[15] - m[14]) #
  *     #
- *     fp.planes[4] = vec4(m[3] + m[2], m[7] + m[6], m[11] + m[10], m[15] + m[14])             # <<<<<<<<<<<<<<
- *     #
- *     fp.planes[5] = vec4(m[3] - m[2], m[7] - m[6], m[11] - m[10], m[15] - m[14])
 */
-  __pyx_t_2 = __pyx_f_6math3d_vec4(((__pyx_v_m[3]) + (__pyx_v_m[2])), ((__pyx_v_m[7]) + (__pyx_v_m[6])), ((__pyx_v_m[11]) + (__pyx_v_m[10])), ((__pyx_v_m[15]) + (__pyx_v_m[14]))); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 324, __pyx_L1_error)
+  __pyx_t_2 = __pyx_f_6math3d_vec4(((__pyx_v_m[3]) + (__pyx_v_m[2])), ((__pyx_v_m[7]) + (__pyx_v_m[6])), ((__pyx_v_m[11]) + (__pyx_v_m[10])), ((__pyx_v_m[15]) + (__pyx_v_m[14]))); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 305, __pyx_L1_error)
   (__pyx_v_fp.planes[4]) = __pyx_t_2;
 
-  /* "math3d.pyx":326
- *     fp.planes[4] = vec4(m[3] + m[2], m[7] + m[6], m[11] + m[10], m[15] + m[14])
- *     #
- *     fp.planes[5] = vec4(m[3] - m[2], m[7] - m[6], m[11] - m[10], m[15] - m[14])             # <<<<<<<<<<<<<<
+  /* "math3d.pyx":306
+ *     fp.planes[3] = vec4(m[3] - m[1], m[7] - m[5], m[11] - m[9], m[15] - m[13]) #
+ *     fp.planes[4] = vec4(m[3] + m[2], m[7] + m[6], m[11] + m[10], m[15] + m[14]) #
+ *     fp.planes[5] = vec4(m[3] - m[2], m[7] - m[6], m[11] - m[10], m[15] - m[14]) #             # <<<<<<<<<<<<<<
  *     #
  *     for i in range(6):
 */
-  __pyx_t_2 = __pyx_f_6math3d_vec4(((__pyx_v_m[3]) - (__pyx_v_m[2])), ((__pyx_v_m[7]) - (__pyx_v_m[6])), ((__pyx_v_m[11]) - (__pyx_v_m[10])), ((__pyx_v_m[15]) - (__pyx_v_m[14]))); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 326, __pyx_L1_error)
+  __pyx_t_2 = __pyx_f_6math3d_vec4(((__pyx_v_m[3]) - (__pyx_v_m[2])), ((__pyx_v_m[7]) - (__pyx_v_m[6])), ((__pyx_v_m[11]) - (__pyx_v_m[10])), ((__pyx_v_m[15]) - (__pyx_v_m[14]))); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 306, __pyx_L1_error)
   (__pyx_v_fp.planes[5]) = __pyx_t_2;
 
-  /* "math3d.pyx":328
- *     fp.planes[5] = vec4(m[3] - m[2], m[7] - m[6], m[11] - m[10], m[15] - m[14])
+  /* "math3d.pyx":308
+ *     fp.planes[5] = vec4(m[3] - m[2], m[7] - m[6], m[11] - m[10], m[15] - m[14]) #
  *     #
  *     for i in range(6):             # <<<<<<<<<<<<<<
  *         norm_len = sqrt(fp.planes[i].v[0]*fp.planes[i].v[0] +
@@ -5606,7 +5606,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_FrustumPlanes __pyx_f_6math3d_frustu
   for (__pyx_t_3 = 0; __pyx_t_3 < 6; __pyx_t_3+=1) {
     __pyx_v_i = __pyx_t_3;
 
-    /* "math3d.pyx":329
+    /* "math3d.pyx":309
  *     #
  *     for i in range(6):
  *         norm_len = sqrt(fp.planes[i].v[0]*fp.planes[i].v[0] +             # <<<<<<<<<<<<<<
@@ -5615,7 +5615,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_FrustumPlanes __pyx_f_6math3d_frustu
 */
     __pyx_v_norm_len = sqrt((((((__pyx_v_fp.planes[__pyx_v_i]).v[0]) * ((__pyx_v_fp.planes[__pyx_v_i]).v[0])) + (((__pyx_v_fp.planes[__pyx_v_i]).v[1]) * ((__pyx_v_fp.planes[__pyx_v_i]).v[1]))) + (((__pyx_v_fp.planes[__pyx_v_i]).v[2]) * ((__pyx_v_fp.planes[__pyx_v_i]).v[2]))));
 
-    /* "math3d.pyx":332
+    /* "math3d.pyx":312
  *                         fp.planes[i].v[1]*fp.planes[i].v[1] +
  *                         fp.planes[i].v[2]*fp.planes[i].v[2])
  *         fp.planes[i].v[0] /= norm_len             # <<<<<<<<<<<<<<
@@ -5626,11 +5626,11 @@ static CYTHON_INLINE struct __pyx_t_6math3d_FrustumPlanes __pyx_f_6math3d_frustu
     __pyx_t_5 = 0;
     if (unlikely(__pyx_v_norm_len == 0)) {
       PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-      __PYX_ERR(0, 332, __pyx_L1_error)
+      __PYX_ERR(0, 312, __pyx_L1_error)
     }
     ((__pyx_v_fp.planes[__pyx_t_4]).v[__pyx_t_5]) = (((__pyx_v_fp.planes[__pyx_t_4]).v[__pyx_t_5]) / __pyx_v_norm_len);
 
-    /* "math3d.pyx":333
+    /* "math3d.pyx":313
  *                         fp.planes[i].v[2]*fp.planes[i].v[2])
  *         fp.planes[i].v[0] /= norm_len
  *         fp.planes[i].v[1] /= norm_len             # <<<<<<<<<<<<<<
@@ -5641,11 +5641,11 @@ static CYTHON_INLINE struct __pyx_t_6math3d_FrustumPlanes __pyx_f_6math3d_frustu
     __pyx_t_5 = 1;
     if (unlikely(__pyx_v_norm_len == 0)) {
       PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-      __PYX_ERR(0, 333, __pyx_L1_error)
+      __PYX_ERR(0, 313, __pyx_L1_error)
     }
     ((__pyx_v_fp.planes[__pyx_t_4]).v[__pyx_t_5]) = (((__pyx_v_fp.planes[__pyx_t_4]).v[__pyx_t_5]) / __pyx_v_norm_len);
 
-    /* "math3d.pyx":334
+    /* "math3d.pyx":314
  *         fp.planes[i].v[0] /= norm_len
  *         fp.planes[i].v[1] /= norm_len
  *         fp.planes[i].v[2] /= norm_len             # <<<<<<<<<<<<<<
@@ -5656,11 +5656,11 @@ static CYTHON_INLINE struct __pyx_t_6math3d_FrustumPlanes __pyx_f_6math3d_frustu
     __pyx_t_5 = 2;
     if (unlikely(__pyx_v_norm_len == 0)) {
       PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-      __PYX_ERR(0, 334, __pyx_L1_error)
+      __PYX_ERR(0, 314, __pyx_L1_error)
     }
     ((__pyx_v_fp.planes[__pyx_t_4]).v[__pyx_t_5]) = (((__pyx_v_fp.planes[__pyx_t_4]).v[__pyx_t_5]) / __pyx_v_norm_len);
 
-    /* "math3d.pyx":335
+    /* "math3d.pyx":315
  *         fp.planes[i].v[1] /= norm_len
  *         fp.planes[i].v[2] /= norm_len
  *         fp.planes[i].v[3] /= norm_len             # <<<<<<<<<<<<<<
@@ -5671,12 +5671,12 @@ static CYTHON_INLINE struct __pyx_t_6math3d_FrustumPlanes __pyx_f_6math3d_frustu
     __pyx_t_5 = 3;
     if (unlikely(__pyx_v_norm_len == 0)) {
       PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-      __PYX_ERR(0, 335, __pyx_L1_error)
+      __PYX_ERR(0, 315, __pyx_L1_error)
     }
     ((__pyx_v_fp.planes[__pyx_t_4]).v[__pyx_t_5]) = (((__pyx_v_fp.planes[__pyx_t_4]).v[__pyx_t_5]) / __pyx_v_norm_len);
   }
 
-  /* "math3d.pyx":336
+  /* "math3d.pyx":316
  *         fp.planes[i].v[2] /= norm_len
  *         fp.planes[i].v[3] /= norm_len
  *     return fp             # <<<<<<<<<<<<<<
@@ -5686,8 +5686,8 @@ static CYTHON_INLINE struct __pyx_t_6math3d_FrustumPlanes __pyx_f_6math3d_frustu
   __pyx_r = __pyx_v_fp;
   goto __pyx_L0;
 
-  /* "math3d.pyx":310
- * # ============================================================================
+  /* "math3d.pyx":296
+ * # 7.  (Frustum Culling)
  * 
  * cdef inline FrustumPlanes frustum_from_matrix(Mat4 MVP):             # <<<<<<<<<<<<<<
  *     cdef FrustumPlanes fp
@@ -5702,7 +5702,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_FrustumPlanes __pyx_f_6math3d_frustu
   return __pyx_r;
 }
 
-/* "math3d.pyx":338
+/* "math3d.pyx":318
  *     return fp
  * 
  * cdef inline bint is_point_in_frustum(FrustumPlanes fp, Vec3 point):             # <<<<<<<<<<<<<<
@@ -5716,7 +5716,7 @@ static CYTHON_INLINE int __pyx_f_6math3d_is_point_in_frustum(struct __pyx_t_6mat
   int __pyx_t_1;
   int __pyx_t_2;
 
-  /* "math3d.pyx":340
+  /* "math3d.pyx":320
  * cdef inline bint is_point_in_frustum(FrustumPlanes fp, Vec3 point):
  *     cdef int i
  *     for i in range(6):             # <<<<<<<<<<<<<<
@@ -5726,7 +5726,7 @@ static CYTHON_INLINE int __pyx_f_6math3d_is_point_in_frustum(struct __pyx_t_6mat
   for (__pyx_t_1 = 0; __pyx_t_1 < 6; __pyx_t_1+=1) {
     __pyx_v_i = __pyx_t_1;
 
-    /* "math3d.pyx":344
+    /* "math3d.pyx":324
  *             fp.planes[i].v[1] * point.v[1] +
  *             fp.planes[i].v[2] * point.v[2] +
  *             fp.planes[i].v[3] < 0):             # <<<<<<<<<<<<<<
@@ -5735,7 +5735,7 @@ static CYTHON_INLINE int __pyx_f_6math3d_is_point_in_frustum(struct __pyx_t_6mat
 */
     __pyx_t_2 = (((((((__pyx_v_fp.planes[__pyx_v_i]).v[0]) * (__pyx_v_point.v[0])) + (((__pyx_v_fp.planes[__pyx_v_i]).v[1]) * (__pyx_v_point.v[1]))) + (((__pyx_v_fp.planes[__pyx_v_i]).v[2]) * (__pyx_v_point.v[2]))) + ((__pyx_v_fp.planes[__pyx_v_i]).v[3])) < 0.0);
 
-    /* "math3d.pyx":341
+    /* "math3d.pyx":321
  *     cdef int i
  *     for i in range(6):
  *         if (fp.planes[i].v[0] * point.v[0] +             # <<<<<<<<<<<<<<
@@ -5744,7 +5744,7 @@ static CYTHON_INLINE int __pyx_f_6math3d_is_point_in_frustum(struct __pyx_t_6mat
 */
     if (__pyx_t_2) {
 
-      /* "math3d.pyx":345
+      /* "math3d.pyx":325
  *             fp.planes[i].v[2] * point.v[2] +
  *             fp.planes[i].v[3] < 0):
  *             return False             # <<<<<<<<<<<<<<
@@ -5754,7 +5754,7 @@ static CYTHON_INLINE int __pyx_f_6math3d_is_point_in_frustum(struct __pyx_t_6mat
       __pyx_r = 0;
       goto __pyx_L0;
 
-      /* "math3d.pyx":341
+      /* "math3d.pyx":321
  *     cdef int i
  *     for i in range(6):
  *         if (fp.planes[i].v[0] * point.v[0] +             # <<<<<<<<<<<<<<
@@ -5764,7 +5764,7 @@ static CYTHON_INLINE int __pyx_f_6math3d_is_point_in_frustum(struct __pyx_t_6mat
     }
   }
 
-  /* "math3d.pyx":346
+  /* "math3d.pyx":326
  *             fp.planes[i].v[3] < 0):
  *             return False
  *     return True             # <<<<<<<<<<<<<<
@@ -5774,7 +5774,7 @@ static CYTHON_INLINE int __pyx_f_6math3d_is_point_in_frustum(struct __pyx_t_6mat
   __pyx_r = 1;
   goto __pyx_L0;
 
-  /* "math3d.pyx":338
+  /* "math3d.pyx":318
  *     return fp
  * 
  * cdef inline bint is_point_in_frustum(FrustumPlanes fp, Vec3 point):             # <<<<<<<<<<<<<<
@@ -5787,7 +5787,7 @@ static CYTHON_INLINE int __pyx_f_6math3d_is_point_in_frustum(struct __pyx_t_6mat
   return __pyx_r;
 }
 
-/* "math3d.pyx":348
+/* "math3d.pyx":328
  *     return True
  * 
  * cdef inline bint is_sphere_in_frustum(FrustumPlanes fp, Vec3 center, float radius):             # <<<<<<<<<<<<<<
@@ -5801,7 +5801,7 @@ static CYTHON_INLINE int __pyx_f_6math3d_is_sphere_in_frustum(struct __pyx_t_6ma
   int __pyx_t_1;
   int __pyx_t_2;
 
-  /* "math3d.pyx":350
+  /* "math3d.pyx":330
  * cdef inline bint is_sphere_in_frustum(FrustumPlanes fp, Vec3 center, float radius):
  *     cdef int i
  *     for i in range(6):             # <<<<<<<<<<<<<<
@@ -5811,7 +5811,7 @@ static CYTHON_INLINE int __pyx_f_6math3d_is_sphere_in_frustum(struct __pyx_t_6ma
   for (__pyx_t_1 = 0; __pyx_t_1 < 6; __pyx_t_1+=1) {
     __pyx_v_i = __pyx_t_1;
 
-    /* "math3d.pyx":354
+    /* "math3d.pyx":334
  *             fp.planes[i].v[1] * center.v[1] +
  *             fp.planes[i].v[2] * center.v[2] +
  *             fp.planes[i].v[3] < -radius):             # <<<<<<<<<<<<<<
@@ -5820,7 +5820,7 @@ static CYTHON_INLINE int __pyx_f_6math3d_is_sphere_in_frustum(struct __pyx_t_6ma
 */
     __pyx_t_2 = (((((((__pyx_v_fp.planes[__pyx_v_i]).v[0]) * (__pyx_v_center.v[0])) + (((__pyx_v_fp.planes[__pyx_v_i]).v[1]) * (__pyx_v_center.v[1]))) + (((__pyx_v_fp.planes[__pyx_v_i]).v[2]) * (__pyx_v_center.v[2]))) + ((__pyx_v_fp.planes[__pyx_v_i]).v[3])) < (-__pyx_v_radius));
 
-    /* "math3d.pyx":351
+    /* "math3d.pyx":331
  *     cdef int i
  *     for i in range(6):
  *         if (fp.planes[i].v[0] * center.v[0] +             # <<<<<<<<<<<<<<
@@ -5829,7 +5829,7 @@ static CYTHON_INLINE int __pyx_f_6math3d_is_sphere_in_frustum(struct __pyx_t_6ma
 */
     if (__pyx_t_2) {
 
-      /* "math3d.pyx":355
+      /* "math3d.pyx":335
  *             fp.planes[i].v[2] * center.v[2] +
  *             fp.planes[i].v[3] < -radius):
  *             return False             # <<<<<<<<<<<<<<
@@ -5839,7 +5839,7 @@ static CYTHON_INLINE int __pyx_f_6math3d_is_sphere_in_frustum(struct __pyx_t_6ma
       __pyx_r = 0;
       goto __pyx_L0;
 
-      /* "math3d.pyx":351
+      /* "math3d.pyx":331
  *     cdef int i
  *     for i in range(6):
  *         if (fp.planes[i].v[0] * center.v[0] +             # <<<<<<<<<<<<<<
@@ -5849,17 +5849,17 @@ static CYTHON_INLINE int __pyx_f_6math3d_is_sphere_in_frustum(struct __pyx_t_6ma
     }
   }
 
-  /* "math3d.pyx":356
+  /* "math3d.pyx":336
  *             fp.planes[i].v[3] < -radius):
  *             return False
  *     return True             # <<<<<<<<<<<<<<
  * 
- * # ============================================================================
+ * # 8.   ( -> )
 */
   __pyx_r = 1;
   goto __pyx_L0;
 
-  /* "math3d.pyx":348
+  /* "math3d.pyx":328
  *     return True
  * 
  * cdef inline bint is_sphere_in_frustum(FrustumPlanes fp, Vec3 center, float radius):             # <<<<<<<<<<<<<<
@@ -5872,8 +5872,8 @@ static CYTHON_INLINE int __pyx_f_6math3d_is_sphere_in_frustum(struct __pyx_t_6ma
   return __pyx_r;
 }
 
-/* "math3d.pyx":362
- * # ============================================================================
+/* "math3d.pyx":340
+ * # 8.   ( -> )
  * 
  * cdef inline Vec3 world_to_screen(Mat4 MVP, Vec3 world_point,             # <<<<<<<<<<<<<<
  *                                  int viewport_width, int viewport_height):
@@ -5891,18 +5891,18 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Vec3 __pyx_f_6math3d_world_to_screen
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
 
-  /* "math3d.pyx":364
+  /* "math3d.pyx":342
  * cdef inline Vec3 world_to_screen(Mat4 MVP, Vec3 world_point,
  *                                  int viewport_width, int viewport_height):
  *     cdef Vec4 clip = mat4_mul_vec4(MVP, vec3_to_vec4(world_point, 1.0))             # <<<<<<<<<<<<<<
  *     cdef Vec3 ndc
  *     cdef Vec3 screen
 */
-  __pyx_t_1 = __pyx_f_6math3d_vec3_to_vec4(__pyx_v_world_point, 1.0); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 364, __pyx_L1_error)
-  __pyx_t_2 = __pyx_f_6math3d_mat4_mul_vec4(__pyx_v_MVP, __pyx_t_1); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 364, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_6math3d_vec3_to_vec4(__pyx_v_world_point, 1.0); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 342, __pyx_L1_error)
+  __pyx_t_2 = __pyx_f_6math3d_mat4_mul_vec4(__pyx_v_MVP, __pyx_t_1); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 342, __pyx_L1_error)
   __pyx_v_clip = __pyx_t_2;
 
-  /* "math3d.pyx":367
+  /* "math3d.pyx":345
  *     cdef Vec3 ndc
  *     cdef Vec3 screen
  *     ndc.v[0] = clip.v[0] / clip.v[3]             # <<<<<<<<<<<<<<
@@ -5911,11 +5911,11 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Vec3 __pyx_f_6math3d_world_to_screen
 */
   if (unlikely((__pyx_v_clip.v[3]) == 0)) {
     PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-    __PYX_ERR(0, 367, __pyx_L1_error)
+    __PYX_ERR(0, 345, __pyx_L1_error)
   }
   (__pyx_v_ndc.v[0]) = ((__pyx_v_clip.v[0]) / (__pyx_v_clip.v[3]));
 
-  /* "math3d.pyx":368
+  /* "math3d.pyx":346
  *     cdef Vec3 screen
  *     ndc.v[0] = clip.v[0] / clip.v[3]
  *     ndc.v[1] = clip.v[1] / clip.v[3]             # <<<<<<<<<<<<<<
@@ -5924,11 +5924,11 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Vec3 __pyx_f_6math3d_world_to_screen
 */
   if (unlikely((__pyx_v_clip.v[3]) == 0)) {
     PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-    __PYX_ERR(0, 368, __pyx_L1_error)
+    __PYX_ERR(0, 346, __pyx_L1_error)
   }
   (__pyx_v_ndc.v[1]) = ((__pyx_v_clip.v[1]) / (__pyx_v_clip.v[3]));
 
-  /* "math3d.pyx":369
+  /* "math3d.pyx":347
  *     ndc.v[0] = clip.v[0] / clip.v[3]
  *     ndc.v[1] = clip.v[1] / clip.v[3]
  *     ndc.v[2] = clip.v[2] / clip.v[3]             # <<<<<<<<<<<<<<
@@ -5937,11 +5937,11 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Vec3 __pyx_f_6math3d_world_to_screen
 */
   if (unlikely((__pyx_v_clip.v[3]) == 0)) {
     PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-    __PYX_ERR(0, 369, __pyx_L1_error)
+    __PYX_ERR(0, 347, __pyx_L1_error)
   }
   (__pyx_v_ndc.v[2]) = ((__pyx_v_clip.v[2]) / (__pyx_v_clip.v[3]));
 
-  /* "math3d.pyx":370
+  /* "math3d.pyx":348
  *     ndc.v[1] = clip.v[1] / clip.v[3]
  *     ndc.v[2] = clip.v[2] / clip.v[3]
  *     screen.v[0] = (ndc.v[0] + 1.0) * 0.5 * viewport_width             # <<<<<<<<<<<<<<
@@ -5950,7 +5950,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Vec3 __pyx_f_6math3d_world_to_screen
 */
   (__pyx_v_screen.v[0]) = ((((__pyx_v_ndc.v[0]) + 1.0) * 0.5) * __pyx_v_viewport_width);
 
-  /* "math3d.pyx":371
+  /* "math3d.pyx":349
  *     ndc.v[2] = clip.v[2] / clip.v[3]
  *     screen.v[0] = (ndc.v[0] + 1.0) * 0.5 * viewport_width
  *     screen.v[1] = (1.0 - ndc.v[1]) * 0.5 * viewport_height             # <<<<<<<<<<<<<<
@@ -5959,7 +5959,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Vec3 __pyx_f_6math3d_world_to_screen
 */
   (__pyx_v_screen.v[1]) = (((1.0 - (__pyx_v_ndc.v[1])) * 0.5) * __pyx_v_viewport_height);
 
-  /* "math3d.pyx":372
+  /* "math3d.pyx":350
  *     screen.v[0] = (ndc.v[0] + 1.0) * 0.5 * viewport_width
  *     screen.v[1] = (1.0 - ndc.v[1]) * 0.5 * viewport_height
  *     screen.v[2] = (ndc.v[2] + 1.0) * 0.5             # <<<<<<<<<<<<<<
@@ -5967,7 +5967,7 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Vec3 __pyx_f_6math3d_world_to_screen
 */
   (__pyx_v_screen.v[2]) = (((__pyx_v_ndc.v[2]) + 1.0) * 0.5);
 
-  /* "math3d.pyx":373
+  /* "math3d.pyx":351
  *     screen.v[1] = (1.0 - ndc.v[1]) * 0.5 * viewport_height
  *     screen.v[2] = (ndc.v[2] + 1.0) * 0.5
  *     return screen             # <<<<<<<<<<<<<<
@@ -5975,8 +5975,8 @@ static CYTHON_INLINE struct __pyx_t_6math3d_Vec3 __pyx_f_6math3d_world_to_screen
   __pyx_r = __pyx_v_screen;
   goto __pyx_L0;
 
-  /* "math3d.pyx":362
- * # ============================================================================
+  /* "math3d.pyx":340
+ * # 8.   ( -> )
  * 
  * cdef inline Vec3 world_to_screen(Mat4 MVP, Vec3 world_point,             # <<<<<<<<<<<<<<
  *                                  int viewport_width, int viewport_height):

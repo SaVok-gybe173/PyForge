@@ -8,7 +8,7 @@ try:
 except ImportError as e:
     sys.exit(102)
 
-from PyForge.opengl.locals import IS_IMPORT_GL, InitGl
+from PyForge.gpu.locals import IS_IMPORT_GL, InitGl
 
 if IS_IMPORT_GL:
     from pygame.locals import *

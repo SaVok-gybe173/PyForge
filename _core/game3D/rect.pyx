@@ -2,12 +2,6 @@ from math3d cimport *
 import numpy as np
 
 cdef class Rect3D:
-    cdef float[:, :] vertices
-    cdef int[:, :] indices
-    cdef float[:, :] normals
-    cdef float[:, :] uvs
-    cdef float[:, :] colors
-
     def __init__(self, vertices_list, indices_list, normals_list=None, uvs_list=None, colors_list=None):
         self.vertices = np.array(vertices_list, dtype=np.float32)
 
@@ -69,8 +63,11 @@ cdef class Rect3D:
                 a[2] < b[3] and a[3] > b[2] and
                 a[4] < b[5] and a[5] > b[4])
 
-    def get_vertices(self):
-        return self.vertices
     def set_vertices(self, vertices_list):
         self.vertices = np.array(vertices_list, dtype=np.float32)
-    
+
+    cpdef float[:, :] get_vertices(self):
+        return self.vertices
+
+    cpdef int[:, :] get_indices(self):
+        return self.indices

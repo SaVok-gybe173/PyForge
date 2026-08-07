@@ -24,3 +24,7 @@ $PY_VERSION setup.py build_ext --inplace
 cd "$SCRIPT_DIR"
 cd _core/game3D
 $PY_VERSION setup.py build_ext --inplace
+
+cd "$SCRIPT_DIR"
+cd cpu/game3D
+$PY_VERSION setup.py build_ext --inplace

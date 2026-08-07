@@ -15,3 +15,7 @@ cd _core\creating\listing
 cd /d "%~dp0"
 cd _core\game3D
 %PY_VERSION% setup.py build_ext --inplace 
+
+cd /d "%~dp0"
+cd cpu\game3D
+%PY_VERSION% setup.py build_ext --inplace

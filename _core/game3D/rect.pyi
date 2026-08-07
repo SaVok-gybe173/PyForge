@@ -2,7 +2,7 @@ import numpy as np
 
 class Rect3D:
     def __init__(self, vertices_list: tuple[tuple[int, int, int], ...],
-                indices_list: tuple[tuple[int, int], ...],
+                indices_list: tuple[tuple[int, int, int], ...],
                 normals_list: tuple[tuple[float, float, float], ...] | None = None,
                 uvs_list: list[tuple[float, float]] | None = None,
                 colors_list: tuple[tuple[float, float, float], ...] | tuple[tuple[float, float, float, float], ...] | None = None
@@ -11,8 +11,8 @@ class Rect3D:
         Получение аргументов для работы.
 
         Args:
-            vertices_list (list[tuple[int, int, int]]): Cписок всех вершин (точек) объекта в локальной системе координат. Каждая вершина — это кортеж из трёх чисел (x, y, z)
-            indices_list (tuple[int]): Индексы вершин, определяющие, как соединять вершины в треугольники. Каждые три подряд идущих числа образуют один треугольник.
+            vertices_list (tuple[tuple[int, int, int], ...]): Cписок всех вершин (точек) объекта в локальной системе координат. Каждая вершина — это кортеж из трёх чисел (x, y, z)
+            indices_list (tuple[tuple[int, int, int], ...]): Индексы вершин, определяющие, как соединять вершины в треугольники. Каждые три подряд идущих числа образуют один треугольник.
             normals_list (tuple[tuple[float, float, float], ...] | None): Нормали для каждой вершины – векторы, указывающие направление «наружу» от поверхности в данной вершине. Используются для освещения. Каждая нормаль — три числа (nx, ny, nz), длина обычно равна 1 (нормализованный вектор).
             uvs_list (list[tuple[float, float]] | None): Текстурные координаты (UV) для каждой вершины. Каждая UV-пара — два числа (u, v) в диапазоне [0, 1], определяющие, какой участок текстуры (изображения) соответствует данной вершине. Используется для текстурирования.
             colors_list (tuple[tuple[float, float, float], ...] | tuple[tuple[float, float, float, float], ...] | None): Цвет для каждой вершины в формате (R, G, B) (или (R, G, B, A) с альфа-прозрачностью). Значения в диапазоне [0, 1].

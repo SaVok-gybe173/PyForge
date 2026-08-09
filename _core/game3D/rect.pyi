@@ -61,6 +61,7 @@ class Rect3D:
 
         Return:
             bool: Есть или нету пересечение с кординатами
+            
         """
 
     def colliderect(self, other: Rect3D):
@@ -79,11 +80,13 @@ class Rect3D:
         """
         Return:
             np.NDArray[tuple[int, int, int], ...]: Вершины в numpy массиве
+
         """
     
     def set_vertices(self, vertices_list: tuple[tuple[int, int, int], ...]):
         """
         Args:
             vertices_list (list[tuple[int, int, int]]): Cписок всех вершин (точек) объекта в локальной системе координат. Каждая вершина — это кортеж из трёх чисел (x, y, z)
+
         """
 

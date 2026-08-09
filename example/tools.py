@@ -1,8 +1,7 @@
 import pygame as pg
 import sys
 from functools import wraps
-sys.path.append("C:\\Users\\SaVok\\Desktop\\PygameRedactor")
-from PyForge.tools import cordinate_transformation as ct
+from ..tools import cordinate_transformation as ct
 
 def decorete_cord(fun):
     @wraps(fun)

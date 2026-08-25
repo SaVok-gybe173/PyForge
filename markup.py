@@ -1,11 +1,34 @@
 from .tools import cordinate_transformation, relationship_transformation
 from ._core.locals import GRAPHICS, GRAPHICS_GL_2D_ORTHO, GRAPHICS_PYGAME
+from typing import Type
 
 SIZE_RELATIONSHIP = "size-relationship"
 SIZE_PIXEL = "size-pixel"
 
 POINT_RELATIONSHIP = "point-relationship"
 POINT_PIXEL = "point-pixel"
+
+
+
+def isListType(ls: tuple | set | list, len: int = 2, type: Type = int) -> bool:
+    """
+    Проверяет тип в массиве
+    
+    Args:
+        ls (tuple | set | list):    Массив в котором храняться данные
+        len (int):                  Длина массива
+        type (Type):                Тип в массиве
+        
+    Return:
+        bool: Если в масииве храняться int и длиной 2
+    
+    """
+    try:
+        if ls.__len__() == len:
+            for i in ls:
+                if not isinstance(i, type): return False
+    except: ...
+    return False
 
 class _General:
     pixel: tuple

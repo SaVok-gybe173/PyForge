@@ -66,7 +66,7 @@ def check_proxies_(target, proxies, port=80, timeout=5):
             return p,{'status':'fail','latency':None}
     res={}
     with ThreadPoolExecutor(max_workers=min(len(proxies),20)) as ex:
-        for p,r in as_completed([ex.submit(test, pr) for pr in proxies]):
+        for p, r in as_completed([ex.submit(test, pr) for pr in proxies]):
             res[p]=r
     return res
 

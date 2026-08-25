@@ -4,9 +4,9 @@ from .textures import getAppTexture, Texture, TypeTexture, _AppTexture, newAppTe
 import pygame as pg
 import zlib
 
-COMANDS = {} # 4 байтa
+COMANDS = {}                                                            # 4 байтa
 NAME_COMANDS = {}
-COMPRESSIONS = {(0).to_bytes(1): lambda data: zlib.compress(data, 0), # сжатие
+COMPRESSIONS = {(0).to_bytes(1): lambda data: zlib.compress(data, 0),   # сжатие
                 (1).to_bytes(1): lambda data: zlib.compress(data, 1),
                 (2).to_bytes(1): lambda data: zlib.compress(data, 2),
                 (3).to_bytes(1): lambda data: zlib.compress(data, 3),
@@ -17,7 +17,7 @@ COMPRESSIONS = {(0).to_bytes(1): lambda data: zlib.compress(data, 0), # сжат
                 (8).to_bytes(1): lambda data: zlib.compress(data, 8),
                 (9).to_bytes(1): lambda data: zlib.compress(data, 9),}
 
-DECOMPRESS = {(0).to_bytes(1): zlib.decompress, # расжатие
+DECOMPRESS = {(0).to_bytes(1): zlib.decompress,                         # расжатие
               (1).to_bytes(1): zlib.decompress,
               (2).to_bytes(1): zlib.decompress,
               (3).to_bytes(1): zlib.decompress,
@@ -42,13 +42,13 @@ def addComand(name: str, byte: bytes, fun: Callable):
 
 @dataclass
 class tile:
-    name: bytes # команда 4 байта
-    cells: List[bytes] # длина 8 байт
+    name: bytes         # команда 4 байта
+    cells: List[bytes]  # длина 8 байт
 
 @dataclass
 class lad:
-    name: str # 3 байта
-    compression: int # 1 байт
+    name: str           # 3 байта
+    compression: int    # 1 байт
 
     comands: List[tile]
 
@@ -125,7 +125,7 @@ addComand("addTextureSur", b"\x01", (lambda path, sur_byte, width, height: getAp
 
 def createTextureSur(surface: pg.Surface, path: str):
     return tile(NAME_COMANDS["addTextureSur"], [path.encode(), pg.image.tostring(surface, 'RGBA'), int.to_bytes(surface.get_width(), 2), int.to_bytes(surface.get_height(), 2)])
-def createAppTexture(file: str|None = None):
+def createAppTexture(file: str | None = None):
     return tile(NAME_COMANDS["appTexture"], [b"*" if file is None else file.encode()])
 
 def createTexture(testur: Texture):

@@ -27,6 +27,8 @@ def isListType(ls: tuple | set | list, len: int = 2, type: Type = int) -> bool:
         if ls.__len__() == len:
             for i in ls:
                 if not isinstance(i, type): return False
+            else:
+                return True
     except: ...
     return False
 

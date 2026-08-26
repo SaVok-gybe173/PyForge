@@ -47,13 +47,26 @@ class Video:
                 left_top: tuple[int, int] | Point,
                 width_height: tuple[int, int] | Size | None = None):
 
-        if (isinstance(left_top) is Point): self.left_top = left_top
+        """
+        Args:
+            container (MediaContainer): Контейнер видео
+            left_top (tuple[int, int] | Point): Позиция
+            width_height (tuple[int, int] | Size | None): Размер
+            
+        Raise:
+            ValueError: Если типы left_top и width_height не совподают
+        """
+
+        if (type(left_top) is Point): self.left_top = left_top
         else:
+            print(left_top)
             if not isListType(left_top):
                 raise ValueError()
             self.left_top = Point(*left_top)
 
-        if (isinstance(width_height) is Point): self.width_height = width_height
+        if width_height is None:
+            self.width_height = Point(container.video_info["width"], container.video_info["height"])
+        elif (type(width_height) is Point): self.width_height = width_height
         else:
             if width_height is None:
                 width_height = container.video_info
@@ -68,10 +81,13 @@ class Video:
         self.audio = AudioMaster(sample_rate=container.audio_info["sample_rate"],
                                 channels=container.audio_info["channels"])
 
-        self.video = VideoDecoder(container.filepath,
-                                fps=container.video_info["fps"],
-                                width=self.width_height.pixel[0],
-                                height=self.width_height.pixel[1])
+        self.video = VideoDecoder(
+            container.filepath,
+            fps=container.video_info["fps"],
+            width=container.video_info["width"],   # исходная ширина
+            height=container.video_info["height"]  # исходная высота
+        )
+        self.orig_size = (container.video_info["width"], container.video_info["height"])
         
         def audio_feeder():
             cmd_audio = [get_ffmpeg(), "-i", container.filepath,
@@ -87,27 +103,117 @@ class Video:
                 self.audio.feed_audio(data)
             proc.wait()
         self.threading = threading.Thread(target=audio_feeder, daemon=True)
-
+        self._paused = False
+        self._finished = False
 
     def start(self):
         self.audio.start()
         self.video.start()
         self.threading.start()
+        self._finished = False
 
-    def draw(self, screen: pygame.Surface):
-        screen.blit(self.surf, (0, 0))
+    def pause(self):
+        self.audio.set_pause(True)
+        self._paused = True
+
+    def resume(self):
+        self.audio.set_pause(False)
+        self._paused = False
+
+    def toggle_pause(self):
+        self.audio.toggle_pause()
+        self._paused = not self._paused
+
+    def seek(self, time_sec: float):
+        """Перемотка на указанную секунду"""
+        if time_sec < 0:
+            time_sec = 0
+        if time_sec > self.container.duration:
+            time_sec = self.container.duration
+
+        # Останавливаем текущее воспроизведение (не убивая потоки полностью)
+        self.video.stop()
+        # Перезапускаем видео-декодер с новым временем
+        self.video.seek(time_sec)  # теперь у VideoDecoder есть seek
+        
+        # Перезапускаем аудио-фидер с новым смещением
+        # Для этого надо остановить старый поток и создать новый
+        # Пока упрощённо: просто останавливаем и пересоздаём
+        self.audio.stop()
+        self.audio = AudioMaster(sample_rate=self.container.audio_info["sample_rate"],
+                                 channels=self.container.audio_info["channels"])
+        self.audio.start()
+
+        # Создаём новый поток для audio_feeder с параметром -ss
+        def new_audio_feeder():
+            cmd_audio = [get_ffmpeg(), "-ss", str(time_sec), "-i", self.container.filepath,
+                         "-f", "s16le", "-acodec", "pcm_s16le",
+                         "-ar", str(self.container.audio_info["sample_rate"]),
+                         "-ac", str(self.container.audio_info["channels"]),
+                         "-vn", "-"]
+            proc = subprocess.Popen(cmd_audio, stdout=subprocess.PIPE, bufsize=10**8)
+            while True:
+                data = proc.stdout.read(4096)
+                if not data:
+                    break
+                self.audio.feed_audio(data)
+            proc.wait()
+        
+        self.threading = threading.Thread(target=new_audio_feeder, daemon=True)
+        self.threading.start()
+
+        # Сбрасываем флаги
+        self._paused = False
+        self._finished = False
+
+    def set_volume(self, volume: float):
+        self.audio.set_volume(volume)
+
+    def get_current_time(self) -> float:
+        return self.audio.get_time()
+
+    def get_duration(self) -> float:
+        return self.container.duration
+
+    def is_paused(self) -> bool:
+        return self._paused
+
+    def is_finished(self) -> bool:
+        """Проверяет, достигнут ли конец файла"""
+        # Если время >= длительность и аудио уже не воспроизводится
+        if self.get_current_time() >= self.get_duration():
+            # дополнительно проверяем, что буфер аудио пуст и видео-очередь пуста
+            if self.audio._buffer and len(self.audio._buffer) == 0:
+                return True
+        return False
 
     def update(self):
+        """Обновление кадра – вызывается каждый тик главного цикла"""
+        if self._finished:
+            return
         current_time = self.audio.get_time()
         frame = self.video.get_frame_at_time(current_time)
         if frame is not None:
-            print(1)
             self.surf = pygame.surfarray.make_surface(frame.swapaxes(0, 1))
+        # Проверяем окончание
+        if self.is_finished():
+            self._finished = True
+            # Можно вызвать коллбэк, если есть
 
     def stop(self):
+        """Полная остановка и освобождение ресурсов"""
         self.video.stop()
         self.audio.stop()
+        # Ждём завершения потока audio_feeder (опционально)
+        # self.threading.join(timeout=1)
 
+    def close(self):
+        """Альтернативное имя для stop"""
+        self.stop()
+
+    def draw(self, screen: pygame.Surface):
+        screen.blit(self.surf, self.left_top.pixel)
+    
 def main():
     video_file = r"ttr.mp4"
     container = MediaContainer(video_file)

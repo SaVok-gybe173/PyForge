@@ -7,36 +7,60 @@ import json
 import queue
 import pyaudio
 import pygame
-
+import os
 
 class MediaContainer:
-    "умный контейнер"
     def __init__(self, filepath):
         self.filepath = filepath
         self.video_info = {}
         self.audio_info = {}
+        self.duration = 0.0
         self._probe()
 
     def _probe(self):
-        # Получаем информацию через ffprobe
-        cmd = [
-            get_ffprobe(), "-v", "quiet", "-print_format", "json",
-            "-show_streams", self.filepath
-        ]
-        result = subprocess.check_output(cmd)
-        data = json.loads(result)
+        if not os.path.exists(self.filepath):
+            raise FileNotFoundError(f"File not found: {self.filepath}")
+
+        cmd = [get_ffprobe(), "-v", "quiet", "-print_format", "json",
+               "-show_streams", self.filepath]
+        try:
+            result = subprocess.check_output(cmd, stderr=subprocess.PIPE)
+        except subprocess.CalledProcessError as e:
+            error_msg = e.stderr.decode() if e.stderr else "unknown error"
+            raise RuntimeError(f"FFprobe error: {error_msg}") from e
+
+        if not result:
+            raise RuntimeError("FFprobe returned empty output")
+
+        try:
+            data = json.loads(result)
+        except json.JSONDecodeError as e:
+            raise RuntimeError(f"Invalid JSON from ffprobe: {result[:200]}") from e
+
+        if "streams" not in data:
+            raise RuntimeError(f"No streams found in file: {self.filepath}")
+
         for stream in data["streams"]:
             if stream["codec_type"] == "video":
                 self.video_info = {
                     "width": int(stream["width"]),
                     "height": int(stream["height"]),
-                    "fps": eval(stream["r_frame_rate"])  # может быть дробью
+                    "fps": eval(stream["r_frame_rate"])
                 }
             elif stream["codec_type"] == "audio":
                 self.audio_info = {
                     "sample_rate": int(stream["sample_rate"]),
                     "channels": int(stream["channels"])
                 }
+
+        cmd_format = [get_ffprobe(), "-v", "quiet", "-print_format", "json",
+                      "-show_format", self.filepath]
+        try:
+            fmt_result = subprocess.check_output(cmd_format)
+            fmt_data = json.loads(fmt_result)
+            self.duration = float(fmt_data.get("format", {}).get("duration", 0))
+        except:
+            self.duration = 0.0
 
 class AudioMaster:
     "дирижёр времени"
@@ -50,7 +74,24 @@ class AudioMaster:
         self._running = False
         self._buffer = []
         self._chunk_size = 1024
+        self._paused = False
+        self._volume = 1.0
 
+    def set_pause(self, paused: bool):
+        with self._lock:
+            self._paused = paused
+
+    def toggle_pause(self):
+        with self._lock:
+            self._paused = not self._paused
+
+    def set_volume(self, volume: float):
+        """volume от 0.0 до 1.0"""
+        with self._lock:
+            self._volume = max(0.0, min(1.0, volume))
+
+    
+    
     def start(self):
         self._running = True
         self.stream = self.p.open(
@@ -64,18 +105,26 @@ class AudioMaster:
         self.stream.start_stream()
 
     def _callback(self, in_data, frame_count, time_info, status):
-        # Здесь мы должны выдавать следующий кусок PCM-данных
-        # и обновлять audio_time на длительность этого куска
         if not self._running:
             return (None, pyaudio.paComplete)
-        # Если буфер пуст – выдаём тишину и не двигаем время
+
+        # Если пауза – выдаём тишину, время не двигаем
+        if self._paused:
+            data = np.zeros(frame_count * self.channels, dtype=np.int16).tobytes()
+            return (data, pyaudio.paContinue)
+
         if not self._buffer:
             data = np.zeros(frame_count * self.channels, dtype=np.int16).tobytes()
             return (data, pyaudio.paContinue)
-        # Берём первый кусок из буфера
+
         chunk = self._buffer.pop(0)
-        # Вычисляем длительность этого куска в секундах
-        duration = len(chunk) / (self.sample_rate * self.channels * 2)  # 2 байта на сэмпл
+        # Применяем громкость
+        if self._volume != 1.0:
+            samples = np.frombuffer(chunk, dtype=np.int16).astype(np.float32)
+            samples *= self._volume
+            chunk = samples.astype(np.int16).tobytes()
+
+        duration = len(chunk) / (self.sample_rate * self.channels * 2)
         with self._lock:
             self.audio_time += duration
         return (chunk, pyaudio.paContinue)
@@ -97,7 +146,9 @@ class AudioMaster:
 
 class VideoDecoder:
     "поставщик видеокадров"
-    def __init__(self, filepath: str, fps: int | float, width: int, height: int):
+    def __init__(self, filepath: str, fps: int | float, width: int, height: int,  start_time: float | None = 0.0):
+        if start_time is None: start_time = 0.0
+
         self.filepath = filepath
         self.fps = fps
         self.width = width
@@ -107,21 +158,33 @@ class VideoDecoder:
         self._frame_queue = queue.Queue(maxsize=30)  # храним (frame_index, numpy_array)
         self._running = False
         self._thread = None
+        self.start_time = start_time
+        self._frame_index_offset = int(start_time * fps)  # смещение для индексации
 
     def start(self):
-        cmd = [
-            get_ffmpeg(), "-i", self.filepath,
-            "-f", "rawvideo", "-pix_fmt", "rgb24",
-            "-vsync", "0", "-an", "-"
-        ]
+        cmd = [get_ffmpeg(), "-ss", str(self.start_time), "-i", self.filepath,
+               "-f", "rawvideo", "-pix_fmt", "rgb24",
+               "-fps_mode", "passthrough", "-an", "-"]
         self._process = subprocess.Popen(cmd, stdout=subprocess.PIPE, bufsize=10**8)
         self._running = True
         self._thread = threading.Thread(target=self._reader)
         self._thread.start()
 
+    
+
+    def seek(self, new_time):
+        """Перемотка на новое время (сек)"""
+        self.stop()  # останавливаем текущий процесс
+        self.start_time = new_time
+        self._frame_index_offset = int(new_time * self.fps)
+        self._frame_queue = queue.Queue(maxsize=30)  # новая очередь
+        self.start()
+        
+    
+
     def _reader(self):
         frame_size = self.width * self.height * 3
-        frame_index = 0
+        frame_index = self._frame_index_offset
         while self._running:
             raw = self._process.stdout.read(frame_size)
             if not raw:

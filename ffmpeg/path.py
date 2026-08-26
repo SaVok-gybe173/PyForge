@@ -29,9 +29,9 @@ def check_ffmpeg_version():
 
 
 if is_window():
-    ffprobe = "bin/ffprobe.exe"
-    ffmpeg = "bin/ffmpeg.exe"
-    ffplay = "bin/ffplay.exe"
+    ffprobe = os.path.join(os.path.dirname(os.path.abspath(__file__)), "bin", "ffprobe.exe")
+    ffmpeg = os.path.join(os.path.dirname(os.path.abspath(__file__)), "bin", "ffmpeg.exe")
+    ffplay = os.path.join(os.path.dirname(os.path.abspath(__file__)), "bin", "ffplay.exe")
 else:
     if check_ffmpeg():
         ffprobe = "ffprobe"
@@ -39,9 +39,6 @@ else:
         ffplay = "ffplay"
     else:
         ...
-
-if check_ffmpeg_version():
-    printLog("Не найден ffmpeg для обработки видео и аудио")
 
 # сеттеры и геттеры возвращают ключи
 def get_ffprobe() -> str:
@@ -67,3 +64,8 @@ def set_ffmpeg(_ffmpeg: str) -> None:
 def set_ffplay(_ffplay: str) -> None:
     global ffplay
     ffplay = _ffplay
+
+if check_ffmpeg_version():
+    printLog("Не найден ffmpeg для обработки видео и аудио")
+
+print(get_ffmpeg())

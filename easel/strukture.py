@@ -1,60 +1,26 @@
+"""
+Модуль со структурой класса сцены и окна
+"""
 import sys
 from typing import Type, TypeVar
 from threading import Thread
 from traceback import extract_tb
 
-try:
-    import pygame as pg
-except ImportError as e:
-    sys.exit(102)
+import pygame as pg
 
+from .scene import Scene
 from PyForge.gpu.locals import IS_IMPORT_GL, InitGl
-
 if IS_IMPORT_GL:
     from pygame.locals import *
     from OpenGL.GL import *
     from OpenGL.GLU import *
 
 
-class Scene:
-    name: str
-    
-    def __init__(self, win = None):
-        self._win = win
-    def close(self):
-        '''
-        сработает при нажатии на крестик
-        '''
-    def event(self, event: pg.event.Event):
-        '''
-        сработает for event in pg.event.get()
-        Аргументы:
-            event: pg.event.get
-        '''
-    def draw(self, screen: pg.Surface):
-        '''
-        сработает при каждом цикле
-        Аргументы:
-            screen: pg.display.set_mode
-        '''
-    def update(self):
-        '''
-        сработает при обновление
-        '''
-    def size_update(self, old: tuple[int], new: tuple[int]):
-        '''
-        обновление размер окна
-        '''
-    def muve_window(self, old: tuple[int], new: tuple[int]):
-        '''
-        обновление перемещение экрана
-        '''
-
 T = TypeVar('Scene')
-class Window(Scene):
-    _scene: list[T] # все сцены в приложении
-    condition = 0 # номер сцены которя активна
-    range_p = False
+class Window:
+    _scene: list[T]     # все сцены в приложении
+    condition = 0       # номер сцены которя активна
+    range_p = False     
 
     @property
     def size(self):
@@ -63,7 +29,7 @@ class Window(Scene):
     def size(self, size: list[int, int]):
         self.__size = size
     
-    def add_scene(self, *scene: T | Scene):
+    def add_scene(self, *scene: T):
         for sc in scene:
             self._scene.append(sc(self.win))
 
@@ -83,7 +49,7 @@ class Window(Scene):
     def logger(self, text, info=None):
         print(text)
 
-    def __init__(self, size=(400, 300), color=(255, 255, 255), scene: list[Type[T]] | None = None, *, fps=60,flags = 0, zi_set_mode = ()):
+    def __init__(self, size=(400, 300), color=(255, 255, 255), scene: list[T] | None = None, *, fps=60,flags = 0, zi_set_mode = ()):
         self.logger("[INIT] Начало инцилизации", "INIT")
         self.flags = flags
         self.zi= zi_set_mode

@@ -1,3 +1,6 @@
+"""
+Модуль для проверки платформы
+"""
 import sys
 import os
 
@@ -40,12 +43,3 @@ def is_macos():
     if sys.platform == 'darwin':
         return True
     return False
-
-if __name__ == "__main__":
-    if is_android():
-        print("Скрипт запущен на Android!")
-    else:
-        print("Скрипт запущен не на Android (вероятно, на Desktop Linux, Windows, macOS).")
-    print(f"sys.platform: {sys.platform}")
-    print(f"KIVY_BUILD env var: {os.environ.get('KIVY_BUILD')}")
-    print(f"TERMUX_VERSION env var: {os.environ.get('TERMUX_VERSION')}")

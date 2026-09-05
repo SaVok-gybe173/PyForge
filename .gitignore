@@ -1,7 +1,12 @@
 # Python
 __pycache__/
 build/
-*.py[cod]
+_core\creating\listing\calculations.c
+_core\creating\progress\calculation_progress.c
+_core\game3D\math3d.c
+_core\game3D\rect.c
+
+cpu\game3D\camera.c
 
 # Virtual environments
 .venv/

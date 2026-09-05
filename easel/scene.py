@@ -1,8 +1,14 @@
-from typing import Any
+"""
+Модуль со структурой сценны
+"""
+from typing import Any, TYPE_CHECKING, Self
 import pygame as pg
-pg.constants.TEXTINPUT
 
-type Window = Any
+if TYPE_CHECKING:
+    from .window import Window
+else:
+    type Window = Any
+
 class Scene:
     name: str
     page: Window
@@ -20,14 +26,6 @@ class Scene:
         '''
         сработает при обновление
         '''
-    def size_update(self, old: tuple[int], new: tuple[int]):
-        '''
-        обновление размер окна
-        '''
-    def muve_window(self, old: tuple[int], new: tuple[int]):
-        '''
-        обновление перемещение экрана
-        '''
 
     def event(self, event: pg.event.Event) -> None:
         '''
@@ -35,6 +33,28 @@ class Scene:
 
         Args:
             event (pg.event.Event): Основной класс эвента
+        '''
+
+    def size_update(self, old: tuple[int, int], new: tuple[int, int], ratio: tuple[int, int]):
+        '''
+        Обновление размер окна
+
+        Метод как videoresize, но также передает старое число
+
+        Args:
+            old (tuple[int, int]): Старый размер
+            new (tuple[int, int]): Новый размер
+            ratio (tuple[int, int]): Коэфицент между новым и старым размером (new/old)
+        '''
+    def muve_window(self, old: tuple[int, int], new: tuple[int, int]) -> None:
+        '''
+        Перемещение окна
+
+        Работает на pygame-ce
+
+        Args:
+            old (tuple[int, int]): Старая позиция
+            new (tuple[int, int]): Новоя позиция
         '''
 
     # Системные события
@@ -192,20 +212,21 @@ class Scene:
             precise_y (float) точное значение вертикальной прокрутки.
         """
 
+# методы эвентов по их типу
 EVENTS_METOD = {
-    pg.event.event_name(pg.ACTIVEEVENT): Scene.activeevent,
-    pg.event.event_name(pg.VIDEORESIZE): Scene.videoresize, 
-    pg.event.event_name(pg.VIDEOEXPOSE): Scene.videoexpose, 
-    pg.event.event_name(pg.RENDER_TARGETS_RESET): Scene.render_targets_reset,
+    pg.event.event_name(pg.ACTIVEEVENT): (lambda obj, event: Scene.activeevent(obj, event.gain, event.state)),
+    pg.event.event_name(pg.VIDEORESIZE):  (lambda obj, event: Scene.videoresize(obj, event.size, event.w, event.h)), 
+    pg.event.event_name(pg.VIDEOEXPOSE): (lambda obj, _: Scene.videoexpose(obj)), 
+    pg.event.event_name(pg.RENDER_TARGETS_RESET):  (lambda obj, _: Scene.render_targets_reset(obj)),
 
-    pg.event.event_name(pg.KEYDOWN): Scene.keydown, 
-    pg.event.event_name(pg.KEYUP): Scene.keyup, 
-    pg.event.event_name(pg.TEXTEDITING): Scene.textediting, 
-    pg.event.event_name(pg.TEXTINPUT): Scene.textinput,
+    pg.event.event_name(pg.KEYDOWN): (lambda obj, event: Scene.keydown(obj, event.key, event.mod, event.unicode, event.scancode)), 
+    pg.event.event_name(pg.KEYUP): (lambda obj, event: Scene.keyup(obj, event.key, event.mod, event.scancode)), 
+    pg.event.event_name(pg.TEXTEDITING): (lambda obj, event: Scene.textediting(obj, event.text, event.start, event.length)), 
+    pg.event.event_name(pg.TEXTINPUT): (lambda obj, event: Scene.textinput(obj, event.text)),
 
-    pg.event.event_name(pg.MOUSEMOTION): Scene.mousemotion,
-    pg.event.event_name(pg.MOUSEBUTTONDOWN): Scene.mousebuttondown,
-    pg.event.event_name(pg.MOUSEBUTTONUP): Scene.mousebuttonup,
-    pg.event.event_name(pg.MOUSEWHEEL): Scene.mousewheel,
+    pg.event.event_name(pg.MOUSEMOTION): (lambda obj, event: Scene.mousemotion(obj, event.pos, event.rel, event.buttons, event.touch)),
+    pg.event.event_name(pg.MOUSEBUTTONDOWN): (lambda obj, event: Scene.mousebuttondown(obj, event.pos, event.button, event.touch)),
+    pg.event.event_name(pg.MOUSEBUTTONUP): (lambda obj, event: Scene.mousebuttonup(obj, event.pos, event.button, event.touch)),
+    pg.event.event_name(pg.MOUSEWHEEL): (lambda obj, event: Scene.mousewheel(obj, event.x, event.y, event.flipped, event.which, event.precise_x, event.precise_y)),
 
 }

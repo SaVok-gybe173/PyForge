@@ -8,7 +8,7 @@ from traceback import extract_tb
 
 import pygame as pg
 
-from .scene import Scene
+from .scene import Scene, EVENTS_METOD
 from ..gpu.locals import IS_IMPORT_GL, InitGl
 if IS_IMPORT_GL:
     from pygame.locals import *
@@ -77,6 +77,7 @@ class Window:
             for frame in extract_tb(e.__traceback__):
                 self.logger(f" [ERROR] [{self.temporarily_scene[index].__name__}] [{frame.name}] {e}")
             raise e
+        
     def start_scenes(self):
         for _ in range(self.temporarily_scene.__len__()):
             self._scene.append(None)
@@ -127,16 +128,23 @@ class Window:
                     if self.min_size[1] > event.h:
                         event.h = self.min_size[1]
                     self.win = pg.display.set_mode((event.w, event.h), flags= self.flags, *self.zi)
-                    self.size_update(self.__size, (event.w, event.h))
+                    self.size_update(self.__size, (event.w, event.h), (self.__size[0]/event.w, self.__size[1]/event.h))
                     self.__size = (event.w, event.h)
                 else:
                     self.event(event)
+                self.eventManager(event)
+
             self.draw(self.win)
             pg.display.flip()
             self.clock_fps.tick(self.fps)
         pg.quit()
         sys.exit()
-    
+
+    def eventManager(self, event: pg.event.Event):
+        type = pg.event.event_name(event.type)
+        if type in EVENTS_METOD:
+            EVENTS_METOD[type](self._scene[self.condition], event)
+
     def gl_init(self):
         pass
 

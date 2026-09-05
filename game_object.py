@@ -1,11 +1,9 @@
 import importlib.util as util
 import os
 
-from .easel.strukture import Window, T, extract_tb, Scene
-try:
-    from .mods.mod import FrameMod
-except ImportError:
-    from mods.mod import FrameMod
+from .easel.window import Window, T, extract_tb, Scene
+from .mods.mod import FrameMod
+
 
 
 class Game(Window):

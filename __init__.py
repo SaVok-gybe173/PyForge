@@ -45,31 +45,18 @@ else:
 '''
 if _multiprocessing_activ:
     try:
+        from .easel.window_processing import Window
+    except ImportError:
+        from easel.window_processing import Window
+else:
+    try:
         from .easel.window import Window
     except ImportError:
         from easel.window import Window
-else:
-    try:
-        from .easel.strukture import Window
-    except ImportError:
-        from easel.strukture import Window
 
+from .game_object import Game
+from .mods.mod import FrameMod
 
-try:
-    from .game_object import Game
-except ImportError:
-    from PyForge.game_object import Game
-
-    
-
-try:
-    from .mods.mod import FrameMod
-except ImportError:
-    from mods.mod import FrameMod
-
-# используйте пути для импорта
-
-from .easel.strukture import Scene
-
+from .easel.window import Scene
 from .cpu.creating.colisions import point_in_rounded_rect, check_rounded_rect_collision
 from .cpu.creating.image import get_none_image, round_image, resize_image_with_aspect_ratio, extract_square_fast, extract_square

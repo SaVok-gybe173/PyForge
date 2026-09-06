@@ -28,7 +28,7 @@ class Window:
     _scene: list[T]     # все сцены в приложении
     condition = 0       # номер сцены которя активна
 
-    def add_scene(self, *scene: T) -> None:
+    def addScene(self, *scene: T) -> None:
         for sc in scene:
             self._scene.append(sc(self.win))
 

@@ -8,10 +8,10 @@ import os
 
 class App(Window):
     
-    mods_dir:str
-    mods_list: list[FrameMod] = []
-    mod_info = dict()
-    mod_load = [".py", ".pyc", ".pyd"]
+    mods_dir: str                       # Путь к папке с модами 
+    mods_list: list[FrameMod] = []      # Обьеты модов
+    mod_info = dict()                   # Информация о моде
+    mod_load = [".py", ".pyc", ".pyd"]  # Расшерения которые нужно загрузить
     
     
     def __init__(self,

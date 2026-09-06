@@ -1,33 +1,32 @@
 """
-Модуль со структурой класса сцены и окна
+Модуль со структурой класса окна
 """
-import sys
-from typing import Type, TypeVar
+from typing import Type, TypeVar, TypedDict, NotRequired
 from threading import Thread
 from traceback import extract_tb
-
-import pygame as pg
-
 from .scene import Scene, EVENTS_METOD
 from ..gpu.locals import IS_IMPORT_GL, InitGl
+
+import pygame as pg
+import sys
+
 if IS_IMPORT_GL:
     from pygame.locals import *
     from OpenGL.GL import *
     from OpenGL.GLU import *
 
 
+class KwargsSetMode(TypedDict):
+    flags: NotRequired[int]     # Стадарт 0
+    depth: NotRequired[int]     # Стадарт 0
+    display: NotRequired[int]   # Стадарт 0
+    vsync: NotRequired[int]     # Стадарт 0
+
 T = TypeVar('Scene')
 class Window:
     _scene: list[T]     # все сцены в приложении
     condition = 0       # номер сцены которя активна
-    range_p = False     
 
-    @property
-    def size(self):
-        return self.__size
-    @size.setter 
-    def size(self, size: list[int, int]):
-        self.__size = size
     
     def add_scene(self, *scene: T):
         for sc in scene:
@@ -43,8 +42,18 @@ class Window:
             caption = str(caption)
         pg.display.set_caption(caption)
     
-    def init(self, win):
+    def init(self, win: pg.Surface):
         pass
+
+    def initOpenGL(self) -> None:
+        """
+        Запускает инцилизацию OpenGL в любых случаев
+        """
+        self.opengl = InitGl()
+
+        if self.opengl and IS_IMPORT_GL:
+            glClearColor(self.color[0]/255, self.color[1]/255, self.color[2]/255, 1)
+            self.opengl.initialization_fun()
 
     def logger(self, text, info=None):
         print(text)
@@ -94,30 +103,28 @@ class Window:
 
     def run_window(self):
         pg.init()
-        pg.display.init()
         self.win = pg.display.set_mode(self.__size, flags= self.flags, *self.zi)
 
         self.clock_fps = pg.time.Clock()
         self.clock_tps = pg.time.Clock()
 
-        self.gl_init()
-        self.opengl = InitGl()
-
-        if self.opengl and IS_IMPORT_GL:
-            glClearColor(self.color[0]/255, self.color[1]/255, self.color[2]/255, 1)
-            self.opengl.initialization_fun()
-        self.range_p = True
-
+        # инцилизация OpenGL
+        self.initOpenGL()
+        # инцилизация сценн
         self.start_scenes()
+        # инцилизация остольного
         self.init(self.win)
 
-
         while self.running:
+
             if self.opengl and IS_IMPORT_GL:
                 self.opengl.clear()
             else:
                 self.win.fill(self.color)
-            self.update()
+
+            # обновеление активной сценный
+            self.update(self.clock_fps.tick(self.fps)/1000.0)
+
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     self.close()
@@ -132,11 +139,11 @@ class Window:
                     self.__size = (event.w, event.h)
                 else:
                     self.event(event)
-                self.eventManager(event)
+                self.eventManager(event)    # запуск методов эвента
 
-            self.draw(self.win)
-            pg.display.flip()
-            self.clock_fps.tick(self.fps)
+            self.draw(self.win)             # отрисовка активной сценны
+            pg.display.flip()               # обновление экрана
+               # ограничение фпс и тпс
         pg.quit()
         sys.exit()
 
@@ -144,9 +151,6 @@ class Window:
         type = pg.event.event_name(event.type)
         if type in EVENTS_METOD:
             EVENTS_METOD[type](self._scene[self.condition], event)
-
-    def gl_init(self):
-        pass
 
     def size_update(self, old: tuple[int], new: tuple[int]):
         for scene in self._scene:
@@ -163,28 +167,35 @@ class Window:
         for scene in self._scene:
             scene.close()
 
-    def update(self):
+    def update(self, dt: float) -> None:
         self._scene[self.condition].update()
 
-
-        
-    def start(self):
+    def start(self) -> None:
         self.run_window()
 
-    def is_alive(self):
+    def is_alive(self) -> bool:
         return self.running
     
-    def join(self):
-        pass
+    def join(self) -> None: ... # затычка
 
-    def kill(self):
+    def kill(self) -> None:
         self.close()
 
-    def update_window(self, size=None, flags=None, zi=None):
+    def update_window(self, size=None, flags=None, zi=None) -> None:
+        """
+        Обновление параметров окна
+        """
         self.__size = self.__size if size is None else size
         self.flags = self.flags if flags is None else flags
         self.zi = self.zi if zi is None else zi
-        self.win = pg.display.set_mode(self.__size, pg.RESIZABLE)
+        self.win = pg.display.set_mode(self.__size, self.flags, *self.zi)
+
+    @property
+    def size(self):
+        return self.__size
+    @size.setter 
+    def size(self, size: list[int, int]):
+        self.__size = size
 
 if __name__ == '__main__':
     print(type(Window), Window.__name__)

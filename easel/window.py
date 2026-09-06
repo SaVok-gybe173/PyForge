@@ -6,6 +6,7 @@ from threading import Thread
 from traceback import extract_tb
 from .scene import Scene, EVENTS_METOD
 from ..gpu.locals import IS_IMPORT_GL, InitGl
+from ..logger import printError, printInfo
 
 import pygame as pg
 import sys
@@ -16,7 +17,7 @@ if IS_IMPORT_GL:
     from OpenGL.GLU import *
 
 
-class KwargsSetMode(TypedDict):
+class KwargsSetMode(TypedDict): # класс для параметров
     flags: NotRequired[int]     # Стадарт 0
     depth: NotRequired[int]     # Стадарт 0
     display: NotRequired[int]   # Стадарт 0
@@ -58,10 +59,22 @@ class Window:
     def logger(self, text, info=None):
         print(text)
 
-    def __init__(self, size=(400, 300), color=(255, 255, 255), scene: list[T] | None = None, *, fps=60,flags = 0, zi_set_mode = ()):
-        self.logger("[INIT] Начало инцилизации", "INIT")
-        self.flags = flags
-        self.zi= zi_set_mode
+    def __init__(self, 
+                size: tuple[int, int] = (400, 300), 
+                color: tuple[int, int, int] = (255, 255, 255), 
+                scene: list[T] | None = None, 
+                *, 
+                fps: int | float = 60, 
+                kwargs_set_mode: KwargsSetMode | None = None
+                ):
+        printInfo(f"Начало инцилизации класса {self}")
+        self.kwargs_set_mode = {} if kwargs_set_mode is None else kwargs_set_mode
+
+        if not "depth" in kwargs_set_mode:      self.kwargs_set_mode['depth'] = 0
+        if not "display" in kwargs_set_mode:    self.kwargs_set_mode['display'] = 0
+        if not "flags" in kwargs_set_mode:      self.kwargs_set_mode['flags'] = 0
+        if not "vsync" in kwargs_set_mode:      self.kwargs_set_mode['vsync'] = 0
+
         self.__size = size
         self.color = color
         self.fps = fps
@@ -72,9 +85,7 @@ class Window:
         self._scene = []
         self.temporarily_scene = [] if scene is None else scene
 
-        self.min_size = [0, 0]
-    def _st(self):
-        pass
+        self.min_size = [50, 50]    # минимальный размер
     
     def _ran_scene(self, index: int):
         self.logger(f"[INFO] [START] {self.temporarily_scene[index].__name__}")

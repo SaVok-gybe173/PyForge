@@ -1,12 +1,12 @@
+from .window import Window, T, extract_tb, Scene, KwargsSetMode
+from ..mods.mod import FrameMod
+from ..logger import printError
+
 import importlib.util as util
+import pygame as pg
 import os
 
-from .easel.window import Window, T, extract_tb, Scene
-from .mods.mod import FrameMod
-
-
-
-class Game(Window):
+class App(Window):
     
     mods_dir:str
     mods_list: list[FrameMod] = []
@@ -14,19 +14,35 @@ class Game(Window):
     mod_load = [".py", ".pyc", ".pyd"]
     
     
-    def __init__(self, size=(400, 300), color=(255, 255, 255),scene: list[type[T]] = [Scene], *, fps=60, mods_dir=None, _mod = True, flags = None, zi = []):
+    def __init__(self,
+                size: tuple[int, int] = (400, 300), 
+                color: tuple[int, int, int] = (255, 255, 255), 
+                scene: list[T] | None = None, 
+                *, 
+                fps: int = 60, 
+                mods_dir: str | None = None, 
+                kwargs_set_mode: KwargsSetMode | None = None
+                ):
+        """
+        Инцизация главного класса управление окном
+        
+        Args:
+            size (tuple[int, int]): размеры окна (width, height)
+            color (tuple[int, int, int]): Цветовая политра RGB заднего фона
+            scene (list[T] | None): список классов сценн наследованые от главного класса (Scene)
+            fps (int | float): кадры в секунду
+            mod_dir (str | None): путь к папке с модами
+            kwargs_set_mode (KwargsSetMode | None): парамерты для создание окна (pg.display.set_mode)
+        """
         self.mods_dir = mods_dir or os.path.join(os.path.dirname(os.path.abspath(__file__)), 'mods')
-        self._mod = _mod
-        super().__init__( size, color, fps=fps,flags = flags, zi_set_mode = zi, scene= scene)
-    def init(self, win):
+        self._mod = not mods_dir is None
+        super().__init__( size, color, scene, fps=fps, kwargs_set_mode=kwargs_set_mode)
+
+    def init(self, win: pg.Surface) -> None:
         if self._mod:
             self.load_mods()
             for mod in self.mods_list:
                 mod.start()
-
-
-    def start(self):
-        super().start()
         
     def draw(self, win):
         super().draw(win)
@@ -56,9 +72,7 @@ class Game(Window):
                         self.mods_list.append(stucture)
                     except Exception as e:
                         for frame in extract_tb(e.__traceback__):
-                            self.logger("\033[31m"+ f" [ERROR] [{mod.__name__}] [{frame.name}] {e}" + "\033[0m")
-
-
+                            printError(f"[{mod.__name__}] [{frame.name}] {e}")
 
 if __name__ == '__main__':
     import multiprocessing
@@ -69,4 +83,4 @@ if __name__ == '__main__':
     if getattr(sys, 'frozen', False):
         os.environ['PATH'] = sys._MEIPASS + os.pathsep + os.environ['PATH']
     
-    Game().start()
+    App().start()

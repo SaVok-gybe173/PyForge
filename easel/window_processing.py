@@ -28,7 +28,7 @@ from typing import overload
 
 import os
 
-#работает с pygame v2.0
+#работает с pygame>=v2.0
 class Window(_window):
     name = None
     daemon = False

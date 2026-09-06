@@ -28,22 +28,21 @@ class Window:
     _scene: list[T]     # все сцены в приложении
     condition = 0       # номер сцены которя активна
 
-    
-    def add_scene(self, *scene: T):
+    def add_scene(self, *scene: T) -> None:
         for sc in scene:
             self._scene.append(sc(self.win))
 
-    def set_icon(self, icon: pg.Surface | str, permission = (32, 32)):
+    def setIcon(self, icon: pg.Surface | str, permission: tuple[int, int] = (32, 32)) -> None:
         if type(icon) is str:
             icon = pg.image.load(icon)
         pg.display.set_icon(pg.transform.smoothscale(icon, permission).convert_alpha())
 
-    def set_caption(self, caption: str | object):
+    def setCaption(self, caption: str | object) -> None:
         if not type(caption) is str:
             caption = str(caption)
         pg.display.set_caption(caption)
     
-    def init(self, win: pg.Surface):
+    def init(self, win: pg.Surface) -> None:
         pass
 
     def initOpenGL(self) -> None:
@@ -56,9 +55,6 @@ class Window:
             glClearColor(self.color[0]/255, self.color[1]/255, self.color[2]/255, 1)
             self.opengl.initialization_fun()
 
-    def logger(self, text, info=None):
-        print(text)
-
     def __init__(self, 
                 size: tuple[int, int] = (400, 300), 
                 color: tuple[int, int, int] = (255, 255, 255), 
@@ -67,13 +63,23 @@ class Window:
                 fps: int | float = 60, 
                 kwargs_set_mode: KwargsSetMode | None = None
                 ):
+        """
+        Инцизация главного класса управление окном
+        
+        Args:
+            size (tuple[int, int]): размеры окна (width, height)
+            color (tuple[int, int, int]): Цветовая политра RGB заднего фона
+            scene (list[T] | None): список классов сценн наследованые от главного класса (Scene)
+            fps (int | float): кадры в секунду
+            kwargs_set_mode (KwargsSetMode | None): парамерты для создание окна (pg.display.set_mode)
+        """
         printInfo(f"Начало инцилизации класса {self}")
         self.kwargs_set_mode = {} if kwargs_set_mode is None else kwargs_set_mode
 
-        if not "depth" in kwargs_set_mode:      self.kwargs_set_mode['depth'] = 0
-        if not "display" in kwargs_set_mode:    self.kwargs_set_mode['display'] = 0
-        if not "flags" in kwargs_set_mode:      self.kwargs_set_mode['flags'] = 0
-        if not "vsync" in kwargs_set_mode:      self.kwargs_set_mode['vsync'] = 0
+        if not "depth" in self.kwargs_set_mode:      self.kwargs_set_mode['depth'] = 0
+        if not "display" in self.kwargs_set_mode:    self.kwargs_set_mode['display'] = 0
+        if not "flags" in self.kwargs_set_mode:      self.kwargs_set_mode['flags'] = 0
+        if not "vsync" in self.kwargs_set_mode:      self.kwargs_set_mode['vsync'] = 0
 
         self.__size = size
         self.color = color
@@ -83,22 +89,22 @@ class Window:
         self.running = True
 
         self._scene = []
-        self.temporarily_scene = [] if scene is None else scene
+        self.temporarily_scene = [Scene] if scene is None else scene
 
         self.min_size = [50, 50]    # минимальный размер
     
     def _ran_scene(self, index: int):
-        self.logger(f"[INFO] [START] {self.temporarily_scene[index].__name__}")
+        printInfo(f"[START] {self.temporarily_scene[index].__name__}")
         try:
             self._scene[index] = self.temporarily_scene[index](self.win)
-            self.logger(f"[INFO] [FINISH] {self.temporarily_scene[index].__name__}")
+            printInfo(f"[FINISH] {self.temporarily_scene[index].__name__}")
         except Exception as e:
             self._scene[index] = Scene(self.win)
             for frame in extract_tb(e.__traceback__):
-                self.logger(f" [ERROR] [{self.temporarily_scene[index].__name__}] [{frame.name}] {e}")
+                printError(f"[{self.temporarily_scene[index].__name__}] [{frame.name}] {e}")
             raise e
         
-    def start_scenes(self):
+    def start_scenes(self) -> None:
         for _ in range(self.temporarily_scene.__len__()):
             self._scene.append(None)
 
@@ -114,7 +120,7 @@ class Window:
 
     def run_window(self):
         pg.init()
-        self.win = pg.display.set_mode(self.__size, flags= self.flags, *self.zi)
+        self.win = pg.display.set_mode(self.__size, flags=self.kwargs_set_mode['flags'], depth=self.kwargs_set_mode['depth'], display=self.kwargs_set_mode['display'], vsync=self.kwargs_set_mode['vsync'])
 
         self.clock_fps = pg.time.Clock()
         self.clock_tps = pg.time.Clock()
@@ -179,7 +185,7 @@ class Window:
             scene.close()
 
     def update(self, dt: float) -> None:
-        self._scene[self.condition].update()
+        self._scene[self.condition].update(dt)
 
     def start(self) -> None:
         self.run_window()
@@ -192,14 +198,22 @@ class Window:
     def kill(self) -> None:
         self.close()
 
-    def update_window(self, size=None, flags=None, zi=None) -> None:
+    def update_window(self, 
+                    size: tuple[int, int] | None = None, 
+                    flags: int | None = None, 
+                    depth: int | None = None,
+                    display: int | None = None,
+                    vsync: int | None = None
+                    ) -> None:
         """
         Обновление параметров окна
         """
         self.__size = self.__size if size is None else size
-        self.flags = self.flags if flags is None else flags
-        self.zi = self.zi if zi is None else zi
-        self.win = pg.display.set_mode(self.__size, self.flags, *self.zi)
+        if not flags is None: self.kwargs_set_mode['flags'] = flags
+        if not depth is None: self.kwargs_set_mode['depth'] = depth
+        if not display is None: self.kwargs_set_mode['display'] = display
+        if not vsync is None: self.kwargs_set_mode['vsync'] = vsync
+        self.win = pg.display.set_mode(self.__size, flags=self.kwargs_set_mode['flags'], depth=self.kwargs_set_mode['depth'], display=self.kwargs_set_mode['display'], vsync=self.kwargs_set_mode['vsync'])
 
     @property
     def size(self):

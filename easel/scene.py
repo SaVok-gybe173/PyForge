@@ -15,21 +15,28 @@ class Scene:
     
     def __init__(self, win = None):
         self._win = win
+        self.name = type(self).__name__
 
-    def draw(self, screen: pg.Surface):
+    def draw(self, win: pg.Surface):
         '''
-        сработает при каждом цикле
-        Аргументы:
-            screen: pg.display.set_mode
+
+        Отрисовка обьектов.
+        Cработает при каждом цикле
+        
+        Args:
+            win (pg.Surface): Холст главного окна
         '''
-    def update(self):
+    def update(self, dt: float):
         '''
         сработает при обновление
+
+        Args:
+            dt (float): Время в секундах
         '''
 
     def event(self, event: pg.event.Event) -> None:
         '''
-        Сработыет 
+        Сработыет при вызове жвента
 
         Args:
             event (pg.event.Event): Основной класс эвента
@@ -59,14 +66,11 @@ class Scene:
 
     # Системные события
 
-    def close(self) -> bool | None:
+    def close(self) -> None:
         """
         QUIT
 
         Срабатывает при эвенте закрытие окна
-        
-        Return:
-            Завершить ли работы или нет
         """
         return True
 
@@ -124,7 +128,7 @@ class Scene:
         
         """
 
-    def keyup(key: int, mod, scancode) -> None:
+    def keyup(self, key: int, mod: int, scancode: int) -> None:
         """
         KEYUP
 
@@ -214,19 +218,19 @@ class Scene:
 
 # методы эвентов по их типу
 EVENTS_METOD = {
-    pg.event.event_name(pg.ACTIVEEVENT): (lambda obj, event: Scene.activeevent(obj, event.gain, event.state)),
-    pg.event.event_name(pg.VIDEORESIZE):  (lambda obj, event: Scene.videoresize(obj, event.size, event.w, event.h)), 
-    pg.event.event_name(pg.VIDEOEXPOSE): (lambda obj, _: Scene.videoexpose(obj)), 
-    pg.event.event_name(pg.RENDER_TARGETS_RESET):  (lambda obj, _: Scene.render_targets_reset(obj)),
+    pg.event.event_name(pg.ACTIVEEVENT): (lambda obj, event: obj.activeevent(event.gain, event.state)),
+    pg.event.event_name(pg.VIDEORESIZE):  (lambda obj, event: obj.videoresize(event.size, event.w, event.h)), 
+    pg.event.event_name(pg.VIDEOEXPOSE): (lambda obj, _: obj.videoexpose()), 
+    pg.event.event_name(pg.RENDER_TARGETS_RESET):  (lambda obj, _: obj.render_targets_reset()),
 
-    pg.event.event_name(pg.KEYDOWN): (lambda obj, event: Scene.keydown(obj, event.key, event.mod, event.unicode, event.scancode)), 
-    pg.event.event_name(pg.KEYUP): (lambda obj, event: Scene.keyup(obj, event.key, event.mod, event.scancode)), 
-    pg.event.event_name(pg.TEXTEDITING): (lambda obj, event: Scene.textediting(obj, event.text, event.start, event.length)), 
-    pg.event.event_name(pg.TEXTINPUT): (lambda obj, event: Scene.textinput(obj, event.text)),
+    pg.event.event_name(pg.KEYDOWN): (lambda obj, event: obj.keydown(event.key, event.mod, event.unicode, event.scancode)), 
+    pg.event.event_name(pg.KEYUP): (lambda obj, event: obj.keyup(event.key, event.mod, event.scancode)), 
+    pg.event.event_name(pg.TEXTEDITING): (lambda obj, event: obj.textediting(event.text, event.start, event.length)), 
+    pg.event.event_name(pg.TEXTINPUT): (lambda obj, event: obj.textinput(event.text)),
 
-    pg.event.event_name(pg.MOUSEMOTION): (lambda obj, event: Scene.mousemotion(obj, event.pos, event.rel, event.buttons, event.touch)),
-    pg.event.event_name(pg.MOUSEBUTTONDOWN): (lambda obj, event: Scene.mousebuttondown(obj, event.pos, event.button, event.touch)),
-    pg.event.event_name(pg.MOUSEBUTTONUP): (lambda obj, event: Scene.mousebuttonup(obj, event.pos, event.button, event.touch)),
-    pg.event.event_name(pg.MOUSEWHEEL): (lambda obj, event: Scene.mousewheel(obj, event.x, event.y, event.flipped, event.which, event.precise_x, event.precise_y)),
+    pg.event.event_name(pg.MOUSEMOTION): (lambda obj, event: obj.mousemotion(event.pos, event.rel, event.buttons, event.touch)),
+    pg.event.event_name(pg.MOUSEBUTTONDOWN): (lambda obj, event: obj.mousebuttondown(event.pos, event.button, event.touch)),
+    pg.event.event_name(pg.MOUSEBUTTONUP): (lambda obj, event: obj.mousebuttonup(event.pos, event.button, event.touch)),
+    pg.event.event_name(pg.MOUSEWHEEL): (lambda obj, event: obj.mousewheel(event.x, event.y, event.flipped, event.which, event.precise_x, event.precise_y)),
 
 }

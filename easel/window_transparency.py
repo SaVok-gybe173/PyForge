@@ -1,4 +1,5 @@
 import pygame
+from ..logger import printError
 try:
     import win32api
     import win32con
@@ -7,10 +8,12 @@ except ImportError:
     win32api = None
     win32con = None
     win32gui = None
-    print("Модули pywin32 не найдены. Функциональность прозрачности окна не будет работать.")
+    printError("Модули pywin32 не найдены. Функциональность прозрачности окна не будет работать.")
 
-# Функция для установки прозрачности окна (только для Windows)
 def set_window_transparency(hwnd = None, alpha_value = 255):
+    """
+    Функция для установки прозрачности окна (только для Windows)
+    """
     if hwnd is None: 
         hwnd = pygame.display.get_wm_info()['window']
     if win32api and win32con and win32gui:
@@ -22,6 +25,3 @@ def set_window_transparency(hwnd = None, alpha_value = 255):
     else:
         return False
 
-if __name__ == "__main__":
-    hwnd = pygame.display.get_wm_info()['window']
-    set_window_transparency(hwnd, 200) # Устанавливаем 200 (примерно 80% непрозрачности)

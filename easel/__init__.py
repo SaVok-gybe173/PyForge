@@ -65,4 +65,15 @@ MIDI:
 Чтобы избежать конфликтов, рекомендуется использовать pygame.event.custom_type() (Pygame 2) для выделения уникальных номеров.    
 """
 
-from .scene import Scene
+from .scene import Scene, EVENTS_METOD
+from .platform import is_android, is_linux, is_macos, is_ios, is_window
+from .window_transparency import set_window_transparency
+from .window_processing import Window as WindowProcession
+from .window import Window
+from .object import App
+
+__all__ = [
+    "Scene", "EVENTS_METOD",
+    "is_android", "is_linux", "is_macos", "is_ios", "is_window",
+    "WindowProcession", "Window", "App", "set_window_transparency"
+]

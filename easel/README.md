@@ -26,25 +26,27 @@
 
 ## Установка
 
-bash
-
+```bash
 pip install pygame-ce
+```
 # Для прозрачности окон на Windows:
+```bash
 pip install pywin32
+```
 
 Модуль является частью PyForge, поэтому импорт выглядит так:
 
-python
+```python
 
 from PyForge.easel import Window, Scene, App, set_window_transparency
-
+```
 ---
 
 ## Быстрый старт
 
 ### Минимальное приложение
 
-python
+```python
 
 from PyForge.easel import Window, Scene
 import pygame as pg
@@ -57,10 +59,11 @@ class MainScene(Scene):
 # Создаём окно размером 800x600 со сценой MainScene
 app = Window(size=(800, 600), scene=[MainScene])
 app.start()
+```
 
 ### Приложение со множеством сцен
 
-python
+```python
 
 from PyForge.easel import Window, Scene
 import pygame as pg
@@ -81,19 +84,21 @@ class GameScene(Scene):
             self.page.condition = 0  # возврат в меню
 app = Window(size=(800, 600), scene=[MenuScene, GameScene])
 app.start()
+```
 
 ### Приложение с модами
 
-python
+```python
 
 from PyForge.easel import App
 # App наследуется от Window и автоматически загружает моды из папки mods
 app = App(size=(1024, 768), mods_dir="./my_mods")
 app.start()
+```
 
 Структура мода (`mods/my_mod.py`):
 
-python
+```python
 
 from PyForge.mods.mod import FrameMod
 class Main(FrameMod):
@@ -107,10 +112,11 @@ class Main(FrameMod):
         pass
     def close(self):
         print("Мод выгружается")
+```
 
 ### Создание второго окна (отдельный процесс)
 
-python
+```python
 
 from PyForge.easel.window_processing import Window as ProcessWindow
 from PyForge.easel import Scene
@@ -121,16 +127,18 @@ class SecondScene(Scene):
 win2 = ProcessWindow(size=(400, 300), scene=[SecondScene])
 win2.start()  # запуск в новом процессе
 win2.join()   # ожидание завершения
+```
 
 ### Прозрачность окна (только Windows)
 
-python
+```python
 
 from PyForge.easel import set_window_transparency
 import pygame as pg
 pg.display.set_mode((400, 300))
 # Устанавливаем прозрачность 50% (alpha 0-255)
 set_window_transparency(alpha_value=128)
+```
 
 ---
 
@@ -239,7 +247,7 @@ Window(size=(400, 300),
 
 **Конструктор:**
 
-python
+```python
 
 App(size=(400, 300),
     color=(255, 255, 255),
@@ -248,6 +256,7 @@ App(size=(400, 300),
     fps: int = 60,
     mods_dir: str | None = None,
     kwargs_set_mode: KwargsSetMode | None = None)
+```
 
 |Параметр|Описание|
 |---|---|
@@ -289,7 +298,7 @@ App(size=(400, 300),
 
 **Пример с очередью:**
 
-python
+```python
 
 from multiprocessing import Process, Queue
 def worker(q):
@@ -299,6 +308,7 @@ p = Process(target=worker, args=(q,))
 p.start()
 print(q.get())
 p.join()
+```
 
 ---
 
@@ -320,9 +330,10 @@ p.join()
 
 **Доступно только на Windows.**
 
-python
+```python
 
-set_window_transparency(hwnd=None, alpha_value=255) -> bool
+def set_window_transparency(hwnd=None, alpha_value=255) -> bool: ...
+```
 
 |Параметр|Описание|
 |---|---|

@@ -1,5 +1,5 @@
 import pygame
-from ..logger import printError
+from .logger import printError
 try:
     import win32api
     import win32con

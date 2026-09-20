@@ -1,5 +1,5 @@
 from ..easel.platform import is_window
-from ..logger import printLog
+from ..easel.logger import printLog
 
 import os
 import subprocess

@@ -1,86 +1,216 @@
-from .window import Window, T, extract_tb, Scene, KwargsSetMode
-from ..mods.mod import FrameMod
-from ..logger import printError
-
-import importlib.util as util
 import pygame as pg
-import os
+from copy import deepcopy
 
-class App(Window):
+class PfObject:
+    """
+    initial class for all objects
+    начальный класс для всех обьектов 
+    """
     
-    mods_dir: str                       # Путь к папке с модами 
-    mods_list: list[FrameMod] = []      # Обьеты модов
-    mod_info = dict()                   # Информация о моде
-    mod_load = [".py", ".pyc", ".pyd"]  # Расшерения которые нужно загрузить
-    
-    
-    def __init__(self,
-                size: tuple[int, int] = (400, 300), 
-                color: tuple[int, int, int] = (255, 255, 255), 
-                scene: list[T] | None = None, 
-                *, 
-                fps: int = 60, 
-                mods_dir: str | None = None, 
-                kwargs_set_mode: KwargsSetMode | None = None
-                ):
+    def copy(self):
         """
-        Инцизация главного класса управление окном
+        Копирование полностью обьекта
+        """
+        return deepcopy(self)
+    
+    def __bool__(self) -> bool:
+        return False
+
+    def draw(self, win: pg.Surface):
+        '''
+
+        Отрисовка обьектов.
+        Cработает при каждом цикле
         
         Args:
-            size (tuple[int, int]): размеры окна (width, height)
-            color (tuple[int, int, int]): Цветовая политра RGB заднего фона
-            scene (list[T] | None): список классов сценн наследованые от главного класса (Scene)
-            fps (int | float): кадры в секунду
-            mod_dir (str | None): путь к папке с модами
-            kwargs_set_mode (KwargsSetMode | None): парамерты для создание окна (pg.display.set_mode)
+            win (pg.Surface): Холст главного окна
+        '''
+    def update(self, dt: float):
+        '''
+        сработает при обновление
+
+        Args:
+            dt (float): Время в секундах
+        '''
+
+    def event(self, event: pg.event.Event) -> None:
+        '''
+        Сработыет при вызове жвента
+
+        Args:
+            event (pg.event.Event): Основной класс эвента
+        '''
+
+    def size_update(self, old: tuple[int, int], new: tuple[int, int], ratio: tuple[int, int]):
+        '''
+        Обновление размер окна
+
+        Метод как videoresize, но также передает старое число
+
+        Args:
+            old (tuple[int, int]): Старый размер
+            new (tuple[int, int]): Новый размер
+            ratio (tuple[int, int]): Коэфицент между новым и старым размером (new/old)
+        '''
+    def muve_window(self, old: tuple[int, int], new: tuple[int, int]) -> None:
+        '''
+        Перемещение окна
+
+        Работает на pygame-ce
+
+        Args:
+            old (tuple[int, int]): Старая позиция
+            new (tuple[int, int]): Новоя позиция
+        '''
+
+    # Системные события
+
+    def close(self) -> None:
         """
-        self.mods_dir = mods_dir or os.path.join(os.path.dirname(os.path.abspath(__file__)), 'mods')
-        self._mod = not mods_dir is None
-        super().__init__( size, color, scene, fps=fps, kwargs_set_mode=kwargs_set_mode)
+        QUIT
 
-    def init(self, win: pg.Surface) -> None:
-        if self._mod:
-            self.load_mods()
-            for mod in self.mods_list:
-                mod.start()
-        
-    def draw(self, win):
-        super().draw(win)
-        for i in self.mods_list:
-            i.draw(win)
-        
-    def event(self, event):
-        super().event(event)
-        for i in self.mods_list:
-            i.event(event)
-        
-    def close(self):
-        super().close()
-        for i in self.mods_list:
-            i.close()
-        
-    def load_mods(self):
+        Срабатывает при эвенте закрытие окна
+        """
+        return True
 
-        for filename in os.listdir(self.mods_dir):
-            if max([filename.endswith(obf) for obf in self.mod_load]):
-                spec = util.spec_from_file_location(f"{filename[:-3]}", os.path.join(self.mods_dir, filename))
-                mod = util.module_from_spec(spec)
-                spec.loader.exec_module(mod)
-                if hasattr(mod, 'Main'):
-                    try:
-                        stucture: FrameMod = mod.Main(self)
-                        self.mods_list.append(stucture)
-                    except Exception as e:
-                        for frame in extract_tb(e.__traceback__):
-                            printError(f"[{mod.__name__}] [{frame.name}] {e}")
+    def activeevent(self, gain: bool, state: bool) -> None:  # ACTIVEEVENT
+        """
+        ACTIVEEVENT
 
-if __name__ == '__main__':
-    import multiprocessing
-    import sys
-    
-    multiprocessing.freeze_support()
-    
-    if getattr(sys, 'frozen', False):
-        os.environ['PATH'] = sys._MEIPASS + os.pathsep + os.environ['PATH']
-    
-    App().start()
+        Окно получило или потеряло фокус.
+
+        Args: 
+            gain (bool): 1 — получен, 0 — потерян
+            state (int): флаги состояния
+        """
+
+    def videoresize(self, size: tuple[int, int], w: int, h: int) -> None:
+        """
+        VIDEORESIZE
+
+        Изменение размера окна. 
+        
+        Args:
+            size (tuple[int, int]): Новый размер (w, h) 
+            w (int): Новая ширина
+            h (int): Новая высота
+
+        """
+
+    def videoexpose(self) -> None:
+        """
+        VIDEOEXPOSE
+
+        Окно было частично или полностью перекрыто и снова показано
+        """
+
+    def render_targets_reset(self) -> None:
+        """
+        RENDER_TARGETS_RESET
+
+        Добавлено в pygame 2.x
+        """
+
+    # События клавиатуры
+
+    def keydown(self, key: int, mod: int, unicode: str, scancode: int) -> None:
+        """
+        KEYDOWN
+        
+        Клавиша нажата
+
+        Args:
+            key (int): код клавиши (например K_a, K_SPACE).
+            mod (int): битовая маска модификаторов (KMOD_SHIFT, KMOD_CTRL, KMOD_ALT, KMOD_CAPS и т.д.).
+            unicode (str): символ, соответствующий нажатой клавише (учитывает модификаторы и раскладку).
+            scancode (int): аппаратный скан-код клавиши (не зависит от раскладки).
+        
+        """
+
+    def keyup(self, key: int, mod: int, scancode: int) -> None:
+        """
+        KEYUP
+
+        Клавиша отпущена
+
+        Args:
+            key (int): код клавиши (например K_a, K_SPACE).
+            mod (int): битовая маска модификаторов (KMOD_SHIFT, KMOD_CTRL, KMOD_ALT, KMOD_CAPS и т.д.).
+            scancode (int): аппаратный скан-код клавиши (не зависит от раскладки).
+        """
+
+    def textediting(self, text: str, start: int, length: int) -> None:
+        """
+        TEXTEDITING
+
+        Редактирование текста (IME)
+
+        Args:
+            text (str): редактируемый текст (может быть пустым).
+            start (int): начальная позиция выделения в тексте.
+            length (int): длина выделения.
+        """
+
+    def textinput(self, text: str) -> None:
+        """
+        TEXTINPUT
+
+        Ввод текста (после завершения IME)
+
+        Args:
+            text (str): введённый текст (обычно один символ, но может быть несколько при автодополнении).
+        """
+
+    # События мыши
+
+    def mousemotion(self, pos: tuple[int, int], rel: tuple[int, int], buttons: tuple[bool, bool, bool], touch: bool) -> None:
+        """
+        MOUSEMOTION
+
+        Перемещение мыши
+
+        Args:
+            pos (tuple[int, int]): текущие координаты курсора (x, y).
+            rel (tuple[int, int]): относительное перемещение с прошлого события (dx, dy).
+            buttons (tuple[bool, bool, bool]): состояние трёх кнопок (левая, средняя, правая) в виде кортежа (True/False, ...).
+            touch (bool): было ли событие вызвано касанием сенсорного экрана.
+        """
+
+    def mousebuttondown(self, pos: tuple[int, int], button: int, touch: bool) -> None:
+        """
+        MOUSEBUTTONDOWN
+
+        Кнопка мыши нажата
+
+        Args:
+            pos (tuple[int, int]): координаты курсора в момент нажатия/отпускания.
+            button (int) номер кнопки: 1 – левая, 2 – средняя, 3 – правая, 4 – прокрутка вверх, 5 – прокрутка вниз (для старых версий).
+            touch (bool) было ли касание на тачскрине.
+        """
+
+    def mousebuttonup(self, pos: tuple[int, int], button: int, touch: bool) -> None:
+        """
+        MOUSEBUTTONUP
+
+        Кнопка мыши отпущена
+
+        Args:
+            pos (tuple[int, int]): координаты курсора в момент нажатия/отпускания.
+            button (int) номер кнопки: 1 – левая, 2 – средняя, 3 – правая, 4 – прокрутка вверх, 5 – прокрутка вниз (для старых версий).
+            touch (bool) было ли касание на тачскрине.
+        """
+
+    def mousewheel(self, x: int, y: int, flipped: bool, which: int, precise_x: float, precise_y: float) -> None:
+        """
+        MOUSEWHEEL
+
+        Прокрутка колеса мыши
+
+        Args:
+            x (int): горизонтальная прокрутка (положительное значение – вправо).
+            y (int): вертикальная прокрутка (положительное – вверх).
+            flipped (bool): True, если значения осей были «перевёрнуты» (зависит от настроек ОС).
+            which (int): идентификатор устройства (обычно 0).
+            precise_x (float) точное значение горизонтальной прокрутки (дробное).
+            precise_y (float) точное значение вертикальной прокрутки.
+        """

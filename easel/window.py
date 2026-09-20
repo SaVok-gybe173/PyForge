@@ -6,7 +6,7 @@ from threading import Thread
 from traceback import extract_tb
 from .scene import Scene, EVENTS_METOD
 from ..gpu.locals import IS_IMPORT_GL, InitGl
-from ..logger import printError, printInfo
+from .logger import printError, printInfo
 
 import pygame as pg
 import sys

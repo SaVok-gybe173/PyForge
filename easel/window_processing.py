@@ -22,7 +22,7 @@ p.join()
 Используйте json и сами создавайте обьекты
 """
 from .window import Window as _window
-from ..logger import printError, printInfo
+from .logger import printError, printInfo
 from multiprocessing import Process
 from typing import overload
 

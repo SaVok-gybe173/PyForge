@@ -54,7 +54,7 @@ else:
     except ImportError:
         from easel.window import Window
 
-from .easel.object import App
+from .easel.app import App
 from .mods.mod import FrameMod
 
 from .easel.window import Scene

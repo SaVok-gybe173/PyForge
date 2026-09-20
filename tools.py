@@ -1,5 +1,6 @@
 import pygame
 from copy import deepcopy
+from .easel.object import PfObject
 
 def cordinate_transformation(fraction: tuple[float]) -> tuple[int]:
     size = pygame.display.get_window_size()
@@ -37,22 +38,4 @@ class MathCord:
     def __call__(self, event: pygame.event.Event):
         self.event(event)
 
-class PfObject:
-    """
-    initial class for all objects
-    начальный класс для всех обьектов 
-    """
-    def draw(self, sceen: pygame.Surface):
-        pass
-    def update(self):
-        pass
-    def event(self, event: pygame.event.Event):
-        pass
 
-    def size_update(self, old: tuple[int], new: tuple[int]):
-        pass
-    def copy(self):
-        return deepcopy(self)
-    
-    def __bool__(self):
-        return False

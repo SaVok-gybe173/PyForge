@@ -1,6 +1,6 @@
 from ....tools import PfObject
 from .calculation_progress import ProgressBarCalc
-from ....markup import Point, Size
+from ....easel.markup import Point, Size
 from ....color import RGB
 import pygame as pg
 

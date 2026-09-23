@@ -1,8 +1,8 @@
 import pygame as pg
-from PyForge.tools import PfObject
+from ....easel import PfObject
 from typing import Tuple
 from .structure import ListItems, Governance
-from ....markup import Size, Point
+from ....easel.markup import Size, Point
 from .calculations import event_size, update_size
 
 class CoreListOfItems(PfObject):

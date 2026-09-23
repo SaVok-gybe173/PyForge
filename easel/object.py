@@ -1,7 +1,8 @@
 import pygame as pg
 from copy import deepcopy
+from .markup import Size, Point
 
-class PfObject:
+class CoreObject:
     """
     initial class for all objects
     начальный класс для всех обьектов 
@@ -214,3 +215,7 @@ class PfObject:
             precise_x (float) точное значение горизонтальной прокрутки (дробное).
             precise_y (float) точное значение вертикальной прокрутки.
         """
+
+class PfObject(CoreObject):
+    def __init__(self, left_top: Point | tuple[int, int], width_height: Size | tuple[int, int], *args: CoreObject, **kvargs):
+        pass

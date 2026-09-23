@@ -1,6 +1,6 @@
-from PyForge.tools import PfObject
+from ....easel import PfObject
 from .structure import ListItems, Governance, AdvancedListItems
-from ....markup import Size, Point
+from ....easel.markup import Size, Point
 from typing import Tuple
 from .calculations import event_size, update_size
 import pygame as pg

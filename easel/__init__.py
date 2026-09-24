@@ -71,7 +71,7 @@ from .window_transparency import set_window_transparency
 from .window_processing import Window as WindowProcession
 from .window import Window
 from .app import App
-from .markup import isListType, _General, Size, Point, SizeTup, PointTup
+from .markup import isListType, _General, Size, Point
 from .object import CoreObject, PfObject
 
 __all__ = [

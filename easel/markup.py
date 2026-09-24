@@ -107,7 +107,8 @@ class _General:
         Args:
             pix: Пара ``(x, y)`` в пикселях.
         """
-        self._pixel = cordinate_transformation(pix)
+        self._pixel = pix
+        self._relationship = relationship_transformation(pix)
 
     @property
     def relationship(self) -> RelCoord:
@@ -122,7 +123,7 @@ class _General:
             rel: Пара ``(x, y)`` в диапазоне ``[0.0, 1.0]`` (обычно).
         """
         self._relationship = rel
-        self._pixel = relationship_transformation(rel)
+        self._pixel = cordinate_transformation(rel)
 
 
 class Size(_General):

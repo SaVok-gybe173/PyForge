@@ -243,12 +243,27 @@ class PfObject(CoreObject):
         return self._left_top.pixel[1]
 
     @left.setter
-    def left(self, num) -> None:
-        self._left_top.pixel[0] = num
-        self._left_top.update()
+    def left(self, num: int) -> None:
+        self._left_top.pixel = (num, self._left_top.pixel[1])
+        
 
     @top.setter
-    def top(self, num) -> None:
-        self._left_top.pixel[1] = num
-        self._left_top.update()
+    def top(self, num: int) -> None:
+        self._left_top.pixel = (self._left_top.pixel[0], num)
+
     # Size
+    @property
+    def width(self) -> int:
+        self._width_height[0]
+
+    @property
+    def height(self) -> int:
+        return self._width_height[1]
+
+    @width.setter
+    def width(self, num: int) -> None:
+        self._width_height.pixel = (num, self._width_height[1])
+
+    @height.setter
+    def height(self, num: int) -> None:
+        self._width_height.pixel = (self._width_height[0], num)

@@ -1,6 +1,6 @@
 import pygame as pg
 from copy import deepcopy
-from .markup import Size, Point
+from .markup import Size, Point, isListType
 
 class CoreObject:
     """
@@ -218,20 +218,37 @@ class CoreObject:
 
 class PfObject(CoreObject):
     def __init__(self, left_top: Point | tuple[int, int], width_height: Size | tuple[int, int], *args: CoreObject, **kvargs):
-        self._left = left_top[0]
-        self._top = left_top[1]
-        self._width_height = width_height
+        if isinstance(left_top, Point):
+            self._left_top = left_top
+        elif isinstance(left_top, tuple) and isListType(left_top):
+            self._left_top = Point(left_top[0], left_top[1])
+        else:
+            raise ValueError(f"Не верный аргумент {self._left_top}")
+
+        if isinstance(width_height, Point):
+            self._width_height = width_height
+        elif isinstance(width_height, tuple) and isListType(width_height):
+            self._width_height = Point(width_height[0], width_height[1])
+        else:
+            raise ValueError(f"Не верный аргумент {self._width_height}")
 
     # сеттеры и геттеры
     # Point
     @property
     def left(self) -> int:
-        return self._left_top[0]
+        return self._left_top.pixel[0]
 
     @property
     def top(self) -> int:
-        return self._left_top[1]
+        return self._left_top.pixel[1]
 
     @left.setter
     def left(self, num) -> None:
-        self._left = num
+        self._left_top.pixel[0] = num
+        self._left_top.update()
+
+    @top.setter
+    def top(self, num) -> None:
+        self._left_top.pixel[1] = num
+        self._left_top.update()
+    # Size

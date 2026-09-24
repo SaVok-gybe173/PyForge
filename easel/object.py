@@ -218,4 +218,20 @@ class CoreObject:
 
 class PfObject(CoreObject):
     def __init__(self, left_top: Point | tuple[int, int], width_height: Size | tuple[int, int], *args: CoreObject, **kvargs):
-        pass
+        self._left = left_top[0]
+        self._top = left_top[1]
+        self._width_height = width_height
+
+    # сеттеры и геттеры
+    # Point
+    @property
+    def left(self) -> int:
+        return self._left_top[0]
+
+    @property
+    def top(self) -> int:
+        return self._left_top[1]
+
+    @left.setter
+    def left(self, num) -> None:
+        self._left = num

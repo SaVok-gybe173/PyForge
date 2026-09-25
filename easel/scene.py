@@ -2,6 +2,7 @@
 Модуль со структурой сценны
 """
 from typing import Any, TYPE_CHECKING, Self
+from .object import CoreObject, PfObject
 import pygame as pg
 
 if TYPE_CHECKING:
@@ -9,15 +10,56 @@ if TYPE_CHECKING:
 else:
     type Window = Any
 
-class Scene:
+class Scene(CoreObject):
     name: str
     page: Window
     
     def __init__(self, win = None):
         self._win = win
         self.name = type(self).__name__
+        self.objects: list[PfObject] = []
 
-    
+    def append(self, object: PfObject):
+        self.objects.append(object)
+
+    def activeevent(self, gain, state):
+        for object in self.objects:
+            object.activeevent(gain, state)
+    def videoresize(self, size, w, h):
+        for object in self.objects:
+            object.videoresize(size, w, h)
+    def videoexpose(self):
+        for object in self.objects:
+            object.videoexpose()
+    def render_targets_reset(self):
+        for object in self.objects:
+            object.render_targets_reset()
+
+    def keydown(self, key, mod, unicode, scancode):
+        for object in self.objects:
+            object.keydown(key, mod, unicode, scancode)
+    def keyup(self, key, mod, scancode):
+        for object in self.objects:
+            object.keyup(key, mod, scancode)
+    def textediting(self, text, start, length):
+        for object in self.objects:
+            object.textediting(text, start, length)
+    def textinput(self, text):
+        for object in self.objects:
+            object.textinput(text)
+
+    def mousemotion(self, pos, rel, buttons, touch):
+        for object in self.objects:
+            object.mousemotion(pos, rel, buttons, touch)
+    def mousebuttondown(self, pos, button, touch):
+        for object in self.objects:
+            object.mousebuttondown(pos, button, touch)
+    def mousebuttonup(self, pos, button, touch):
+        for object in self.objects:
+            object.mousebuttonup(pos, button, touch)
+    def mousewheel(self, x, y, flipped, which, precise_x, precise_y):
+        for object in self.objects:
+            object.mousewheel(x, y, flipped, which, precise_x, precise_y)
 
 # методы эвентов по их типу
 EVENTS_METOD = {

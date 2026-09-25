@@ -15,7 +15,7 @@ try:
     from .animation import FrameAnimationButton
 except ImportError:
     from animation import FrameAnimationButton
-from PyForge.tools import PfObject
+from PyForge.easel import Point, PfObject
 
 class ButtonClick:
     LCM = 3
@@ -31,7 +31,7 @@ class Button(PfObject):
     cursor_hand = pg.SYSTEM_CURSOR_HAND
     cursor_arrow = pg.SYSTEM_CURSOR_ARROW
 
-    def __init__(self, left_top: list[int, int], image: pg.Surface, *, is_mask: bool = False, alpha: int = 0, is_clicking: bool = True):
+    def __init__(self, left_top: Point | tuple[int, int], image: pg.Surface, *, is_mask: bool = False, is_clicking: bool = True):
         '''
         инцилизация!
         
@@ -40,7 +40,6 @@ class Button(PfObject):
             image: pg.Surface - изображение (размеры)
             
             is_mask: bool - использовать маску для точной колизии
-            alpha: int - прозрачность для маски
             is_clicking: bool - показывать облость нажатия
         '''
         self.set_mask(is_mask)

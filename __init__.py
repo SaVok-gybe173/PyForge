@@ -37,22 +37,11 @@ def is_admin():
     else: # Для других ОС, предполагаем, что не админ
         return False
 
-'''
 if _multiprocessing_activ:
-    import easel.window
+    from .easel.window_processing import Window
 else:
-    import easel.strukture as window
-'''
-if _multiprocessing_activ:
-    try:
-        from .easel.window_processing import Window
-    except ImportError:
-        from easel.window_processing import Window
-else:
-    try:
-        from .easel.window import Window
-    except ImportError:
-        from easel.window import Window
+    from .easel.window import Window
+ 
 
 from .easel.app import App
 from .mods.mod import FrameMod

@@ -22,6 +22,18 @@ class Scene(CoreObject):
     def append(self, object: PfObject):
         self.objects.append(object)
 
+    def draw(self, win):
+        for object in self.objects:
+            object.draw(win)
+
+    def update(self, dt):
+        for object in self.objects:
+            object.update(dt)
+
+    def event(self, event):
+        for object in self.objects:
+            object.event(event)
+
     def activeevent(self, gain, state):
         for object in self.objects:
             object.activeevent(gain, state)

@@ -1,9 +1,9 @@
 """
 Модуль для работы с кординатами и с размерами
 """
-from ..tools import cordinate_transformation, relationship_transformation
 from .._core.locals import GRAPHICS, GRAPHICS_GL_2D_ORTHO, GRAPHICS_PYGAME
 from typing import Type, overload, Final, Literal, TypeAlias
+import pygame as pg
 
 # Флаги для классов
 SIZE_RELATIONSHIP: Final[str]   = "size-relationship"
@@ -13,12 +13,21 @@ POINT_RELATIONSHIP: Final[str]  = "point-relationship"
 POINT_PIXEL: Final[str]         = "point-pixel"
 
 # типы
-PointType: TypeAlias = Literal["point_pixel", "point_relationship"]
-SizeType:  TypeAlias = Literal["size_pixel", "size_relationship"]
+PointType:  TypeAlias = Literal["point_pixel", "point_relationship"]
+SizeType:   TypeAlias = Literal["size_pixel", "size_relationship"]
 
 PixelCoord: TypeAlias = tuple[int, int]
 RelCoord:   TypeAlias = tuple[float, float]
 Coord:      TypeAlias = PixelCoord | RelCoord
+
+# функции для преобразовании кординат
+def cordinate_transform(fraction: tuple[float]) -> tuple[int]:
+    size = pg.display.get_window_size()
+    return size[0]/2*(fraction[0]+1), size[1]/2*(-fraction[1]+1)
+
+def relationship_transform(fraction: tuple[int]) -> tuple[float]:
+    size = pg.display.get_window_size()
+    return fraction[0]/(size[0]/2)-1, fraction[1]/(size[1]/2)-1
 
 #
 def isListType(ls: tuple | set | list, len: int = 2, type: Type = int) -> bool:
@@ -86,7 +95,7 @@ class _General:
 
         Returns:
             Пиксельные координаты, если активен ``GRAPHICS_GL_2D_ORTHO``
-            или ``GRAPHICS_PYGAME``; иначе — нормализованные координаты
+            или ``GRAPHICS_pg``; иначе — нормализованные координаты
             для OpenGL.
         """
         if GRAPHICS.get() == GRAPHICS_GL_2D_ORTHO or GRAPHICS.get() == GRAPHICS_PYGAME:
@@ -108,7 +117,7 @@ class _General:
             pix: Пара ``(x, y)`` в пикселях.
         """
         self._pixel = pix
-        self._relationship = relationship_transformation(pix)
+        self._relationship = relationship_transform(pix)
 
     @property
     def relationship(self) -> RelCoord:
@@ -123,7 +132,7 @@ class _General:
             rel: Пара ``(x, y)`` в диапазоне ``[0.0, 1.0]`` (обычно).
         """
         self._relationship = rel
-        self._pixel = cordinate_transformation(rel)
+        self._pixel = cordinate_transform(rel)
 
 
 class Size(_General):
@@ -186,10 +195,10 @@ class Size(_General):
         """
 
         if self.type == SIZE_PIXEL:
-            self.relationship =  relationship_transformation(self.data)
+            self.relationship =  relationship_transform(self.data)
             self.pixel = self.data
         elif self.type == SIZE_RELATIONSHIP:
-            self.pixel = cordinate_transformation(self.data)
+            self.pixel = cordinate_transform(self.data)
             self.relationship = self.data
         else:
             raise ValueError(f"тип: {self.type} не существует")
@@ -257,10 +266,38 @@ class Point(_General):
         """
 
         if self.type == POINT_PIXEL:
-            self._relationship = relationship_transformation(self.data)
+            self._relationship = relationship_transform(self.data)
             self._pixel = self.data
         elif self.type == POINT_RELATIONSHIP:
-            self._pixel = cordinate_transformation(self.data)
+            self._pixel = cordinate_transform(self.data)
             self._relationship = self.data
         else:
             raise ValueError(f"тип: {self.type} не существует")
+
+def cord(event: pg.event.Event, i = 1):
+    """
+    coordinate output function
+    функция вывода кординат
+    """
+    if event.type == pg.MOUSEBUTTONDOWN:
+        if event.button == i:
+            print(event.pos)
+            return event.pos
+
+class MathCord:
+    """
+    class for debugging and displaying coordinates
+    класс для отладки и вывода кординат
+    """
+    stade = None
+    def event(self, event: pg.event.Event):
+        if event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
+            if self.stade is None:
+                self.stade = cord(event)
+                print(f"сохранено {self.stade}")
+            else:
+                stade = cord(event)
+                print(f"x_y = ({min((self.stade[0], stade[0]))}, {min((self.stade[1], stade[1]))}), w_h = ({abs(self.stade[0]-stade[0])}, {abs(self.stade[1]-stade[1])})")
+                self.stade = None
+    def __call__(self, event: pg.event.Event):
+        self.event(event)

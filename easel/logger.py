@@ -265,6 +265,15 @@ def getLogPath() -> str:
     global LOG_PATH
     return LOG_PATH
 
+class ObjectMeta(type):
+    def __new__(mcls, name, bases, namespace: dict, /, **kwds):
+        printInfo(f'\t\t\tRegistration (ObjectMeta): {name}')
+        printLog(f'{' '*(30-len(name))}{bases}', types=f"[{name}]")
+        for (k, i) in namespace.items():
+            printLog(f'{' '*(30-len(name))}{k} = {i}', types=f"[{name}]")
+        #print(bases, namespace)
+        return super().__new__(mcls, name, bases, namespace)
+
 def init(path: str | None = None): # инцилизация всего
     # стандарт - создает фаил
     if not path is None:

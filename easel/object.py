@@ -1,8 +1,10 @@
 import pygame as pg
 from copy import deepcopy
+from .logger import ObjectMeta
 from .markup import Size, Point, isListType
 
-class CoreObject:
+class CoreObject(metaclass=ObjectMeta):
+    __abstract__ = True
     """
     initial class for all objects
     начальный класс для всех обьектов 

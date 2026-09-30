@@ -274,6 +274,10 @@ class ObjectMeta(type):
         #print(bases, namespace)
         return super().__new__(mcls, name, bases, namespace)
 
+    def __call__(cls, *args, **kwds):
+        printLog(f"[{cls}]", args, kwds, types="[CREATURE]")
+        return super().__call__(*args, **kwds)
+
 def init(path: str | None = None): # инцилизация всего
     # стандарт - создает фаил
     if not path is None:

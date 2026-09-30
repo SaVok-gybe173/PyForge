@@ -265,15 +265,17 @@ def getLogPath() -> str:
     global LOG_PATH
     return LOG_PATH
 
+# Класс для логирования всех классов в PyForge
 class ObjectMeta(type):
+    # Обработка наследования и выводит все адреса, значения в классе
     def __new__(mcls, name, bases, namespace: dict, /, **kwds):
         printInfo(f'\t\t\tRegistration (ObjectMeta): {name}')
         printLog(f'{' '*(30-len(name))}{bases}', types=f"[{name}]")
-        for (k, i) in namespace.items():
+        for (k, i) in namespace.items():    # с отступом
             printLog(f'{' '*(30-len(name))}{k} = {i}', types=f"[{name}]")
-        #print(bases, namespace)
         return super().__new__(mcls, name, bases, namespace)
 
+    # обработка создания
     def __call__(cls, *args, **kwds):
         printLog(f"[{cls}]", args, kwds, types="[CREATURE]")
         return super().__call__(*args, **kwds)
@@ -284,3 +286,21 @@ def init(path: str | None = None): # инцилизация всего
         setLogPath(path)
     else:
         createFileLog()
+
+# Стуктура для пустого логирования
+# метод для отправки логов в мусорку
+def null(*args, **kargs) -> None:
+    global _log_list_not_file
+    _log_list_not_file.clear()
+
+Null = type("Null", (), {"write": null})    # класс для обработки directionNull
+
+def directionNull() -> None:
+    """
+    Делает так, что бы все логи удалялись.
+    
+    (Остаеться вывод только в консоль)
+    """
+    global _is_open_file, _open_file, _file_log, _log_list_not_file
+    _is_open_file = True
+    _open_file = Null()

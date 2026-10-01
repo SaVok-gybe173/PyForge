@@ -1,25 +1,26 @@
-
 # Easel — модуль для создания оконных приложений на Pygame
 
 **Easel** — это часть фреймворка PyForge, предоставляющая удобную объектно-ориентированную надстройку над `pygame-ce` для создания оконных приложений с поддержкой сцен, событий и модульной архитектуры.
 
 ## Возможности
 
-- **Управление окнами** — создание и настройка главного окна приложения
+- **Управление окнами** — создание и настройка главного окна приложения
     
-- **Система сцен** — гибкая архитектура для организации разных экранов приложения
+- **Система сцен** — гибкая архитектура для организации разных экранов приложения
     
-- **Полная обработка событий** — клавиатура, мышь, изменение размера окна и системные события
+- **Полная обработка событий** — клавиатура, мышь, изменение размера окна и системные события
     
-- **Поддержка модов** — динамическая загрузка плагинов из папки `mods`
+- **Поддержка модов** — динамическая загрузка плагинов из папки `mods`
     
-- **Многопроцессность** — создание дополнительных окон в отдельных процессах (кроме Android/iOS)
+- **Многопроцессность** — создание дополнительных окон в отдельных процессах (кроме Android/iOS)
     
 - **Прозрачность окна** — только для Windows (через `pywin32`)
     
-- **Кроссплатформенность** — определение Android, Linux, Windows, macOS, iOS
+- **Кроссплатформенность** — определение Android, Linux, Windows, macOS, iOS
     
-- **OpenGL** — встроенная поддержка инициализации OpenGL
+- **OpenGL** — встроенная поддержка инициализации OpenGL
+    
+- **Логирование** — встроенная система логирования для каждого класса (добавлено в коммите [`ea3373b`](https://github.com/SaVok-gybe173/PyForge/commit/ea3373b17d871719253d8770f572d76a63531c2b))
     
 
 ---
@@ -27,10 +28,9 @@
 ## Установка
 
 ```bash
+
 pip install pygame-ce
-```
 # Для прозрачности окон на Windows:
-```bash
 pip install pywin32
 ```
 
@@ -40,6 +40,7 @@ pip install pywin32
 
 from PyForge.easel import Window, Scene, App, set_window_transparency
 ```
+
 ---
 
 ## Быстрый старт
@@ -59,6 +60,7 @@ class MainScene(Scene):
 app = Window(size=(800, 600), scene=[MainScene])
 app.start()
 ```
+
 
 ### Приложение со множеством сцен
 
@@ -153,13 +155,14 @@ set_window_transparency(alpha_value=128)
 |`Window`|Главный класс управления окном|
 |`App`|Класс приложения с поддержкой модов (наследует `Window`)|
 |`WindowProcession`|Класс для создания окон в отдельных процессах|
-|`EVENTS_METOD`|Словарь соответствия типов событий и методов сцены|
+|`EVENTS_METOD`|Словарь соответствия типов событий и методов сцены (добавлен в коммите [`14b22f3`](https://github.com/SaVok-gybe173/PyForge/commit/14b22f3d3bc65da8a9c5130146e404f40a916f0b))|
 |`is_android()`|Проверка: запущено ли на Android|
 |`is_linux()`|Проверка: запущено ли на Linux|
 |`is_macos()`|Проверка: запущено ли на macOS|
 |`is_ios()`|Проверка: запущено ли на iOS|
 |`is_window()`|Проверка: запущено ли на Windows|
 |`set_window_transparency()`|Установка прозрачности окна (только Windows)|
+
 
 ---
 
@@ -197,6 +200,7 @@ set_window_transparency(alpha_value=128)
 |`mouseup(pos, button, touch)`|Отпускание кнопки мыши|
 |`mousewheel(x, y, flipped, which, precise_x, precise_y)`|Прокрутка колеса|
 
+
 ---
 
 ### Класс `Window` (`window.py`)
@@ -205,14 +209,11 @@ set_window_transparency(alpha_value=128)
 
 **Конструктор:**
 
-python
+```python
 
-Window(size=(400, 300),
-       color=(255, 255, 255),
-       scene: list[Scene] | None = None,
-       *,
-       fps: int | float = 60,
-       kwargs_set_mode: KwargsSetMode | None = None)
+Window(size=(400, 300), color=(255, 255, 255), scene: list[Scene] | None = None,
+       *, fps: int | float = 60, kwargs_set_mode: KwargsSetMode | None = None)
+```
 
 |Параметр|Описание|
 |---|---|
@@ -248,13 +249,8 @@ Window(size=(400, 300),
 
 ```python
 
-App(size=(400, 300),
-    color=(255, 255, 255),
-    scene: list[T] | None = None,
-    *,
-    fps: int = 60,
-    mods_dir: str | None = None,
-    kwargs_set_mode: KwargsSetMode | None = None)
+App(size=(400, 300), color=(255, 255, 255), scene: list[T] | None = None, *,
+    fps: int = 60, mods_dir: str | None = None, kwargs_set_mode: KwargsSetMode | None = None)
 ```
 
 |Параметр|Описание|
@@ -268,8 +264,8 @@ App(size=(400, 300),
 - Автоматически вызывает методы `start()`, `draw()`, `event()`, `close()` у загруженных модов
     
 
-**Структура мода:**  
-Мод — это Python-файл в папке `mods`, содержащий класс `Main`, наследующий `FrameMod` из `PyForge.mods.mod`.
+**Структура мода:** мод — это Python-файл в папке `mods`, содержащий класс `Main`, наследующий `FrameMod` из `PyForge.mods.mod`.
+
 
 ---
 
@@ -309,6 +305,7 @@ print(q.get())
 p.join()
 ```
 
+
 ---
 
 ### Модуль `platform.py`
@@ -331,7 +328,8 @@ p.join()
 
 ```python
 
-def set_window_transparency(hwnd=None, alpha_value=255) -> bool: ...
+def set_window_transparency(hwnd=None, alpha_value=255) -> bool:
+    ...
 ```
 
 |Параметр|Описание|

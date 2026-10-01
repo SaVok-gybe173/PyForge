@@ -219,20 +219,13 @@ class CoreObject(metaclass=ObjectMeta):
         """
 
 class PfObject(CoreObject):
-    def __init__(self, left_top: Point | tuple[int, int], width_height: Size | tuple[int, int], *args: CoreObject, **kvargs):
-        if isinstance(left_top, Point):
-            self._left_top = left_top
-        elif isinstance(left_top, tuple) and isListType(left_top):
-            self._left_top = Point(left_top[0], left_top[1])
-        else:
-            raise ValueError(f"Не верный аргумент {self._left_top}")
+    rect: pg.Rect   | None
+    img: pg.Surface | None
 
-        if isinstance(width_height, Point):
-            self._width_height = width_height
-        elif isinstance(width_height, tuple) and isListType(width_height):
-            self._width_height = Point(width_height[0], width_height[1])
-        else:
-            raise ValueError(f"Не верный аргумент {self._width_height}")
+    def __init__(self, left_top: Point | tuple[int, int], width_height: Size | tuple[int, int], *args: CoreObject, **kvargs):
+        self.rect = pg.Rect(self._left_top.pixel, self._width_height.pixel)
+        self.left_top = left_top
+        self.width_height = width_height
 
     # сеттеры и геттеры
     # Point
@@ -247,16 +240,30 @@ class PfObject(CoreObject):
     @left.setter
     def left(self, num: int) -> None:
         self._left_top.pixel = (num, self._left_top.pixel[1])
-        
+        self.rect.left = num
 
     @top.setter
     def top(self, num: int) -> None:
         self._left_top.pixel = (self._left_top.pixel[0], num)
+        self.rect.top = num
 
+    @property
+    def left_top(self) -> Point:
+        return self._left_top
+
+    @left_top.setter
+    def left_top(self, left_top: Point | tuple[int, int]) -> None:
+        if isinstance(left_top, Point):
+            self._left_top = left_top
+        elif isinstance(left_top, tuple) and isListType(left_top):
+            self._left_top = Point(left_top[0], left_top[1])
+        else:
+            raise ValueError(f"Не верный аргумент {self._left_top}")
+        
     # Size
     @property
     def width(self) -> int:
-        self._width_height[0]
+        return self._width_height[0]
 
     @property
     def height(self) -> int:
@@ -265,7 +272,22 @@ class PfObject(CoreObject):
     @width.setter
     def width(self, num: int) -> None:
         self._width_height.pixel = (num, self._width_height[1])
+        self.rect.width = num
 
     @height.setter
     def height(self, num: int) -> None:
         self._width_height.pixel = (self._width_height[0], num)
+        self.rect.height = num
+
+    @property
+    def width_height(self) -> Size:
+        return self._width_height
+
+    @width_height.setter
+    def width_height(self, width_height: Size | tuple[int, int]) -> None:
+        if isinstance(width_height, Point):
+            self._width_height = width_height
+        elif isinstance(width_height, tuple) and isListType(width_height):
+            self._width_height = Point(width_height[0], width_height[1])
+        else:
+            raise ValueError(f"Не верный аргумент {self._width_height}")

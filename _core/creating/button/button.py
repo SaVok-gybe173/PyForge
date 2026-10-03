@@ -10,12 +10,9 @@ except ModuleNotFoundError:
         return wr
 
 from copy import copy
-
-try:
-    from .animation import FrameAnimationButton
-except ImportError:
-    from animation import FrameAnimationButton
-from PyForge.easel import Point, PfObject
+from typing import Callable
+from .animation import FrameAnimationButton
+from ....easel import Point, PfObject
 
 class ButtonClick:
     LCM = 3
@@ -31,41 +28,45 @@ class _Button(PfObject):
     cursor_hand = pg.SYSTEM_CURSOR_HAND
     cursor_arrow = pg.SYSTEM_CURSOR_ARROW
 
-    def __init__(self, left_top: Point | tuple[int, int], image: pg.Surface, *, is_mask: bool = False, is_clicking: bool = True):
+    def __init__(self, left_top: Point | tuple[int, int], image: pg.Surface, *, is_mask: bool = False):
         '''
-        инцилизация!
+        Кнопка может работать в ручном режиме и также в автоматическом.
         
         Аргументы:
             left_top: list[int, int] - кординаты
             image: pg.Surface - изображение (размеры)
             
             is_mask: bool - использовать маску для точной колизии
-            is_clicking: bool - показывать облость нажатия
         '''
-        super().__init__(left_top, image.get_size())
+        super().__init__(left_top, image)
         self.setMask(is_mask)
         self.collor_button = None
         self.image = image
-        self.is_clicking = is_clicking
-        self._is_clicking = False
+        self._is_mousemotion = False
+        self._mousebuttondown = lambda _: None
 
-    def event(self, event):
-        if self.is_clicking and event.type == pg.MOUSEMOTION:
-            if self.image.get_rect(left_top=self._left_top).collidepoint(event.pos):
-                self._is_clicking = True
-                pg.mouse.set_cursor(self.cursor_hand)
-                self.clicking()
-            else:
-                if self._is_clicking:
-                    self.stop()
+    def mousemotion(self, pos, rel, buttons, touch):
+        if self.rect.collidepoint(pos):
+            self._is_mousemotion = True
+            pg.mouse.set_cursor(self.cursor_hand)
+        else:
+            if self._is_mousemotion:
+                self.stop()
+
+    def mousebuttondown(self, pos, button, touch):
+        if self.rect.collidepoint(pos):
+            self._mousebuttondown(button)
 
     def stop(self):
-        self._is_clicking = False
+        """
+        Сменяет тип мыши на пасивный.
+        """
+        self._is_mousemotion = False
         pg.mouse.set_cursor(self.cursor_arrow)
 
     def _click(self,event: pg.event.Event, i: int) -> bool:
         if event.type == pg.MOUSEBUTTONDOWN:
-            if event.button == i and self.image.get_rect(left_top=self._left_top).collidepoint(event.pos):
+            if event.button == i and self.rect.collidepoint(event.pos):
                 return True
         return False
     
@@ -85,12 +86,21 @@ class _Button(PfObject):
         return self.image.get_rect(left_top=self._left_top).collidepoint(pg.mouse.get_pos())
     
     def setMask(self, is_mask):
+        """
+        Устанавливает маску.
+        """
         self._is_mask = is_mask
 
-    def clicking(self):
-        pass
+
     def collidepoint(self, pos):
         return self.image.get_rect(left_top=self._left_top).collidepoint(pos)
+
+    def setMousebuttondown(self, fun: Callable[[int], None]) -> Callable[[int], None]:
+        """
+        Функция которая принмает другую функцию что бы вызвать ее во премя нажатия. Эта цункция принимает int флаг в ButtonClick.
+        """
+        self._mousebuttondown = fun
+        return fun
 
 class _AnimationButton(_Button):
     '''

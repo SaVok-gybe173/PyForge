@@ -222,10 +222,15 @@ class PfObject(CoreObject):
     rect: pg.Rect   | None
     img: pg.Surface | None
 
-    def __init__(self, left_top: Point | tuple[int, int], width_height: Size | tuple[int, int], *args: CoreObject, **kvargs):
-        self.rect = pg.Rect(self._left_top.pixel, self._width_height.pixel)
+    def __init__(self, left_top: Point | tuple[int, int], width_height: Size | tuple[int, int] | pg.Surface, *args: CoreObject, **kvargs):
+        if isinstance(width_height, pg.Surface):
+            self.img = width_height
+            width_height = self.img.get_size()
+        
+        self.rect = pg.Rect()
         self.left_top = left_top
         self.width_height = width_height
+        
 
     # сеттеры и геттеры
     # Point
@@ -259,6 +264,7 @@ class PfObject(CoreObject):
             self._left_top = Point(left_top[0], left_top[1])
         else:
             raise ValueError(f"Не верный аргумент {self._left_top}")
+        self.rect.left, self.top = self._left_top.pixel
         
     # Size
     @property
@@ -291,3 +297,5 @@ class PfObject(CoreObject):
             self._width_height = Point(width_height[0], width_height[1])
         else:
             raise ValueError(f"Не верный аргумент {self._width_height}")
+
+        self.rect.width, self.rect.height = self._width_height.pixel

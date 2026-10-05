@@ -1,18 +1,9 @@
-import pygame as pg
-try:
-    from typing_extensions import (
-        deprecated,  # added in 3.13
-    )
-except ModuleNotFoundError:
-    def deprecated(message, *, category = None, stacklevel: int = 1):
-        def wr(f):
-            return f
-        return wr
-
 from copy import copy
 from typing import Callable
 from .animation import FrameAnimationButton
-from ....easel import Point, PfObject
+from ....easel import Point, PfObjectIMG
+
+import pygame as pg
 
 class ButtonClick:
     LCM = 3
@@ -22,13 +13,13 @@ class ButtonClick:
     FORWARD = 4
     BACK = 5
     
-class _Button(PfObject):
+class _Button(PfObjectIMG):
     _event = None
     
     cursor_hand = pg.SYSTEM_CURSOR_HAND
     cursor_arrow = pg.SYSTEM_CURSOR_ARROW
 
-    def __init__(self, left_top: Point | tuple[int, int], image: pg.Surface, *, is_mask: bool = False):
+    def __init__(self, left_top: Point | tuple[int, int], image: pg.Surface, *, is_mask: bool = False, mousebuttondown: Callable[[int], None] | None = None):
         '''
         Кнопка может работать в ручном режиме и также в автоматическом.
         
@@ -41,9 +32,8 @@ class _Button(PfObject):
         super().__init__(left_top, image)
         self.setMask(is_mask)
         self.collor_button = None
-        self.image = image
         self._is_mousemotion = False
-        self._mousebuttondown = lambda _: None
+        self._mousebuttondown = (lambda _: None) if mousebuttondown is None else mousebuttondown
 
     def mousemotion(self, pos, rel, buttons, touch):
         if self.rect.collidepoint(pos):
@@ -64,26 +54,23 @@ class _Button(PfObject):
         self._is_mousemotion = False
         pg.mouse.set_cursor(self.cursor_arrow)
 
-    def _click(self,event: pg.event.Event, i: int) -> bool:
+    def click(self,event: pg.event.Event, i: int) -> bool:
         if event.type == pg.MOUSEBUTTONDOWN:
             if event.button == i and self.rect.collidepoint(event.pos):
                 return True
         return False
     
 
-    def lcm(self, event: pg.event.Event) -> bool: return self._click(event, ButtonClick.PCM)
-    def pcm(self, event: pg.event.Event) -> bool: return self._click(event, ButtonClick.LCM)
-    def scm(self, event: pg.event.Event) -> bool: return self._click(event, ButtonClick.SCR)
-    def forward(self, event: pg.event.Event) -> bool: return self._click(event, ButtonClick.FORWARD)
-    def back(self, event: pg.event.Event) -> bool: return self._click(event, ButtonClick.BACK)
+    # Функции для отслежтвания разных нажатий
+    def lcm(self, event: pg.event.Event) -> bool: return self.click(event, ButtonClick.PCM)
+    def pcm(self, event: pg.event.Event) -> bool: return self.click(event, ButtonClick.LCM)
+    def scm(self, event: pg.event.Event) -> bool: return self.click(event, ButtonClick.SCR)
+    def forward(self, event: pg.event.Event) -> bool: return self.click(event, ButtonClick.FORWARD)
+    def back(self, event: pg.event.Event) -> bool: return self.click(event, ButtonClick.BACK)
     
     def copy(self):
         cop = copy(self)
         return cop
-
-    @deprecated("Функция перенагружает систему, лучше использовать collidepoint")
-    def retention(self):
-        return self.image.get_rect(left_top=self._left_top).collidepoint(pg.mouse.get_pos())
     
     def setMask(self, is_mask):
         """
@@ -91,20 +78,20 @@ class _Button(PfObject):
         """
         self._is_mask = is_mask
 
-
     def collidepoint(self, pos):
-        return self.image.get_rect(left_top=self._left_top).collidepoint(pos)
+        return self.rect.collidepoint(pos)
 
     def setMousebuttondown(self, fun: Callable[[int], None]) -> Callable[[int], None]:
         """
-        Функция которая принмает другую функцию что бы вызвать ее во премя нажатия. Эта цункция принимает int флаг в ButtonClick.
+        Функция которая принмает другую функцию что бы вызвать ее во премя нажатия. 
+        Эта цункция принимает int флаг в ButtonClick.
         """
         self._mousebuttondown = fun
         return fun
 
 class _AnimationButton(_Button):
-    '''
-        инцилизация!
+    def __init__(self, left_top: list[int, int] | Point, image: pg.Surface,  animation: FrameAnimationButton = FrameAnimationButton(), *, is_mask: bool = False, mousebuttondown: Callable[[int], None] | None = None):
+        """
         
         Аргументы:
             
@@ -113,19 +100,24 @@ class _AnimationButton(_Button):
             animation: FrameAnimationButton - класс анимации
             
             is_mask: bool - использовать маску для точной колизии
-            alpha: int - прозрачность для маски
-            is_clicking: bool - показывать облость нажатия
-        '''
-    def __init__(self, left_top: list[int, int], image: pg.Surface,  animation: FrameAnimationButton = FrameAnimationButton(), *, is_mask: bool = False, alpha: int = 0, is_clicking: bool = True):
-        super().__init__(left_top,image, is_mask=is_mask, alpha=alpha, is_clicking=is_clicking)
+ 
+        """
+        super().__init__(left_top, image, is_mask=is_mask, mousebuttondown=mousebuttondown)
         self.animation = animation
         self.animation(self)
     
     def event(self, event):
         self.animation.event(event)
         return super().event(event)
-    def update(self):
-        self.animation.update()
+    def update(self, dt: float):
+        self.animation.update(dt)
     def efects(self):
         self.animation.efects()
 
+    def mousemotion(self, pos, rel, buttons, touch):
+        self.animation.mousemotion(pos, rel, buttons, touch)
+        return super().mousemotion(pos, rel, buttons, touch)
+    
+    def mousebuttondown(self, pos, button, touch):
+        self.animation.mousebuttondown(pos, button, touch)
+        return super().mousebuttondown(pos, button, touch)

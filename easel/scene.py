@@ -69,9 +69,9 @@ class Scene(CoreObject):
     def mousebuttonup(self, pos, button, touch):
         for object in self.objects:
             object.mousebuttonup(pos, button, touch)
-    def mousewheel(self, x, y, flipped, which, precise_x, precise_y):
+    def mousewheel(self, x, y, flipped, precise_x, precise_y):
         for object in self.objects:
-            object.mousewheel(x, y, flipped, which, precise_x, precise_y)
+            object.mousewheel(x, y, flipped, precise_x, precise_y)
 
 # методы эвентов по их типу
 EVENTS_METOD = {
@@ -88,6 +88,6 @@ EVENTS_METOD = {
     pg.event.event_name(pg.MOUSEMOTION): (lambda obj, event: obj.mousemotion(event.pos, event.rel, event.buttons, event.touch)),
     pg.event.event_name(pg.MOUSEBUTTONDOWN): (lambda obj, event: obj.mousebuttondown(event.pos, event.button, event.touch)),
     pg.event.event_name(pg.MOUSEBUTTONUP): (lambda obj, event: obj.mousebuttonup(event.pos, event.button, event.touch)),
-    pg.event.event_name(pg.MOUSEWHEEL): (lambda obj, event: obj.mousewheel(event.x, event.y, event.flipped, event.which, event.precise_x, event.precise_y)),
+    pg.event.event_name(pg.MOUSEWHEEL): (lambda obj, event: obj.mousewheel(event.x, event.y, event.flipped, event.precise_x, event.precise_y)),
 
 }

@@ -6,7 +6,7 @@ class FrameAnimationButton(PfObject):
     def __init__(self):
         # инцилизация
         pass
-    def update(self):
+    def update(self, dt):
         # обновление
         pass
     def event(self, event):

@@ -3,9 +3,9 @@ import pygame as pg
 
 class Button(_Button):
     def draw(self, screen: pg.Surface):
-        screen.blit(self.image, (self.left, self.top))
+        screen.blit(self.img, (self.left, self.top))
 
 class AnimationButton(_AnimationButton):
     def draw(self, screen: pg.Surface):
-        screen.blit(self.image, (self.left, self.top))
+        screen.blit(self.img, (self.left, self.top))
         self.animation.draw(screen)

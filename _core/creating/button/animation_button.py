@@ -29,8 +29,8 @@ class Increase(FrameAnimationButton):
             self.width -= self.i*2
             self.height -= self.i*2
             self.i = 0
-    def update(self):
-        if self.button.retention():
+    def update(self, dt):
+        if self.button.collidepoint(pg.mouse.get_pos()):
             if self.seze > self.i:
                 self.x = self.x - (self.speed + self.conif)
                 self.y = self.y - (self.speed + self.conif)
@@ -48,22 +48,20 @@ class Increase(FrameAnimationButton):
             self.width = self.width - (self.speed + self.conif)*2
             
             self.i -= self.speed + self.conif
-        self.button.y = self.y
-        self.button.x = self.x
+        self.button.left = self.y
+        self.button.top = self.x
         
         self.button.height = self.height
         self.button.width = self.width
     def __call__(self, button):
         super().__call__(button)
+        self.x = button.left
+        self.y = button.top
+        self.width_height = (button.width, button.height)
         
-        self.x = button.x
-        self.y = button.y
-        self.width = button.width
-        self.height = button.height
 
 class Impuls(FrameAnimationButton):
-    def __init__(self, speed: int | float = 0.5, fps:int = 60, shadow: int = 50, clic_shadow: int = 30, time_click: int | float = 0.1):
-        self.conif = 1/fps
+    def __init__(self, speed: int | float = 0.5, shadow: int = 50, clic_shadow: int = 30, time_click: int | float = 0.1):
         self.speed = speed
         self.i = 0
         self.clic_shadow = clic_shadow
@@ -81,9 +79,9 @@ class Impuls(FrameAnimationButton):
         super().__call__(button)
         self.shadow_surface = pg.Surface((button.width, button.height), pg.SRCALPHA)
         
-    def update(self):
+    def update(self, dt):
         
-        if self.button.retention():
+        if self.button.collidepoint(pg.mouse.get_pos()):
             if self.susto != 0:
                 self.susto = 0
                 self.shadow_surface.fill(self.shadow)
@@ -95,7 +93,7 @@ class Impuls(FrameAnimationButton):
                 self._round_image()
         
         if self.activites < self.time_click and self.a_activites:
-            self.activites += self.conif
+            self.activites += dt
         elif self.a_activites:
             self.a_activites = False
             self.susto = 0
@@ -103,7 +101,7 @@ class Impuls(FrameAnimationButton):
             self._round_image()
             
     def draw(self, screen: pg.Surface):
-        screen.blit(self.shadow_surface, (self.button.x, self.button.y))
+        screen.blit(self.shadow_surface, (self.button.left, self.button.top))
         #pg.draw.circle(self.shadow_surface, (0,0,0), (50, 25), 20)
     def _round_image(self):
         self.shadow_surface = round_corners_alternative(self.shadow_surface, self.radius)
@@ -113,22 +111,27 @@ class Impuls(FrameAnimationButton):
         self.shadow_surface.fill((self.shadow[0], self.shadow[2], self.shadow[2], self.shadow[3]+self.clic_shadow))
         self._round_image()
     
-class CollorsClick(FrameAnimationButton):
-    def __init__(self, static_collor, retention_collor, click_collor, time_click: int | float = 0.1, fps: int = 60):
-        self.static_collor = static_collor
-        self.retention_collor = retention_collor
-        self.click_collor = click_collor
-        
-        self._conif = 1/fps
+class ImageClick(FrameAnimationButton):
+    def __init__(self, retention_image: pg.Surface, click_image: pg.Surface, time_click: int | float = 0.15):
+        self.retention_image = retention_image
+        self.click_image = click_image
+        self.activites = time_click
         self.time_click = time_click
-    def update(self):
+    def update(self, dt):
         if self.activites < self.time_click:
-            self.activites += self._conif
-            self.button.collor_button = self.click_collor
-        elif self.button.retention():
-            self.button.collor_button = self.retention_collor
+            self.activites += dt
+            self.button.img = self.click_image
+        elif self.button.collidepoint(pg.mouse.get_pos()):
+            self.button.img = self.retention_image
         else:
-            self.button.collor_button = self.static_collor
+            self.button.img = self.static_image
+    def __call__(self, button):
+        self.static_image = button.img
+        return super().__call__(button)
     def efects(self):
         self.activites = 0
+
+    def mousebuttondown(self, pos, button, touch):
+        if self.button.collidepoint(pos):
+            self.activites = 0
             

@@ -74,7 +74,7 @@ from .app import App
 from .markup import (isListType, _General, Size, Point, 
                     cordinate_transform, relationship_transform,
                     )
-from .object import CoreObject, PfObject
+from .object import CoreObject, PfObject, PfObjectIMG
 
 __all__ = [
     "Scene", "EVENTS_METOD",

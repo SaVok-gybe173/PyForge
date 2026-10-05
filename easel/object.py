@@ -203,7 +203,7 @@ class CoreObject(metaclass=ObjectMeta):
             touch (bool) было ли касание на тачскрине.
         """
 
-    def mousewheel(self, x: int, y: int, flipped: bool, which: int, precise_x: float, precise_y: float) -> None:
+    def mousewheel(self, x: int, y: int, flipped: bool, precise_x: float, precise_y: float) -> None:
         """
         MOUSEWHEEL
 
@@ -213,20 +213,19 @@ class CoreObject(metaclass=ObjectMeta):
             x (int): горизонтальная прокрутка (положительное значение – вправо).
             y (int): вертикальная прокрутка (положительное – вверх).
             flipped (bool): True, если значения осей были «перевёрнуты» (зависит от настроек ОС).
-            which (int): идентификатор устройства (обычно 0).
             precise_x (float) точное значение горизонтальной прокрутки (дробное).
             precise_y (float) точное значение вертикальной прокрутки.
         """
 
 class PfObject(CoreObject):
-    rect: pg.Rect   | None
-    img: pg.Surface | None
+    rect: pg.Rect | None = None
 
-    def __init__(self, left_top: Point | tuple[int, int], width_height: Size | tuple[int, int] | pg.Surface, *args: CoreObject, **kvargs):
-        if isinstance(width_height, pg.Surface):
-            self.img = width_height
-            width_height = self.img.get_size()
-        
+    def __init__(self, left_top: Point | tuple[int, int], width_height: Size | tuple[int, int], *args: CoreObject, **kvargs):
+        """
+        Класс создан для основы остальных классов.
+
+        Принимает размеры и кординаты.
+        """
         self.rect = pg.Rect()
         self.left_top = left_top
         self.width_height = width_height
@@ -245,12 +244,14 @@ class PfObject(CoreObject):
     @left.setter
     def left(self, num: int) -> None:
         self._left_top.pixel = (num, self._left_top.pixel[1])
-        self.rect.left = num
+        if not self.rect is None:
+            self.rect.left = num
 
     @top.setter
     def top(self, num: int) -> None:
         self._left_top.pixel = (self._left_top.pixel[0], num)
-        self.rect.top = num
+        if not self.rect is None:
+            self.rect.top = num
 
     @property
     def left_top(self) -> Point:
@@ -264,26 +265,30 @@ class PfObject(CoreObject):
             self._left_top = Point(left_top[0], left_top[1])
         else:
             raise ValueError(f"Не верный аргумент {self._left_top}")
-        self.rect.left, self.top = self._left_top.pixel
+
+        if not self.rect is None:
+            self.rect.left, self.top = self._left_top.pixel
         
     # Size
     @property
     def width(self) -> int:
-        return self._width_height[0]
+        return self._width_height.pixel[0]
 
     @property
     def height(self) -> int:
-        return self._width_height[1]
+        return self._width_height.pixel[1]
 
     @width.setter
     def width(self, num: int) -> None:
-        self._width_height.pixel = (num, self._width_height[1])
-        self.rect.width = num
+        self._width_height.pixel = (num, self._width_height.pixel[1])
+        if not self.rect is None:
+            self.rect.width = num
 
     @height.setter
     def height(self, num: int) -> None:
-        self._width_height.pixel = (self._width_height[0], num)
-        self.rect.height = num
+        self._width_height.pixel = (self._width_height.pixel[0], num)
+        if not self.rect is None:
+            self.rect.height = num
 
     @property
     def width_height(self) -> Size:
@@ -298,4 +303,18 @@ class PfObject(CoreObject):
         else:
             raise ValueError(f"Не верный аргумент {self._width_height}")
 
-        self.rect.width, self.rect.height = self._width_height.pixel
+        if not self.rect is None:
+            self.rect.width, self.rect.height = self._width_height.pixel
+
+
+class PfObjectIMG(PfObject):
+    img: pg.Surface # изображение
+
+    def __init__(self, left_top: Point | tuple[int, int], img: pg.Surface, *args, **kvargs):
+        """
+        Прокаченый PfObject, но поддерживает хранение изображения.
+        """
+        if not isinstance(img, pg.Surface):
+            raise ValueError(f"Ожидаеться pygame.Surface, пришло {type(img)}")
+        self.img = img
+        super().__init__(left_top, img.get_size(), *args, **kvargs)

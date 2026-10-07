@@ -58,7 +58,9 @@ class Increase(FrameAnimationButton):
         self.x = button.left
         self.y = button.top
         self.width_height = (button.width, button.height)
-        
+
+    def mousebuttondown(self, pos, button, touch):
+        self.efects()
 
 class Impuls(FrameAnimationButton):
     def __init__(self, speed: int | float = 0.5, shadow: int = 50, clic_shadow: int = 30, time_click: int | float = 0.1):

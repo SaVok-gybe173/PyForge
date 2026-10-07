@@ -240,7 +240,7 @@ class PfObject(CoreObject):
     @property
     def top(self) -> int:
         return self._left_top.pixel[1]
-
+    
     @left.setter
     def left(self, num: int) -> None:
         self._left_top.pixel = (num, self._left_top.pixel[1])

@@ -65,7 +65,6 @@ class FontDirectory:
     checkSum: int   # 4 байта, uint32
     offset: int     # 4 байта, uint32
     length: int     # 4 байта, uint32
-    tabl = None 
 
 
 @dataclass
@@ -109,7 +108,118 @@ class head:
     indexToLocFormat: int   # 0 или 1
     glyphDataFormat: int    # 0
 
+    @staticmethod
+    def _from(datahead: bytes) -> "head":
+        """
+        head — заголовок шрифта
+        Зачем нужна: хранит глобальные параметры шрифта. Без неё не понять, в каких единицах заданы координаты и как читать другие таблицы.
+
+        Что внутри:
+            unitsPerEm — система координат (1024 или 2048 обычно).
+            indexToLocFormat — короткий или длинный формат loca.
+            magicNumber — маркер, что это действительно head (0x5F0F3CF5).
+            Даты создания/изменения.
+            Bounding box всего шрифта.
+            Флаги стиля (bold, italic).
+
+        Кто использует: 
+            парсер берёт unitsPerEm для масштабирования координат и indexToLocFormat для чтения loca
+        """
+        return head(
+                int.from_bytes(datahead[0x00 : 0x04]),
+                int.from_bytes(datahead[0x04 : 0x08]),
+                int.from_bytes(datahead[0x08 : 0x0C]),
+                int.from_bytes(datahead[0x0C : 0x10]),
+                int.from_bytes(datahead[0x10 : 0x12]),
+                int.from_bytes(datahead[0x12 : 0x14]),
+                int.from_bytes(datahead[0x14 : 0x1C], signed=True),
+                int.from_bytes(datahead[0x1C : 0x24], signed=True),
+                int.from_bytes(datahead[0x24 : 0x26], signed=True),
+                int.from_bytes(datahead[0x26 : 0x28], signed=True),
+                int.from_bytes(datahead[0x28 : 0x2A], signed=True),
+                int.from_bytes(datahead[0x2A : 0x2C], signed=True),
+                int.from_bytes(datahead[0x2C : 0x2E]),
+                int.from_bytes(datahead[0x2E : 0x30]),
+                int.from_bytes(datahead[0x30 : 0x32], signed=True),
+                int.from_bytes(datahead[0x32 : 0x34], signed=True),
+                int.from_bytes(datahead[0x34 : 0x36], signed=True),
+            )
+
+class maxp:
+    """
+    Смещение    Размер	Тип	    Имя
+    0x00	    4	    Fixed	version
+    0x04	    2	    uint16	numGlyphs
+    0x06	    2	    uint16	maxPoints
+    0x08	    2	    uint16	maxContours
+    0x0A	    2	    uint16	maxCompositePoints
+    0x0C	    2	    uint16	maxCompositeContours
+    0x0E	    2	    uint16	maxZones
+    0x10	    2	    uint16	maxTwilightPoints
+    0x12	    2	    uint16	maxStorage
+    0x14	    2	    uint16	maxFunctionDefs
+    0x16	    2	    uint16	maxInstructionDefs
+    0x18	    2	    uint16	maxStackElements
+    0x1A	    2	    uint16	maxSizeOfInstructions
+    0x1C	    2	    uint16	maxComponentElements
+    0x1E	    2	    uint16	maxComponentDepth
+
+    """
+
+    version: int
+    numGlyphs: int
+    maxPoints: int
+    maxContours: int
+    maxCompositePoints: int
+    maxCompositeContours: int
+    maxZones: int
+    maxTwilightPoints: int
+    maxStorage: int
+    maxFunctionDefs: int
+    maxInstructionDefs: int
+    maxStackElements: int
+    maxSizeOfInstructions: int
+    maxComponentElements: int
+    maxComponentDepth: int
+
+    @staticmethod
+    def _from(datamaxp: bytes) -> "maxp":
+        """
+        maxp — максимумы
+        
+        Зачем нужна: 
+            содержит numGlyphs — сколько всего глифов в шрифте. Без этого не понять, какой длины массивы в loca и hmtx.
+
+        Что внутри:
+            numGlyphs — ключевое поле.
+            Различные максимумы (maxPoints, maxContours, maxStackElements) — нужны для хинтинга.
+
+        Кто использует: 
+            парсер — чтобы знать размер loca (numGlyphs + 1 записей). Рендер — чтобы понимать границы допустимых glyph_id.
+        """
+        return maxp(
+            int.from_bytes(datamaxp[0x00 : 0x04]),
+            int.from_bytes(datamaxp[0x04 : 0x06]),
+            int.from_bytes(datamaxp[0x06 : 0x08]),
+            int.from_bytes(datamaxp[0x08 : 0x0A]),
+            int.from_bytes(datamaxp[0x0A : 0x0C]),
+            int.from_bytes(datamaxp[0x0C : 0x0E]),
+            int.from_bytes(datamaxp[0x0E : 0x10]),
+            int.from_bytes(datamaxp[0x10 : 0x12]),
+            int.from_bytes(datamaxp[0x12 : 0x14]),
+            int.from_bytes(datamaxp[0x14 : 0x16]),
+            int.from_bytes(datamaxp[0x16 : 0x18]),
+            int.from_bytes(datamaxp[0x18 : 0x1A]),
+            int.from_bytes(datamaxp[0x1A : 0x1C]),
+            int.from_bytes(datamaxp[0x1C : 0x1E]),
+            int.from_bytes(datamaxp[0x1E : 0x20]),
+        )
+
 class Font(CoreObject):
+    # таблица
+    _head: head | None = None
+    _maxp: maxp | None = None
+
     file: str | None = None
 
     sfntVersion: int = 0x00010000   # 0x00010000 — TrueType, 'OTTO' — CFF/OpenType
@@ -142,27 +252,11 @@ class Font(CoreObject):
 
         if "head" in self.tableRecord:
             heads: FontDirectory = self.tableRecord["head"]
-            offset = round_up(heads.offset)
-            datahead = data[offset : offset+heads.length]
-            heads.tabl = head(
-                int.from_bytes(datahead[0x00 : 0x04]),
-                int.from_bytes(datahead[0x04 : 0x08]),
-                int.from_bytes(datahead[0x08 : 0x0C]),
-                int.from_bytes(datahead[0x0C : 0x10]),
-                int.from_bytes(datahead[0x10 : 0x12]),
-                int.from_bytes(datahead[0x12 : 0x14]),
-                int.from_bytes(datahead[0x14 : 0x1C], signed=True),
-                int.from_bytes(datahead[0x1C : 0x24], signed=True),
-                int.from_bytes(datahead[0x24 : 0x26], signed=True),
-                int.from_bytes(datahead[0x26 : 0x28], signed=True),
-                int.from_bytes(datahead[0x28 : 0x2A], signed=True),
-                int.from_bytes(datahead[0x2A : 0x2C], signed=True),
-                int.from_bytes(datahead[0x2C : 0x2E]),
-                int.from_bytes(datahead[0x2E : 0x30]),
-                int.from_bytes(datahead[0x30 : 0x32], signed=True),
-                int.from_bytes(datahead[0x32 : 0x34], signed=True),
-                int.from_bytes(datahead[0x34 : 0x36], signed=True),
-            )
+            self._head = head._from(data[heads.offset : heads.offset+heads.length])
+
+        if "maxp" in self.tableRecord:
+            maxps: FontDirectory = self.tableRecord["head"]
+            self._maxp = head._from(data[maxps.offset : maxps.offset+maxps.length])
         
         self.file = file
 

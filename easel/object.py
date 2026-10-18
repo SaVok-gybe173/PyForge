@@ -1,4 +1,5 @@
 import pygame as pg
+import os
 from copy import deepcopy
 from .logger import ObjectMeta
 from .markup import Size, Point, isListType
@@ -310,11 +311,42 @@ class PfObject(CoreObject):
 class PfObjectIMG(PfObject):
     img: pg.Surface # изображение
 
-    def __init__(self, left_top: Point | tuple[int, int], img: pg.Surface, *args, **kvargs):
+    def __init__(self, left_top: Point | tuple[int, int], img: pg.Surface | tuple[bytes, Size | tuple[int, int]] | str, *args, **kvargs):
         """
         Прокаченый PfObject, но поддерживает хранение изображения.
         """
-        if not isinstance(img, pg.Surface):
+        if isinstance(img, str):
+            img = pg.image.load(img).convert_alpha()
+            
+        elif isinstance(img, bytes):
+            img = pg.image.frombytes(img[0], img[1] if isinstance(img[1], tuple | list) else img[1].pixel)
+        elif not isinstance(img, pg.Surface):
             raise ValueError(f"Ожидаеться pygame.Surface, пришло {type(img)}")
+        
         self.img = img
         super().__init__(left_top, img.get_size(), *args, **kvargs)
+
+    def to_bytes(self) -> bytes:
+        return self.width.to_bytes(4) + self.height.to_bytes(4) + pg.image.tobytes(self.img)
+    
+    @staticmethod
+    def from_bytes(byte: bytes, point: Point | tuple[int, int] = (0, 0)) -> "PfObjectIMG":
+        return PfObjectIMG(point, (
+                                    byte[0x08:],
+                                   (int.from_bytes(byte[0x00:0x04]), int.from_bytes(byte[0x04:0x08]))
+                                   ))
+
+
+    def convert_alpha(self) -> pg.Surface:
+        """
+        Конвертирует основной класс и возвращает ссылку на pygame.Surface
+        """
+        self.img = self.img.convert_alpha()
+        return self.img
+
+    def convert(self) -> pg.Surface:
+        """
+        Конвертирует основной класс и возвращает ссылку на pygame.Surface
+        """
+        self.img = self.img.convert()
+        return self.img

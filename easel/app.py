@@ -1,4 +1,4 @@
-from .window import Window, T, extract_tb, Scene, KwargsSetMode
+from .window import Window, T, extract_tb, Scene
 from ..mods.mod import FrameMod
 from .logger import printError
 
@@ -15,13 +15,15 @@ class App(Window):
     
     
     def __init__(self,
+                caption: str | bytes,
+                point: tuple[int, int] | None = None,
                 size: tuple[int, int] = (400, 300), 
                 color: tuple[int, int, int] = (255, 255, 255), 
                 scene: list[T] | None = None, 
                 *, 
-                fps: int = 60, 
+                fps: int | float = 60, 
                 mods_dir: str | None = None, 
-                kwargs_set_mode: KwargsSetMode | None = None
+                flags: int = 0
                 ):
         """
         Инцизация главного класса управление окном
@@ -36,7 +38,7 @@ class App(Window):
         """
         self.mods_dir = mods_dir or os.path.join(os.path.dirname(os.path.abspath(__file__)), 'mods')
         self._mod = not mods_dir is None
-        super().__init__( size, color, scene, fps=fps, kwargs_set_mode=kwargs_set_mode)
+        super().__init__(caption, point, size, color, scene, fps=fps, flags=flags)
 
     def init(self, win: pg.Surface) -> None:
         if self._mod:

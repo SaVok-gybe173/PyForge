@@ -7,21 +7,26 @@ from traceback import extract_tb
 from .scene import Scene, EVENTS_METOD
 from ..gpu.locals import IS_IMPORT_GL, InitGl
 from .logger import printError, printInfo
+from .time import Clock
+from .event import EVENT_NAMES
+from sdl2.surface import SDL_Surface as Surface
+from sdl2.video import SDL_CreateWindow, SDL_GL_SwapWindow,  SDL_Window, SDL_DestroyWindow, SDL_GetWindowSurface, SDL_UpdateWindowSurface,  SDL_SetWindowTitle, SDL_GetWindowTitle
+from sdl2.events import SDL_QUIT, SDL_PollEvent, SDL_Event as Event, SDL_WINDOWEVENT
+from sdl2.error import SDL_GetError
+from sdl2 import SDL_MapRGB, ext, SDL_FillRect, SDL_WINDOWEVENT_RESIZED
 
-import pygame as pg
 import sys
 
-if IS_IMPORT_GL:
-    from pygame.locals import *
-    from OpenGL.GL import *
-    from OpenGL.GLU import *
 
-
-class KwargsSetMode(TypedDict): # класс для параметров
-    flags: NotRequired[int]     # Стадарт 0
-    depth: NotRequired[int]     # Стадарт 0
-    display: NotRequired[int]   # Стадарт 0
-    vsync: NotRequired[int]     # Стадарт 0
+"""
+SDL_WINDOW_FULLSCREEN	Открывает окно на весь экран, меняя разрешение рабочего стола
+SDL_WINDOW_FULLSCREEN_DESKTOP	Открывает окно на весь экран с разрешением текущего рабочего стола
+SDL_WINDOW_OPENGL	Создаёт окно с поддержкой контекста OpenGL
+SDL_WINDOW_HIDDEN	Изначально скрывает окно
+SDL_WINDOW_RESIZABLE	Разрешает пользователю изменять размер окна
+SDL_WINDOW_MAXIMIZED	Разворачивает окно в максимизированное состояние
+SDL_WINDOW_SHOWN	Сразу отображает окно
+"""
 
 T = TypeVar('Scene')
 class Window:
@@ -32,18 +37,13 @@ class Window:
         for sc in scene:
             self._scene.append(sc(self.win))
 
-    def setIcon(self, icon: pg.Surface | str, permission: tuple[int, int] = (32, 32)) -> None:
-        if type(icon) is str:
-            icon = pg.image.load(icon)
-        pg.display.set_icon(pg.transform.smoothscale(icon, permission).convert_alpha())
+    #def setIcon(self, icon: Surface | str, permission: tuple[int, int] = (32, 32)) -> None:
+    #    if type(icon) is str:
+    #        icon = sdl2.surface.load(icon)
+    #    pg.display.set_icon(pg.transform.smoothscale(icon, permission).convert_alpha())
 
-    def setCaption(self, caption: str | object) -> None:
-        if not type(caption) is str:
-            caption = str(caption)
-        pg.display.set_caption(caption)
     
-    def init(self, win: pg.Surface) -> None:
-        pass
+
 
     def initOpenGL(self) -> None:
         """
@@ -52,21 +52,24 @@ class Window:
         self.opengl = InitGl()
 
         if self.opengl and IS_IMPORT_GL:
-            glClearColor(self.color[0]/255, self.color[1]/255, self.color[2]/255, 1)
+            #glClearColor(self.color[0]/255, self.color[1]/255, self.color[2]/255, 1)
             self.opengl.initialization_fun()
 
-    def __init__(self, 
+    def __init__(self,
+                caption: str | bytes = b'My Engine',
+                point: tuple[int, int] | None = None,
                 size: tuple[int, int] = (400, 300), 
                 color: tuple[int, int, int] = (255, 255, 255), 
                 scene: list[T] | None = None, 
                 *, 
                 fps: int | float = 60, 
-                kwargs_set_mode: KwargsSetMode | None = None
+                flags: int = 0
                 ):
         """
         Инцизация главного класса управление окном
         
         Args:
+            title (bytes | str): Заголовок окна. В PySDL2 строки часто передаются как bytes, например b"My Engine".
             size (tuple[int, int]): размеры окна (width, height)
             color (tuple[int, int, int]): Цветовая политра RGB заднего фона
             scene (list[T] | None): список классов сценн наследованые от главного класса (Scene)
@@ -74,14 +77,12 @@ class Window:
             kwargs_set_mode (KwargsSetMode | None): парамерты для создание окна (pg.display.set_mode)
         """
         printInfo(f"Начало инцилизации класса {self}")
-        self.kwargs_set_mode = {} if kwargs_set_mode is None else kwargs_set_mode
-
-        if not "depth" in self.kwargs_set_mode:      self.kwargs_set_mode['depth'] = 0
-        if not "display" in self.kwargs_set_mode:    self.kwargs_set_mode['display'] = 0
-        if not "flags" in self.kwargs_set_mode:      self.kwargs_set_mode['flags'] = 0
-        if not "vsync" in self.kwargs_set_mode:      self.kwargs_set_mode['vsync'] = 0
-
+        
+        self.__flags = flags
         self.__size = size
+        self.__point = point
+        self.__caption = caption if isinstance(caption, bytes) else caption.encode("utf-8")
+
         self.color = color
         self.fps = fps
 
@@ -103,7 +104,7 @@ class Window:
             for frame in extract_tb(e.__traceback__):
                 printError(f"[{self.temporarily_scene[index].__name__}] [{frame.name}] {e}")
             raise e
-        
+
     def start_scenes(self) -> None:
         for _ in range(self.temporarily_scene.__len__()):
             self._scene.append(None)
@@ -119,61 +120,79 @@ class Window:
         del self.temporarily_scene
 
     def run_window(self):
-        pg.init()
-        self.win = pg.display.set_mode(self.__size, flags=self.kwargs_set_mode['flags'], depth=self.kwargs_set_mode['depth'], display=self.kwargs_set_mode['display'], vsync=self.kwargs_set_mode['vsync'])
+        self.win = SDL_CreateWindow(
+            self.__caption,
+            self.__point[0], self.__point[1],
+            self.__size[0], self.__size[1],
+            self.__flags,
+        )
+        if not self.win:
+            printError(SDL_GetError().decode())
 
-        self.clock_fps = pg.time.Clock()
-        self.clock_tps = pg.time.Clock()
-
-        # инцилизация OpenGL
+        # Инициализация подсистем
         self.initOpenGL()
-        # инцилизация сценн
         self.start_scenes()
-        # инцилизация остольного
-        self.init(self.win)
+
+        self.clock_fps = Clock()
 
         while self.running:
+            use_gl = self.opengl and IS_IMPORT_GL
+            dt = self.clock_fps.tick(self.fps) / 1000.0
 
-            if self.opengl and IS_IMPORT_GL:
+            if use_gl:
                 self.opengl.clear()
             else:
-                self.win.fill(self.color)
+                surface = SDL_GetWindowSurface(self.win)
+                # self.color должен быть кортежем (r,g,b) или sdl2.SDL_Color
+                r, g, b = self.color[:3]
+                pixel = SDL_MapRGB(surface.contents.format, r, g, b)
+                SDL_FillRect(surface, None, pixel)
 
             # обновеление активной сценный
-            self.update(self.clock_fps.tick(self.fps)/1000.0)
+            self.update(dt)
 
-            for event in pg.event.get():
-                if event.type == pg.QUIT:
+            for event in ext.get_events():
+                if event.type == SDL_QUIT:
                     self.close()
-                elif event.type == pg.VIDEORESIZE:
-                    # Обновляем поверхность отображения с новым размером
-                    if self.min_size[0] > event.w:
-                        event.w = self.min_size[0]
-                    if self.min_size[1] > event.h:
-                        event.h = self.min_size[1]
-                    self.win = pg.display.set_mode((event.w, event.h), flags= self.flags, *self.zi)
-                    self.size_update(self.__size, (event.w, event.h), (self.__size[0]/event.w, self.__size[1]/event.h))
-                    self.__size = (event.w, event.h)
+                elif event.type == SDL_WINDOWEVENT and \
+                 event.window.event == SDL_WINDOWEVENT_RESIZED:
+                    new_w = event.window.data1
+                    new_h = event.window.data2
+                    old_w, old_h = self.__size
+                    scale = (old_w / new_w, old_h / new_h)
+                    self.size_update(self.__size, (new_w, new_h), scale)
+                    self.__size = (new_w, new_h)
+
+                    if self.opengl and IS_IMPORT_GL:
+                        # Обновляем viewport OpenGL
+                        import OpenGL.GL as GL
+                        GL.glViewport(0, 0, new_w, new_h)
+                    
+                    self.eventManager(event)
+                    continue
                 else:
                     self.event(event)
-                self.eventManager(event)    # запуск методов эвента
+                #self.eventManager(event)    # запуск методов эвента
 
             self.draw(self.win)             # отрисовка активной сценны
-            pg.display.flip()               # обновление экрана
+            if use_gl:
+                SDL_GL_SwapWindow(self.win)
+            else:
+                SDL_UpdateWindowSurface(self.win)
                # ограничение фпс и тпс
-        pg.quit()
+        SDL_DestroyWindow(self.win)
         sys.exit()
 
-    def eventManager(self, event: pg.event.Event):
-        type = pg.event.event_name(event.type)
-        if type in EVENTS_METOD:
-            EVENTS_METOD[type](self._scene[self.condition], event)
+    def eventManager(self, event):
+        name = EVENT_NAMES.get(event.type)
+        if name and name in EVENTS_METOD:
+            EVENTS_METOD[name](self._scene[self.condition], event)
 
     def size_update(self, old: tuple[int], new: tuple[int]):
         for scene in self._scene:
             scene.size_update(old, new)
 
-    def event(self, event: pg.event.Event):
+    def event(self, event: Event):
         self._scene[self.condition].event(event)
 
     def draw(self, sceen):
@@ -198,22 +217,22 @@ class Window:
     def kill(self) -> None:
         self.close()
 
-    def update_window(self, 
-                    size: tuple[int, int] | None = None, 
-                    flags: int | None = None, 
-                    depth: int | None = None,
-                    display: int | None = None,
-                    vsync: int | None = None
-                    ) -> None:
-        """
-        Обновление параметров окна
-        """
-        self.__size = self.__size if size is None else size
-        if not flags is None: self.kwargs_set_mode['flags'] = flags
-        if not depth is None: self.kwargs_set_mode['depth'] = depth
-        if not display is None: self.kwargs_set_mode['display'] = display
-        if not vsync is None: self.kwargs_set_mode['vsync'] = vsync
-        self.win = pg.display.set_mode(self.__size, flags=self.kwargs_set_mode['flags'], depth=self.kwargs_set_mode['depth'], display=self.kwargs_set_mode['display'], vsync=self.kwargs_set_mode['vsync'])
+    #def update_window(self, 
+    #                size: tuple[int, int] | None = None, 
+    #                flags: int | None = None, 
+    #                depth: int | None = None,
+    #                display: int | None = None,
+    #                vsync: int | None = None
+    #                ) -> None:
+    #    """
+    #    Обновление параметров окна
+    #    """
+    #    self.__size = self.__size if size is None else size
+    #    if not flags is None: self.kwargs_set_mode['flags'] = flags
+    #    if not depth is None: self.kwargs_set_mode['depth'] = depth
+    #    if not display is None: self.kwargs_set_mode['display'] = display
+    #    if not vsync is None: self.kwargs_set_mode['vsync'] = vsync
+    #    self.win = pg.display.set_mode(self.__size, flags=self.kwargs_set_mode['flags'], depth=self.kwargs_set_mode['depth'], display=self.kwargs_set_mode['display'], vsync=self.kwargs_set_mode['vsync'])
 
     @property
     def size(self):
@@ -222,6 +241,29 @@ class Window:
     def size(self, size: list[int, int]):
         self.__size = size
 
+    @property
+    def holst(self) -> Surface:
+        return SDL_GetWindowSurface(self.win)
+
+    @property
+    def caption(self) -> str:
+        """
+        Возвращает текущий заголовок.
+        """
+        return self.__caption.decode("utf-8")
+
+    @caption.setter
+    def caption(self, caption: str | object | bytes) -> None:
+        """
+        Устанавливает новый заголовок окна.
+        """
+        if isinstance(caption, bytes):
+            caption = bytes.decode(caption, "utf-8")
+        elif not type(caption) is str:
+            caption = str(caption)
+        self.__caption = caption.encode("utf-8")
+        SDL_SetWindowTitle(self.win, self.__caption)
+    
 if __name__ == '__main__':
     print(type(Window), Window.__name__)
     # Создаем два окна с разными параметрами

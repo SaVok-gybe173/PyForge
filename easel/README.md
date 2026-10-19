@@ -1,6 +1,6 @@
-# Easel — модуль для создания оконных приложений на Pygame
+# Easel — модуль для создания оконных приложений на PyForge
 
-**Easel** — это часть фреймворка PyForge, предоставляющая удобную объектно-ориентированную надстройку над `pygame-ce` для создания оконных приложений с поддержкой сцен, событий и модульной архитектуры.
+**Easel** — это часть фреймворка PyForge, предоставляющая удобную объектно-ориентированную надстройку над `pysdl2` для создания оконных приложений с поддержкой сцен, событий и модульной архитектуры.
 
 ## Возможности
 
@@ -29,7 +29,8 @@
 
 ```bash
 
-pip install pygame-ce
+pip install pysdl2
+pip install pysdl2-dll
 # Для прозрачности окон на Windows:
 pip install pywin32
 ```
@@ -38,7 +39,7 @@ pip install pywin32
 
 ```python
 
-from PyForge.easel import Window, Scene, App, set_window_transparency
+from PyForge.easel import Window, Scene, App
 ```
 
 ---
@@ -54,7 +55,7 @@ import pygame as pg
 class MainScene(Scene):
     def draw(self, win: pg.Surface):
         win.fill((100, 150, 200))  # заливка фона
-    def exet(self):
+    def close(self):
         print("Окно закрыто")
 # Создаём окно размером 800x600 со сценой MainScene
 app = Window(size=(800, 600), scene=[MainScene])
@@ -70,7 +71,7 @@ from PyForge.easel import Window, Scene
 import pygame as pg
 class MenuScene(Scene):
     def draw(self, win: pg.Surface):
-        win.fill((50, 50, 50))
+        ...
         # отрисовка меню...
     def keydown(self, key: int, mod: int, unicode: str, scancode: int):
         if key == pg.K_SPACE:
@@ -122,8 +123,7 @@ class Main(FrameMod):
 from PyForge.easel.window_processing import Window as ProcessWindow
 from PyForge.easel import Scene
 class SecondScene(Scene):
-    def draw(self, win):
-        win.fill((200, 100, 100))
+    ...
 # Создаём окно в отдельном процессе
 win2 = ProcessWindow(size=(400, 300), scene=[SecondScene])
 win2.start()  # запуск в новом процессе
@@ -134,9 +134,6 @@ win2.join()   # ожидание завершения
 
 ```python
 
-from PyForge.easel import set_window_transparency
-import pygame as pg
-pg.display.set_mode((400, 300))
 # Устанавливаем прозрачность 50% (alpha 0-255)
 set_window_transparency(alpha_value=128)
 ```
@@ -185,12 +182,11 @@ set_window_transparency(alpha_value=128)
 |`update(dt: float)`|Обновление логики. `dt` — время в секундах с прошлого кадра|
 |`event(event: pg.event.Event)`|Обработка событий Pygame|
 |`size_update(old, new, ratio)`|Изменение размера окна|
-|`muve_window(old, new)`|Перемещение окна (pygame-ce)|
+|`muve_window(old, new)`|Перемещение окна|
 |`close()`|Закрытие окна (событие `QUIT`)|
 |`activeevent(gain, state)`|Изменение фокуса окна|
 |`videoresize(size, w, h)`|Изменение размера (событие `VIDEORESIZE`)|
 |`videoexpose()`|Окно было перекрыто и снова показано|
-|`render_targets_reset()`|Сброс целей рендеринга (pygame 2.x)|
 |`keydown(key, mod, unicode, scancode)`|Нажатие клавиши|
 |`keyup(key, mod, scancode)`|Отпускание клавиши|
 |`textediting(text, start, length)`|Редактирование текста (IME)|
@@ -353,7 +349,7 @@ Easel поддерживает все стандартные события Pyga
 |`ACTIVEEVENT`|Окно получило/потеряло фокус|
 |`VIDEORESIZE`|Изменение размера окна|
 |`VIDEOEXPOSE`|Окно было перекрыто и снова показано|
-|`RENDER_TARGETS_RESET`|Сброс целей рендеринга|
+
 
 ### Клавиатура
 

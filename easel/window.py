@@ -13,7 +13,7 @@ from sdl2.surface import SDL_Surface as Surface
 from sdl2.video import SDL_CreateWindow, SDL_GL_SwapWindow,  SDL_Window, SDL_DestroyWindow, SDL_GetWindowSurface, SDL_UpdateWindowSurface,  SDL_SetWindowTitle, SDL_GetWindowTitle
 from sdl2.events import SDL_QUIT, SDL_PollEvent, SDL_Event as Event, SDL_WINDOWEVENT
 from sdl2.error import SDL_GetError
-from sdl2 import SDL_MapRGB, ext, SDL_FillRect, SDL_WINDOWEVENT_RESIZED
+from sdl2 import SDL_MapRGB, ext, SDL_FillRect, SDL_WINDOWEVENT_RESIZED, SDL_Init, SDL_INIT_VIDEO, SDL_DisplayMode, SDL_GetCurrentDisplayMode, SDL_GetNumVideoDisplays, SDL_GetDesktopDisplayMode
 
 import sys
 
@@ -63,7 +63,8 @@ class Window:
                 scene: list[T] | None = None, 
                 *, 
                 fps: int | float = 60, 
-                flags: int = 0
+                flags: int = 0,
+                display_index: int = 0
                 ):
         """
         Инцизация главного класса управление окном
@@ -82,6 +83,7 @@ class Window:
         self.__size = size
         self.__point = point
         self.__caption = caption if isinstance(caption, bytes) else caption.encode("utf-8")
+        self.__display_index = display_index
 
         self.color = color
         self.fps = fps
@@ -120,6 +122,17 @@ class Window:
         del self.temporarily_scene
 
     def run_window(self):
+        SDL_Init(SDL_INIT_VIDEO)
+        if SDL_GetNumVideoDisplays() < self.__display_index:
+            self.__display_index = SDL_GetNumVideoDisplays()
+        elif self.__display_index < 0:
+            self.__display_index = SDL_GetNumVideoDisplays()-self.__display_index
+
+        mode = SDL_DisplayMode()
+        print(SDL_GetDesktopDisplayMode(self.__display_index, mode))
+
+        self.__point = self.__point if not self.__point is None else (int((mode.w-self.__size[0])/2), int((mode.h-self.__size[1])/2))
+
         self.win = SDL_CreateWindow(
             self.__caption,
             self.__point[0], self.__point[1],
@@ -160,7 +173,7 @@ class Window:
                     new_h = event.window.data2
                     old_w, old_h = self.__size
                     scale = (old_w / new_w, old_h / new_h)
-                    self.size_update(self.__size, (new_w, new_h), scale)
+                    self.size_update(self.__size, (new_w, new_h))
                     self.__size = (new_w, new_h)
 
                     if self.opengl and IS_IMPORT_GL:

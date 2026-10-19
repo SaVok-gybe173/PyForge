@@ -98,6 +98,115 @@ SDL_FIRSTEVENT	Значение 0, не используется (не удал�
 SDL_POLLSENTINEL	Сигнализирует о конце цикла опроса событий (0x7F00)
 SDL_LASTEVENT	Последний зарезервированный тип (0xFFFF), используется для границ массивов
 В SDL2, в отличие от Pygame, одному типу события может соответствовать несколько полей в union-структуре SDL_Event. Доступ к ним осуществляется через соответствующий член union: event.key, event.motion, event.button, event.wheel, event.jaxis, event.caxis, event.tfinger, event.mgesture, event.adevice, event.drop, event.user и т.д..
+
+
+
+Атрибут	Структура	Тип(ы) события	Поля (имя: тип)	Краткое описание
+type	Uint32	всегда	type: Uint32	Номер типа события. Сравнивайте с SDL_* константами.
+common	SDL_CommonEvent	всегда (общие поля)	timestamp: Uint32	Метка времени в мс с момента SDL_Init. Используется для таймингов, замеров.
+display	SDL_DisplayEvent	SDL_DISPLAYEVENT	display: Uint32, event: Uint8, data1: Sint32	Изменение дисплея: подключение/отключение, смена ориентации/DPI. event — подтип (SDL_DISPLAYEVENT_*).
+window	SDL_WindowEvent	SDL_WINDOWEVENT	windowID: Uint32, event: Uint8, data1: Sint32, data2: Sint32	Изменение окна: перемещение, размер, фокус, видимость. event — подтип (SDL_WINDOWEVENT_*); data1/data2 зависят от подтипа (например, новая ширина/высота).
+key	SDL_KeyboardEvent	SDL_KEYDOWN, SDL_KEYUP	windowID: Uint32, state: Uint8, repeat: Uint8, keysym: SDL_Keysym (scancode: SDL_Scancode, sym: SDL_Keycode, mod: Uint16)	Нажатие/отпускание клавиши. scancode — физическая клавиша (не зависит от раскладки), sym — виртуальный код, mod — модификаторы (Shift/Ctrl/Alt), repeat — автоповтор.
+edit	SDL_TextEditingEvent	SDL_TEXTEDITING	windowID: Uint32, text: char[32], start: Sint32, length: Sint32	Промежуточный ввод через IME (композиция). text — текущая строка, start/length — выделенный фрагмент для отрисовки подсказки.
+editExt	SDL_TextEditingExtEvent	SDL_TEXTEDITING_EXT	windowID: Uint32, text: char*, start: Sint32, length: Sint32	То же, что edit, но text — указатель на динамическую строку (для длинных IME-композиций). Освобождать через SDL_free.
+text	SDL_TextInputEvent	SDL_TEXTINPUT	windowID: Uint32, text: char[32]	Готовый текст после завершения IME/нажатия клавиши. Используйте для текстовых полей ввода.
+motion	SDL_MouseMotionEvent	SDL_MOUSEMOTION	which: Uint32, state: Uint32, x: Sint32, y: Sint32, xrel: Sint32, yrel: Sint32	Движение мыши. x,y — абсолютные координаты в окне; xrel,yrel — относительное смещение (для FPS-камеры); state — битовая маска нажатых кнопок.
+button	SDL_MouseButtonEvent	SDL_MOUSEBUTTONDOWN, SDL_MOUSEBUTTONUP	which: Uint32, button: Uint8, state: Uint8, clicks: Uint8, x: Sint32, y: Sint32	Клик/отпускание кнопки мыши. button — SDL_BUTTON_LEFT/RIGHT/MIDDLE; clicks — число кликов (2 = двойной); x,y — координаты клика.
+wheel	SDL_MouseWheelEvent	SDL_MOUSEWHEEL	which: Uint32, x: Sint32, y: Sint32, direction: Uint32, preciseX: float, preciseY: float, mouseX: Sint32, mouseY: Sint32	Прокрутка колеса/тачпада. y — вертикаль (+вверх), x — горизонталь; direction — SDL_MOUSEWHEEL_NORMAL/FLIPPED; precise* — плавные значения; mouse* — позиция курсора.
+jaxis	SDL_JoyAxisEvent	SDL_JOYAXISMOTION	which: SDL_JoystickID, axis: Uint8, value: Sint16	Движение оси джойстика. value ∈ [-32768, 32767], axis — индекс оси.
+jball	SDL_JoyBallEvent	SDL_JOYBALLMOTION	which: SDL_JoystickID, ball: Uint8, xrel: Sint16, yrel: Sint16	Движение трекбола. xrel,yrel — относительное смещение.
+jhat	SDL_JoyHatEvent	SDL_JOYHATMOTION	which: SDL_JoystickID, hat: Uint8, value: Uint8	Движение POV-«шляпки». value — комбинация SDL_HAT_UP/DOWN/LEFT/RIGHT/CENTERED.
+jbutton	SDL_JoyButtonEvent	SDL_JOYBUTTONDOWN, SDL_JOYBUTTONUP	which: SDL_JoystickID, button: Uint8, state: Uint8	Нажатие/отпускание кнопки джойстика. state — SDL_PRESSED/SDL_RELEASED.
+jdevice	SDL_JoyDeviceEvent	SDL_JOYDEVICEADDED, SDL_JOYDEVICEREMOVED	which: Sint32	Подключение/отключение джойстика. ADDED → индекс; REMOVED → instance id.
+jbattery	SDL_JoyBatteryEvent	SDL_JOYBATTERYUPDATED	which: SDL_JoystickID, level: SDL_JoystickPowerLevel	Изменение заряда джойстика. level — SDL_JOYSTICK_POWER_* (UNKNOWN/EMPTY/LOW/MEDIUM/FULL/WIRED).
+caxis	SDL_ControllerAxisEvent	SDL_CONTROLLERAXISMOTION	which: SDL_JoystickID, axis: Uint8, value: Sint16	Ось геймпада. axis — SDL_CONTROLLER_AXIS_* (LEFTX, TRIGGERRIGHT и т.д.).
+cbutton	SDL_ControllerButtonEvent	SDL_CONTROLLERBUTTONDOWN, SDL_CONTROLLERBUTTONUP	which: SDL_JoystickID, button: Uint8, state: Uint8	Кнопка геймпада. button — SDL_CONTROLLER_BUTTON_* (A, B, X, Y и т.д.).
+cdevice	SDL_ControllerDeviceEvent 	SDL_CONTROLLERDEVICEADDED/REMOVED/REMAPPED	which: Sint32	Подключение/отключение/перепривязка геймпада.
+ctouchpad	SDL_ControllerTouchpadEvent	SDL_CONTROLLERTOUCHPADDOWN/MOTION/UP	which: SDL_JoystickID, touchpad: Sint32, finger: Sint32, x: float, y: float, pressure: float	Тачпад геймпада (DualShock 4). Координаты нормализованы 0…1.
+csensor	SDL_ControllerSensorEvent	SDL_CONTROLLERSENSORUPDATE	which: SDL_JoystickID, sensor: Sint32, data: float[3]	Данные сенсора геймпада (акселерометр, гироскоп). data — 3 значения.
+sensor	SDL_SensorEvent	SDL_SENSORUPDATE	which: Sint32, data: float[6]	Данные аппаратного сенсора устройства (телефон/планшет). data — до 6 значений.
+quit	SDL_QuitEvent	SDL_QUIT	(нет специфических полей)	Запрос на закрытие приложения (крестик, Alt+F4, SIGTERM). Завершайте главный цикл.
+user	SDL_UserEvent	SDL_USEREVENT…SDL_LASTEVENT-1	windowID: Uint32, code: Sint32, data1: void*, data2: void*	Пользовательское событие (создаёте сами). code — ваш код типа; data1/data2 — указатели на данные.
+syswm	SDL_SysWMEvent	SDL_SYSWMEVENT	msg: SDL_SysWMmsg*	Сырое сообщение оконной системы (WM_* в Windows, XEvent в X11). Для низкоуровневой интеграции.
+tfinger	SDL_TouchFingerEvent	SDL_FINGERDOWN, SDL_FINGERUP, SDL_FINGERMOTION	touchId: SDL_TouchID, fingerId: SDL_FingerID, x: float, y: float, dx: float, dy: float, pressure: float, windowID: Uint32	Касание/движение пальца. x,y,dx,dy,pressure нормализованы 0…1. fingerId — конкретный палец (мультитач).
+mgesture	SDL_MultiGestureEvent	SDL_MULTIGESTURE	touchId: SDL_TouchID, dTheta: float, dDist: float, x: float, y: float, numFingers: Uint16	Мультитач-жест (щипок, вращение). dTheta — поворот, dDist — изменение расстояния (zoom).
+dgesture	SDL_DollarGestureEvent	SDL_DOLLARGESTURE, SDL_DOLLARRECORD	touchId: SDL_TouchID, gestureId: SDL_GestureID, numFingers: Uint32, error: float, x: float, y: float	Шаблонный жест (буква/фигура). gestureId — id шаблона; error — точность распознавания (меньше = точнее).
+drop	SDL_DropEvent	SDL_DROPBEGIN, SDL_DROPFILE, SDL_DROPTEXT, SDL_DROPCOMPLETE	file: char*, windowID: Uint32	Drag&drop. Для DROPFILE — путь к файлу (освобождать SDL_free), для DROPTEXT — сам текст, для BEGIN/COMPLETE — NULL.
+adevice	SDL_AudioDeviceEvent	SDL_AUDIODEVICEADDED, SDL_AUDIODEVICEREMOVED	which: Uint32, iscapture: Uint8	Аудиоустройство подключено/отключено. which — индекс (ADDED) или SDL_AudioDeviceID (REMOVED); iscapture ≠ 0 — микрофон/захват.
+padding	—	—	—	Служебное поле для выравнивания union. Не использовать.
+
+
+SDL_QUIT → event.quit → (no fields beyond common)
+SDL_APP_TERMINATING → no specific structure (uses common)
+SDL_APP_LOWMEMORY → common
+SDL_APP_WILLENTERBACKGROUND → common
+SDL_APP_DIDENTERBACKGROUND → common
+SDL_APP_WILLENTERFOREGROUND → common
+SDL_APP_DIDENTERFOREGROUND → common
+SDL_LOCALECHANGED → common
+SDL_DISPLAYEVENT → event.display
+SDL_WINDOWEVENT → event.window
+SDL_SYSWMEVENT → event.syswm
+SDL_KEYDOWN → event.key
+SDL_KEYUP → event.key
+SDL_TEXTEDITING → event.edit
+SDL_TEXTINPUT → event.text
+SDL_KEYMAPCHANGED → common
+SDL_TEXTEDITING_EXT → event.editExt
+SDL_MOUSEMOTION → event.motion
+SDL_MOUSEBUTTONDOWN → event.button
+SDL_MOUSEBUTTONUP → event.button
+SDL_MOUSEWHEEL → event.wheel
+SDL_JOYAXISMOTION → event.jaxis
+SDL_JOYBALLMOTION → event.jball
+SDL_JOYHATMOTION → event.jhat
+SDL_JOYBUTTONDOWN → event.jbutton
+SDL_JOYBUTTONUP → event.jbutton
+SDL_JOYDEVICEADDED → event.jdevice
+SDL_JOYDEVICEREMOVED → event.jdevice
+SDL_JOYBATTERYUPDATED → event.jbattery
+SDL_CONTROLLERAXISMOTION → event.caxis
+SDL_CONTROLLERBUTTONDOWN → event.cbutton
+SDL_CONTROLLERBUTTONUP → event.cbutton
+SDL_CONTROLLERDEVICEADDED → event.cdevice
+SDL_CONTROLLERDEVICEREMOVED → event.cdevice
+SDL_CONTROLLERDEVICEREMAPPED → event.cdevice
+SDL_CONTROLLERTOUCHPADDOWN → event.ctouchpad
+SDL_CONTROLLERTOUCHPADMOTION → event.ctouchpad
+SDL_CONTROLLERTOUCHPADUP → event.ctouchpad
+SDL_CONTROLLERSENSORUPDATE → event.csensor
+SDL_FINGERDOWN → event.tfinger
+SDL_FINGERUP → event.tfinger
+SDL_FINGERMOTION → event.tfinger
+SDL_DOLLARGESTURE → event.dgesture
+SDL_DOLLARRECORD → event.dgesture
+SDL_MULTIGESTURE → event.mgesture
+SDL_CLIPBOARDUPDATE → common
+SDL_DROPBEGIN → event.drop
+SDL_DROPFILE → event.drop
+SDL_DROPTEXT → event.drop
+SDL_DROPCOMPLETE → event.drop
+SDL_AUDIODEVICEADDED → event.adevice
+SDL_AUDIODEVICEREMOVED → event.adevice
+SDL_SENSORUPDATE → event.sensor
+SDL_RENDER_TARGETS_RESET → common
+SDL_RENDER_DEVICE_RESET → common
+SDL_POLLSENTINEL → common (internal)
+SDL_USEREVENT..SDL_LASTEVENT → event.user
+
+Пояснения к типам
+Тип	Что это	Диапазон / пример
+Uint8	беззнаковый 1 байт	0…255
+Uint16	беззнаковый 2 байта	0…65535
+Uint32	беззнаковый 4 байта	0…2³²-1
+Sint8 / Sint16 / Sint32	знаковые 1/2/4 байта	-128…127 / -32768…32767 / -2³¹…2³¹-1
+float	4-байтовое число с плавающей точкой	нормализованные значения обычно 0…1
+void*	«сырой» указатель	адрес произвольных данных
+char[32]	фиксированный буфер строки	до 31 символа + \0
+char*	указатель на строку	динамическая строка, освобождать SDL_free
+SDL_JoystickID	Sint32	instance id открытого устройства
+SDL_TouchID / SDL_FingerID / SDL_GestureID	Sint64	идентификаторы touch-ввода/пальца/жеста
+
 """
 
 from sdl2.events import (
@@ -165,9 +274,42 @@ from sdl2.events import (
     SDL_DROPCOMPLETE as DROPCOMPLETE,
 
     SDL_USEREVENT as USEREVENT,
-    SDL_LASTEVENT as LASTEVENT
+    SDL_LASTEVENT as LASTEVENT,
+
+    SDL_FIRSTEVENT as FIRSTEVENT,
+    SDL_POLLSENTINEL as POLLSENTINEL,
+
+    SDL_CommonEvent as CommonEvent,
+    SDL_DisplayEvent as DisplayEvent,     
+    SDL_KeyboardEvent as KeyboardEvent,    
+    SDL_TextEditingExtEvent	as TextEditingExtEvent,
+    SDL_JoyButtonEvent as JoyButtonEvent,
+    SDL_JoyDeviceEvent as JoyDeviceEvent,
+    SDL_ControllerButtonEvent as ControllerButtonEvent,
+    SDL_ControllerDeviceEvent as ControllerDeviceEvent,
+    SDL_ControllerSensorEvent as ControllerSensorEvent,
+    SDL_TouchFingerEvent as TouchFingerEvent,
+    SDL_AudioDeviceEvent as AudioDeviceEvent,
+
+    SDL_Event as Enent,
+
+    Uint8 as uint8,
+    Uint16 as uint16,
+    Uint32 as uint32,
+
+    Sint32 as sint32,
+    Sint16 as sint16,
 
 )
+
+sint64 = int
+sint8 = int
+
+from sdl2.keyboard import SDL_Keysym, SDL_Scancode, SDL_Keycode
+from sdl2.joystick import SDL_JoystickID, SDL_JoystickPowerLevel
+from sdl2.syswm import SDL_SysWMmsg
+from sdl2.touch import SDL_TouchID, SDL_FingerID
+from sdl2.gesture import SDL_GestureID
 
 EVENT_NAMES = {
     QUIT: "QUIT",
@@ -246,6 +388,6 @@ def event_name(type: int) -> str | None:
     "возвращает имя эвента"
     return EVENT_NAMES.get(type)
 
-def event_type(name: str) -> int:
+def event_type(name: str) -> int | None:
     "получает тип эвента по имени"
     return next((key for key, value in EVENT_NAMES.items() if value == name), None)

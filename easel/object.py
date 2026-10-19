@@ -219,7 +219,7 @@ class CoreObject(metaclass=ObjectMeta):
             start, length — позиция и длина выделенной части внутри text. Нужны для отрисовки подсказки IME.
         """
 
-    def TEXTEDITING_EXT(self, text: str, start: int, length: int) -> None:
+    def textediting_ext(self, text: str, start: int, length: int) -> None:
         """
         SDL_TEXTEDITING / SDL_TEXTEDITING_EXT
         Когда вызывается: 
@@ -254,7 +254,7 @@ class CoreObject(metaclass=ObjectMeta):
 
     # События мыши
 
-    def mousemotion(self, pos: tuple[int, int], rel: tuple[int, int], buttons: tuple[bool, bool, bool], touch: bool) -> None:
+    def mousemotion(self, pos: tuple[int, int], rel: tuple[int, int], state: bool) -> None:
         """
         SDL_MOUSEMOTION
         Когда вызывается: 
@@ -272,43 +272,61 @@ class CoreObject(metaclass=ObjectMeta):
             Позволяет реализовать перетаскивание (drag) без отслеживания отдельных BUTTONDOWN/UP — достаточно проверять state в MOTION.
         """
 
-    def mousebuttondown(self, pos: tuple[int, int], button: int, touch: bool) -> None:
+    def mousebuttondown(self, pos: tuple[int, int], button: int, clicks: int) -> None:
         """
-        MOUSEBUTTONDOWN
+        SDL_MOUSEBUTTONDOWN / SDL_MOUSEBUTTONUP
+        Когда вызывается: 
+            Кнопка мыши была нажата или отпущена.
 
-        Кнопка мыши нажата
+        Зачем нужны атрибуты:
+            x, y — координаты курсора в момент нажатия/отпускания. 
+            Нужны для определения, куда именно пришёлся клик.
 
-        Args:
-            pos (tuple[int, int]): координаты курсора в момент нажатия/отпускания.
-            button (int) номер кнопки: 1 – левая, 2 – средняя, 3 – правая, 4 – прокрутка вверх, 5 – прокрутка вниз (для старых версий).
-            touch (bool) было ли касание на тачскрине.
+            button — номер кнопки (SDL_BUTTON_LEFT, SDL_BUTTON_RIGHT, SDL_BUTTON_MIDDLE). 
+            Позволяет различать действия.
+
+            clicks — количество кликов (1 для одиночного, 2 для двойного). 
+            Удобно для обработки двойного клика без ручного замера времени.
+            
         """
 
-    def mousebuttonup(self, pos: tuple[int, int], button: int, touch: bool) -> None:
+    def mousebuttonup(self, pos: tuple[int, int], button: int, clicks: int) -> None:
         """
-        MOUSEBUTTONUP
+        SDL_MOUSEBUTTONDOWN / SDL_MOUSEBUTTONUP
+        Когда вызывается: 
+            Кнопка мыши была нажата или отпущена.
 
-        Кнопка мыши отпущена
+        Зачем нужны атрибуты:
+            x, y — координаты курсора в момент нажатия/отпускания. 
+            Нужны для определения, куда именно пришёлся клик.
 
-        Args:
-            pos (tuple[int, int]): координаты курсора в момент нажатия/отпускания.
-            button (int) номер кнопки: 1 – левая, 2 – средняя, 3 – правая, 4 – прокрутка вверх, 5 – прокрутка вниз (для старых версий).
-            touch (bool) было ли касание на тачскрине.
+            button — номер кнопки (SDL_BUTTON_LEFT, SDL_BUTTON_RIGHT, SDL_BUTTON_MIDDLE). 
+            Позволяет различать действия.
+
+            clicks — количество кликов (1 для одиночного, 2 для двойного). 
+            Удобно для обработки двойного клика без ручного замера времени.
+            
         """
 
     def mousewheel(self, x: int, y: int, flipped: bool, precise_x: float, precise_y: float) -> None:
         """
-        MOUSEWHEEL
+        SDL_MOUSEWHEEL
+        Когда вызывается: 
+            Пользователь прокрутил колесо мыши или сделал жест прокрутки на тачпаде.
 
-        Прокрутка колеса мыши
+        Зачем нужны атрибуты:
 
-        Args:
-            x (int): горизонтальная прокрутка (положительное значение – вправо).
-            y (int): вертикальная прокрутка (положительное – вверх).
-            flipped (bool): True, если значения осей были «перевёрнуты» (зависит от настроек ОС).
-            precise_x (float) точное значение горизонтальной прокрутки (дробное).
-            precise_y (float) точное значение вертикальной прокрутки.
+            x, y — направление и величина прокрутки (целые числа). 
+            y обычно отвечает за вертикальную прокрутку (вверх/вниз), x — за горизонтальную.
+
+            direction — SDL_MOUSEWHEEL_NORMAL (прямое направление) или SDL_MOUSEWHEEL_FLIPPED (обратное, в зависимости от настроек ОС). 
+            Позволяет корректно интерпретировать направление.
+
+            preciseX, preciseY — более точные значения с плавающей точкой (для тачпадов с плавной прокруткой).
+
+            mouseX, mouseY — координаты курсора в момент прокрутки (в некоторых версиях SDL2).
         """
+        
 
 class PfObject(CoreObject):
     rect: pg.Rect | None = None

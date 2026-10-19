@@ -8,6 +8,7 @@ from .markup import (isListType, _General, Size, Point,
                     cordinate_transform, relationship_transform,
                     )
 from .object import CoreObject, PfObject, PfObjectIMG
+from .event import event_name, event_add, event_type, EVENT_NAMES
 
 __all__ = [
     "Scene", "EVENTS_METOD",
@@ -15,5 +16,6 @@ __all__ = [
     "WindowProcession", "Window", "App", "set_window_transparency",
     "isListType", "_General", "Size", "Point", "SizeTup", "PointTup",
     "cordinate_transform", "relationship_transform",
-    "CoreObject", "PfObject"
+    "CoreObject", "PfObject",
+    "event_name", "event_add", "event_type", "EVENT_NAMES"
 ]

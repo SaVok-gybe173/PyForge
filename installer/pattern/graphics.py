@@ -1,11 +1,11 @@
 from PyForge import Scene
-from PyForge.easel.strukture import Window
-from PyForge.button import Button, AnimationButton, FrameAnimationButton, Increase, Impuls, CollorsClick
+from PyForge.easel import Window
+from PyForge.widget.button import Button, AnimationButton, FrameAnimationButton, Increase, Impuls
 from PyForge.lad import start, load
-from PyForge.list import ListItems, ListOfItems
-from PyForge.input import InputLine
+from PyForge.widget.list import ListItems, ListOfItems
+from PyForge.widget.input import InputLine
 from PyForge.installer.conductor import select_folder
-from PyForge.progress import ProgressBar
+from PyForge.widget.progress import ProgressBar
 try:
     from .theme import TEMA, get_TEMA
     from .language import TRANSLATION, get_TRANSLATION

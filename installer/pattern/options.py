@@ -1,5 +1,5 @@
 from typing import Callable
-from PyForge.button import Button
+from PyForge.widget.button import Button
 
 try:
     from .theme import TEMA, get_TEMA

@@ -4,6 +4,7 @@ from sdl2.syswm import SDL_SysWMmsg
 from sdl2.touch import SDL_TouchID, SDL_FingerID
 from sdl2.gesture import SDL_GestureID
 
+
 type uint32 = int   # беззнаковый 1 байт	0…255
 type uint16 = int   # беззнаковый 2 байта	0…65535
 type uint8 = int    # беззнаковый 1 байт	0…255

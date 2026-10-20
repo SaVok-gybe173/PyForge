@@ -1,7 +1,7 @@
 from ....tools import PfObject
 from .calculation_progress import ProgressBarCalc
 from ....easel.markup import Point, Size
-from ....color import RGB
+from ....easel.color import RGB
 import pygame as pg
 
 class _ProgressBar(ProgressBarCalc, PfObject):

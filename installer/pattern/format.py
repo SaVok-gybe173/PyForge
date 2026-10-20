@@ -1,4 +1,4 @@
-from PyForge.button import AnimationButton, Impuls
+from PyForge.widget.button import AnimationButton, Impuls
 import pygame as pg
 
 def format_size(bytes_count, units = ["КБ", "МБ", "ГБ", "ТБ", "ПБ"], byte = "Б" ):

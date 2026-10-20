@@ -12,7 +12,7 @@ except ModuleNotFoundError:
         return wrap
     
 from PyForge.tools import PfObject
-from ...button import Button
+from ...widget.button import Button
 
 def set_txt_bufer(text_string):
     """

@@ -1,4 +1,4 @@
-from PyForge.button import AnimationButton, Impuls
+from PyForge.widget.button import AnimationButton, Impuls
 import pygame as pg
 
 # cсоздание серой кнопки

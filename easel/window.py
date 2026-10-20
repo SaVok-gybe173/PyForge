@@ -9,7 +9,8 @@ from ..gpu.locals import IS_IMPORT_GL, InitGl
 from .logger import printError, printInfo
 from .time import Clock
 from .event import EVENT_NAMES
-from sdl2.surface import SDL_Surface as Surface
+from .surface import Surface
+from sdl2.surface import SDL_Surface
 from sdl2.video import SDL_CreateWindow, SDL_GL_SwapWindow,  SDL_Window, SDL_DestroyWindow, SDL_GetWindowSurface, SDL_UpdateWindowSurface,  SDL_SetWindowTitle, SDL_GetWindowTitle
 from sdl2.events import SDL_QUIT, SDL_PollEvent, SDL_Event as Event, SDL_WINDOWEVENT
 from sdl2.error import SDL_GetError
@@ -129,11 +130,10 @@ class Window:
             self.__display_index = SDL_GetNumVideoDisplays()-self.__display_index
 
         mode = SDL_DisplayMode()
-        print(SDL_GetDesktopDisplayMode(self.__display_index, mode))
-
+        SDL_GetCurrentDisplayMode(self.__display_index, mode)
         self.__point = self.__point if not self.__point is None else (int((mode.w-self.__size[0])/2), int((mode.h-self.__size[1])/2))
 
-        self.win = SDL_CreateWindow(
+        self.win: SDL_Window = SDL_CreateWindow(
             self.__caption,
             self.__point[0], self.__point[1],
             self.__size[0], self.__size[1],
@@ -146,6 +146,11 @@ class Window:
         self.initOpenGL()
         self.start_scenes()
 
+        printInfo("Тип self.win:", type(self.win))
+        printInfo("Значение self.win:", self.win)
+
+
+        self.surface = Surface(self.holst, owned=False)
         self.clock_fps = Clock()
 
         while self.running:
@@ -155,18 +160,18 @@ class Window:
             if use_gl:
                 self.opengl.clear()
             else:
-                surface = SDL_GetWindowSurface(self.win)
+                self.surface._surface = self.holst
                 # self.color должен быть кортежем (r,g,b) или sdl2.SDL_Color
                 r, g, b = self.color[:3]
-                pixel = SDL_MapRGB(surface.contents.format, r, g, b)
-                SDL_FillRect(surface, None, pixel)
+                pixel = SDL_MapRGB(self.surface._surface.contents.format, r, g, b)
+                SDL_FillRect(self.surface._surface, None, pixel)
 
             # обновеление активной сценный
             self.update(dt)
 
             for event in ext.get_events():
                 if event.type == SDL_QUIT:
-                    self.close()
+                    self.close(event.common, event.quit)
                 elif event.type == SDL_WINDOWEVENT and \
                  event.window.event == SDL_WINDOWEVENT_RESIZED:
                     new_w = event.window.data1
@@ -187,7 +192,7 @@ class Window:
                     self.event(event)
                 #self.eventManager(event)    # запуск методов эвента
 
-            self.draw(self.win)             # отрисовка активной сценны
+            self.draw(self.surface)             # отрисовка активной сценны
             if use_gl:
                 SDL_GL_SwapWindow(self.win)
             else:
@@ -211,10 +216,10 @@ class Window:
     def draw(self, sceen):
         self._scene[self.condition].draw(sceen)
 
-    def close(self):
+    def close(self, common, quit):
         self.running = False
         for scene in self._scene:
-            scene.close()
+            scene.quit(common, quit)
 
     def update(self, dt: float) -> None:
         self._scene[self.condition].update(dt)
@@ -255,7 +260,7 @@ class Window:
         self.__size = size
 
     @property
-    def holst(self) -> Surface:
+    def holst(self) -> SDL_Surface:
         return SDL_GetWindowSurface(self.win)
 
     @property

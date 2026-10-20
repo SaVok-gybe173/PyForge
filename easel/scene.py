@@ -23,8 +23,8 @@ class Scene(CoreObject):
     def append(self, object: PfObject):
         self.objects.append(object)
 
-    def close(self):
-        return super().close()
+    def quit(self, common, quit):
+        return super().quit(common, quit)
 
     def draw(self, win):
         for object in self.objects:

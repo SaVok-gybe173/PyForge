@@ -1,6 +1,7 @@
 import pygame as pg
 import os
 from copy import deepcopy
+from .surface import Surface
 from .logger import ObjectMeta
 from .markup import Size, Point, isListType
 from .event import (Enent,
@@ -35,7 +36,7 @@ from .event import (Enent,
         DropEvent,
         AudioDeviceEvent
     )
-
+ControllerTouchpadEvent
 class CoreObject(metaclass=ObjectMeta):
     __abstract__ = True
     """
@@ -52,7 +53,7 @@ class CoreObject(metaclass=ObjectMeta):
     def __bool__(self) -> bool:
         return False
 
-    def draw(self, win: pg.Surface):
+    def draw(self, win: Surface):
         '''
 
         Отрисовка обьектов.
@@ -534,9 +535,9 @@ class PfObject(CoreObject):
 
 
 class PfObjectIMG(PfObject):
-    img: pg.Surface # изображение
+    img: Surface # изображение
 
-    def __init__(self, left_top: Point | tuple[int, int], img: pg.Surface | tuple[bytes, Size | tuple[int, int]] | str, *args, **kvargs):
+    def __init__(self, left_top: Point | tuple[int, int], img: Surface | tuple[bytes, Size | tuple[int, int]] | str, *args, **kvargs):
         """
         Прокаченый PfObject, но поддерживает хранение изображения.
         """
@@ -545,8 +546,8 @@ class PfObjectIMG(PfObject):
             
         elif isinstance(img, bytes):
             img = pg.image.frombytes(img[0], img[1] if isinstance(img[1], tuple | list) else img[1].pixel)
-        elif not isinstance(img, pg.Surface):
-            raise ValueError(f"Ожидаеться pygame.Surface, пришло {type(img)}")
+        elif not isinstance(img, Surface):
+            raise ValueError(f"Ожидаеться Surface, пришло {type(img)}")
         
         self.img = img
         super().__init__(left_top, img.get_size(), *args, **kvargs)
@@ -562,16 +563,16 @@ class PfObjectIMG(PfObject):
                                    ))
 
 
-    def convert_alpha(self) -> pg.Surface:
+    def convert_alpha(self) -> Surface:
         """
-        Конвертирует основной класс и возвращает ссылку на pygame.Surface
+        Конвертирует основной класс и возвращает ссылку на Surface
         """
         self.img = self.img.convert_alpha()
         return self.img
 
-    def convert(self) -> pg.Surface:
+    def convert(self) -> Surface:
         """
-        Конвертирует основной класс и возвращает ссылку на pygame.Surface
+        Конвертирует основной класс и возвращает ссылку на Surface
         """
         self.img = self.img.convert()
         return self.img

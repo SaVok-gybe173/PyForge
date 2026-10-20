@@ -237,7 +237,7 @@ from sdl2.events import (
     SDL_ControllerAxisEvent	as ControllerAxisEvent,
     SDL_ControllerButtonEvent as ControllerButtonEvent,
     SDL_ControllerDeviceEvent as ControllerDeviceEvent,
-    SDL_ControllerTouchpadEvent	as _ControllerTouchpadEvent,
+    SDL_ControllerTouchpadEvent	as ControllerTouchpadEvent,
     SDL_ControllerSensorEvent as ControllerSensorEvent,
     SDL_SensorEvent	as SensorEvent,
     SDL_QuitEvent as QuitEvent,

@@ -1,5 +1,7 @@
 """
-Ниже — структурированный справочник по событиям SDL2 в том же формате, что и ваш пример с Pygame. В SDL2 события — это не отдельные типы с фиксированным набором атрибутов, а объединение (union) структур. В таблицах для каждой константы указаны соответствующие поля структуры события, к которым можно получить доступ через event.key, event.motion, event.button и т.д.
+Ниже — структурированный справочник по событиям SDL2. 
+В SDL2 события — это не отдельные типы с фиксированным набором атрибутов, а объединение (union) структур. 
+В таблицах для каждой константы указаны соответствующие поля структуры события, к которым можно получить доступ через event.key, event.motion, event.button и т.д.
 
 Системные события и события окна
 Константа	                Описание	                                                    Атрибуты (поля структуры)
@@ -97,7 +99,9 @@ SDL_LASTEVENT	Верхняя граница зарезервированных �
 SDL_FIRSTEVENT	Значение 0, не используется (не удалять)
 SDL_POLLSENTINEL	Сигнализирует о конце цикла опроса событий (0x7F00)
 SDL_LASTEVENT	Последний зарезервированный тип (0xFFFF), используется для границ массивов
-В SDL2, в отличие от Pygame, одному типу события может соответствовать несколько полей в union-структуре SDL_Event. Доступ к ним осуществляется через соответствующий член union: event.key, event.motion, event.button, event.wheel, event.jaxis, event.caxis, event.tfinger, event.mgesture, event.adevice, event.drop, event.user и т.д..
+
+В SDL2, в отличие от Pygame, одному типу события может соответствовать несколько полей в union-структуре SDL_Event. 
+Доступ к ним осуществляется через соответствующий член union: event.key, event.motion, event.button, event.wheel, event.jaxis, event.caxis, event.tfinger, event.mgesture, event.adevice, event.drop, event.user и т.д..
 
 
 
@@ -134,78 +138,6 @@ dgesture	SDL_DollarGestureEvent	SDL_DOLLARGESTURE, SDL_DOLLARRECORD	touchId: SDL
 drop	SDL_DropEvent	SDL_DROPBEGIN, SDL_DROPFILE, SDL_DROPTEXT, SDL_DROPCOMPLETE	file: char*, windowID: Uint32	Drag&drop. Для DROPFILE — путь к файлу (освобождать SDL_free), для DROPTEXT — сам текст, для BEGIN/COMPLETE — NULL.
 adevice	SDL_AudioDeviceEvent	SDL_AUDIODEVICEADDED, SDL_AUDIODEVICEREMOVED	which: Uint32, iscapture: Uint8	Аудиоустройство подключено/отключено. which — индекс (ADDED) или SDL_AudioDeviceID (REMOVED); iscapture ≠ 0 — микрофон/захват.
 padding	—	—	—	Служебное поле для выравнивания union. Не использовать.
-
-
-SDL_QUIT → event.quit → (no fields beyond common)
-SDL_APP_TERMINATING → no specific structure (uses common)
-SDL_APP_LOWMEMORY → common
-SDL_APP_WILLENTERBACKGROUND → common
-SDL_APP_DIDENTERBACKGROUND → common
-SDL_APP_WILLENTERFOREGROUND → common
-SDL_APP_DIDENTERFOREGROUND → common
-SDL_LOCALECHANGED → common
-SDL_DISPLAYEVENT → event.display
-SDL_WINDOWEVENT → event.window
-SDL_SYSWMEVENT → event.syswm
-SDL_KEYDOWN → event.key
-SDL_KEYUP → event.key
-SDL_TEXTEDITING → event.edit
-SDL_TEXTINPUT → event.text
-SDL_KEYMAPCHANGED → common
-SDL_TEXTEDITING_EXT → event.editExt
-SDL_MOUSEMOTION → event.motion
-SDL_MOUSEBUTTONDOWN → event.button
-SDL_MOUSEBUTTONUP → event.button
-SDL_MOUSEWHEEL → event.wheel
-SDL_JOYAXISMOTION → event.jaxis
-SDL_JOYBALLMOTION → event.jball
-SDL_JOYHATMOTION → event.jhat
-SDL_JOYBUTTONDOWN → event.jbutton
-SDL_JOYBUTTONUP → event.jbutton
-SDL_JOYDEVICEADDED → event.jdevice
-SDL_JOYDEVICEREMOVED → event.jdevice
-SDL_JOYBATTERYUPDATED → event.jbattery
-SDL_CONTROLLERAXISMOTION → event.caxis
-SDL_CONTROLLERBUTTONDOWN → event.cbutton
-SDL_CONTROLLERBUTTONUP → event.cbutton
-SDL_CONTROLLERDEVICEADDED → event.cdevice
-SDL_CONTROLLERDEVICEREMOVED → event.cdevice
-SDL_CONTROLLERDEVICEREMAPPED → event.cdevice
-SDL_CONTROLLERTOUCHPADDOWN → event.ctouchpad
-SDL_CONTROLLERTOUCHPADMOTION → event.ctouchpad
-SDL_CONTROLLERTOUCHPADUP → event.ctouchpad
-SDL_CONTROLLERSENSORUPDATE → event.csensor
-SDL_FINGERDOWN → event.tfinger
-SDL_FINGERUP → event.tfinger
-SDL_FINGERMOTION → event.tfinger
-SDL_DOLLARGESTURE → event.dgesture
-SDL_DOLLARRECORD → event.dgesture
-SDL_MULTIGESTURE → event.mgesture
-SDL_CLIPBOARDUPDATE → common
-SDL_DROPBEGIN → event.drop
-SDL_DROPFILE → event.drop
-SDL_DROPTEXT → event.drop
-SDL_DROPCOMPLETE → event.drop
-SDL_AUDIODEVICEADDED → event.adevice
-SDL_AUDIODEVICEREMOVED → event.adevice
-SDL_SENSORUPDATE → event.sensor
-SDL_RENDER_TARGETS_RESET → common
-SDL_RENDER_DEVICE_RESET → common
-SDL_POLLSENTINEL → common (internal)
-SDL_USEREVENT..SDL_LASTEVENT → event.user
-
-Пояснения к типам
-Тип	Что это	Диапазон / пример
-Uint8	беззнаковый 1 байт	0…255
-Uint16	беззнаковый 2 байта	0…65535
-Uint32	беззнаковый 4 байта	0…2³²-1
-Sint8 / Sint16 / Sint32	знаковые 1/2/4 байта	-128…127 / -32768…32767 / -2³¹…2³¹-1
-float	4-байтовое число с плавающей точкой	нормализованные значения обычно 0…1
-void*	«сырой» указатель	адрес произвольных данных
-char[32]	фиксированный буфер строки	до 31 символа + \0
-char*	указатель на строку	динамическая строка, освобождать SDL_free
-SDL_JoystickID	Sint32	instance id открытого устройства
-SDL_TouchID / SDL_FingerID / SDL_GestureID	Sint64	идентификаторы touch-ввода/пальца/жеста
 
 """
 

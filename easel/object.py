@@ -3,6 +3,38 @@ import os
 from copy import deepcopy
 from .logger import ObjectMeta
 from .markup import Size, Point, isListType
+from .event import (Enent,
+        CommonEvent,
+        DisplayEvent,
+        WindowEvent,
+        KeyboardEvent,
+        TextEditingEvent,
+        TextEditingExtEvent,
+        TextInputEvent,
+        MouseMotionEvent,
+        MouseButtonEvent,
+        MouseWheelEvent,
+        JoyAxisEvent,
+        JoyBallEvent,
+        JoyHatEvent,
+        JoyButtonEvent,
+        JoyDeviceEvent,
+        JoyBatteryEvent,
+        ControllerAxisEvent,
+        ControllerButtonEvent,
+        ControllerDeviceEvent,
+        ControllerTouchpadEvent,
+        ControllerSensorEvent,
+        SensorEvent,
+        QuitEvent,
+        UserEvent,
+        SysWMEvent,
+        TouchFingerEvent,
+        MultiGestureEvent,
+        DollarGestureEvent,
+        DropEvent,
+        AudioDeviceEvent
+    )
 
 class CoreObject(metaclass=ObjectMeta):
     __abstract__ = True
@@ -37,12 +69,12 @@ class CoreObject(metaclass=ObjectMeta):
             dt (float): Время в секундах
         '''
 
-    def event(self, event: pg.event.Event) -> None:
+    def event(self, event: Enent) -> None:
         '''
         Сработыет при вызове жвента
 
         Args:
-            event (pg.event.Event): Основной класс эвента
+            event (Enent): Основной класс эвента
         '''
 
     def size_update(self, old: tuple[int, int], new: tuple[int, int], ratio: tuple[int, int]):
@@ -60,8 +92,6 @@ class CoreObject(metaclass=ObjectMeta):
         '''
         Перемещение окна
 
-        Работает на pygame-ce
-
         Args:
             old (tuple[int, int]): Старая позиция
             new (tuple[int, int]): Новоя позиция
@@ -69,264 +99,349 @@ class CoreObject(metaclass=ObjectMeta):
 
     # Системные события
 
-    def close(self) -> None:
+    def quit(self, common: CommonEvent, quit: QuitEvent) -> bool:
         """
-        QUIT
-        Когда вызывается: 
-            Пользователь запросил закрытие приложения (нажал на крестик окна, Alt+F4 или эквивалент в оконной системе).
-
-        Атрибуты: 
-            Специфических полей нет — важен сам факт события. 
-            При получении SDL_QUIT приложение обычно завершает главный цикл и освобождает ресурсы.
+        SDL_QUIT
+        Пользователь запросил закрытие приложения (нажал на крестик окна, Alt+F4 или эквивалент в оконной системе).
         """
         return True
     
 
-    def localechanged(self) -> None:
+    def app_terminating(self, common: CommonEvent) -> None:
         """
-        LOCALECHANGED
-        Когда вызывается: 
-            Пользователь изменил локальные настройки (язык, региональные стандарты) в системе.
-
-        Атрибуты: 
-            Нет специфических полей. 
-            Сигнализирует, что текстовые ресурсы или форматы (даты, числа) могут требовать обновления.
+        SDL_APP_TERMINATING
+        Приложение завершается ОС (iOS/Android)
         """
 
-    def displayevent(self, display: int, event: int) -> None:
+    def app_lowmemory(self, common: CommonEvent) -> None:
+        """
+        SDL_APP_LOWMEMORY
+        Приложению не хватает памяти
+        """
+
+    def app_willenterbackground(self, common: CommonEvent) -> None:
+        """
+        SDL_APP_WILLENTERBACKGROUND
+        Приложение собирается уйти в фон
+        """
+
+    def app_didenterbackground(self, common: CommonEvent) -> None:
+        """
+        SDL_APP_DIDENTERBACKGROUND
+        Приложение ушло в фон
+        """
+
+    def app_willenterforeground(self, common: CommonEvent) -> None:
+        """
+        SDL_APP_WILLENTERFOREGROUND
+        Приложение собирается вернуться на передний план
+        """
+
+    def app_didenterforeground(self, common: CommonEvent) -> None:
+        """
+        SDL_APP_DIDENTERFOREGROUND
+        Приложение снова активно
+        """
+
+    def localechanged(self, common: CommonEvent) -> None:
+        """
+        SDL_LOCALECHANGED
+        Изменились локальные настройки пользователя
+        """
+
+    def displayevent(self, common: CommonEvent, display: DisplayEvent) -> None:
         """
         SDL_DISPLAYEVENT
-            Когда вызывается: 
-                Изменилось состояние дисплея (например, монитор был подключён/отключён, изменено его разрешение или ориентация).
-
-            Атрибуты:
-                display — индекс дисплея, с которым произошло изменение.
-                event — конкретное подсостояние (например, SDL_DISPLAYEVENT_CONNECTED, SDL_DISPLAYEVENT_ORIENTATION).
+        Изменение состояния дисплея
         """
 
-    def windowevent(self, event: int, *args) -> None:
+    def windowevent(self, common: CommonEvent, window: WindowEvent) -> None:
         """
         SDL_WINDOWEVENT
-        Когда вызывается: 
-            Любое изменение состояния окна: перемещение, изменение размера, сворачивание/разворачивание, получение/потеря фокуса, изменение видимости и т.п.
-
-        Атрибуты:
-            event — конкретное подсостояние (например, SDL_WINDOWEVENT_RESIZED, SDL_WINDOWEVENT_FOCUS_GAINED).
-            data1, data2 — зависят от event. Например, для SDL_WINDOWEVENT_RESIZED в data1 и data2 лежат новые ширина и высота окна.
+        Изменение состояния окна (фокус, размер, перемещение и т.п.)
         """
 
-    def syswmevent(self, msg: object) -> None:
+    def syswmevent(self, common: CommonEvent, syswm: SysWMEvent) -> None:
         """
         SDL_SYSWMEVENT
-        Когда вызывается: 
-            Оконная система передаёт «сырое» системное сообщение (например, WM_* в Windows или XEvent в X11), которое SDL не обработала сама.
-
-        Атрибуты: 
-            msg — указатель на системно-зависимую структуру сообщения. 
-            Нужен для низкоуровневой интеграции с оконной системой.
+        Системное событие оконного менеджера
         """
 
-    def clipboardupdate(self) -> None:
+    def clipboardupdate(self, common: CommonEvent) -> None:
         """
         SDL_CLIPBOARDUPDATE
-        Когда вызывается: 
-            Содержимое системного буфера обмена изменилось.
-
-        Атрибуты: 
-            Нет. Позволяет приложению вовремя обновить своё представление буфера обмена.
+        Изменилось содержимое буфера обмена
         """
 
-    def render_targets_reset(self) -> None:
+    def render_targets_reset(self, common: CommonEvent) -> None:
         """
-        SDL_RENDER_TARGETS_RESET, SDL_RENDER_DEVICE_RESET
-        Когда вызывается: 
-            Сброс целей рендеринга или устройства рендеринга (например, после потери контекста OpenGL/Direct3D или изменения параметров окна).
-
-        Атрибуты: 
-            Нет. Сигнализирует, что все текстуры и цели рендеринга нужно пересоздать.
+        SDL_RENDER_TARGETS_RESET
+        Цели рендеринга сброшены (нужно обновить содержимое)
         """
 
-    def render_device_reset(self) -> None:
+    def render_device_reset(self, common: CommonEvent) -> None:
         """
-        SDL_RENDER_TARGETS_RESET, SDL_RENDER_DEVICE_RESET
-        Когда вызывается: 
-            Сброс целей рендеринга или устройства рендеринга (например, после потери контекста OpenGL/Direct3D или изменения параметров окна).
-
-        Атрибуты: 
-            Нет. Сигнализирует, что все текстуры и цели рендеринга нужно пересоздать.
+        SDL_RENDER_DEVICE_RESET
+        Устройство рендеринга сброшено (нужно пересоздать текстуры)
         """
 
-    def sensorupdate(self) -> None:
+    def sensorupdate(self, common: CommonEvent, sensor: SensorEvent) -> None:
         """
         SDL_SENSORUPDATE
-        Когда вызывается: 
-            С аппаратного сенсора (акселерометр, гироскоп) поступили новые данные.
-
-        Атрибуты: 
-            which (идентификатор сенсора), 
-            data (массив из 6 float с показаниями). Используется для управления на основе наклона/вращения устройства.
+        Обновились данные сенсора
         """
 
     # События клавиатуры
 
-    def keydown(self, sym: int, mod: int, unicode: str, scancode: int) -> None:
+    def keydown(self, common: CommonEvent, key: KeyboardEvent) -> None:
         """
-        SDL_KEYDOWN / SDL_KEYUP
-        Когда вызывается: 
-            Физическая клавиша была нажата или отпущена.
-
-        Зачем нужны атрибуты keysym:
-
-            scancode — аппаратный код клавиши, зависящий от физического расположения. 
-            Используйте его для игрового управления (например, «клавиша W» на QWERTY и «клавиша Z» на AZERTY имеют разный sym, но одинаковый scancode).
-
-            sym — виртуальный код клавиши (например, SDLK_w, SDLK_RETURN). 
-            Удобен для привязки действий к конкретным клавишам с учётом раскладки.
-
-            mod — текущие модификаторы (KMOD_SHIFT, KMOD_CTRL, KMOD_ALT). Позволяет различать, например, Ctrl+S и просто S.
-        
-        Дополнительно: repeat (для KEYDOWN) — 1, если событие сгенерировано автоповтором при удержании клавиши.
+        SDL_KEYDOWN
+        Клавиша нажата
         """
 
-    def keyup(self, key: int, mod: int, scancode: int) -> None:
+    def keyup(self, common: CommonEvent, key: KeyboardEvent) -> None:
         """
-        SDL_KEYDOWN / SDL_KEYUP
-        Когда вызывается: 
-            Физическая клавиша была нажата или отпущена.
-
-        Зачем нужны атрибуты keysym:
-
-            scancode — аппаратный код клавиши, зависящий от физического расположения. 
-            Используйте его для игрового управления (например, «клавиша W» на QWERTY и «клавиша Z» на AZERTY имеют разный sym, но одинаковый scancode).
-
-            sym — виртуальный код клавиши (например, SDLK_w, SDLK_RETURN). 
-            Удобен для привязки действий к конкретным клавишам с учётом раскладки.
-
-            mod — текущие модификаторы (KMOD_SHIFT, KMOD_CTRL, KMOD_ALT). Позволяет различать, например, Ctrl+S и просто S.
-        
-        Дополнительно: repeat (для KEYDOWN) — 1, если событие сгенерировано автоповтором при удержании клавиши.
+        SDL_KEYUP
+        Клавиша отпущена
         """
 
-    def textediting(self, text: str, start: int, length: int) -> None:
+    def textediting(self, common: CommonEvent, edit: TextEditingEvent) -> None:
         """
-        SDL_TEXTEDITING / SDL_TEXTEDITING_EXT
-        Когда вызывается: 
-            Пользователь вводит текст через IME (Input Method Editor — например, для китайского, японского или корейского языков). 
-            Это промежуточный этап, когда символы ещё не зафиксированы.
-
-        Атрибуты:
-            text — текущая строка композиции (может содержать ещё не подтверждённые символы).
-            start, length — позиция и длина выделенной части внутри text. Нужны для отрисовки подсказки IME.
+        SDL_TEXTEDITING
+        Редактирование текста (IME, композиция)
         """
 
-    def textediting_ext(self, text: str, start: int, length: int) -> None:
-        """
-        SDL_TEXTEDITING / SDL_TEXTEDITING_EXT
-        Когда вызывается: 
-            Пользователь вводит текст через IME (Input Method Editor — например, для китайского, японского или корейского языков). 
-            Это промежуточный этап, когда символы ещё не зафиксированы.
-
-        Атрибуты:
-            text — текущая строка композиции (может содержать ещё не подтверждённые символы).
-            start, length — позиция и длина выделенной части внутри text. Нужны для отрисовки подсказки IME.
-        """
-
-
-    def textinput(self, text: str) -> None:
+    def textinput(self, common: CommonEvent, text: TextInputEvent) -> None:
         """
         SDL_TEXTINPUT
-        Когда вызывается: 
-            Пользователь завершил ввод символа (подтвердил выбор в IME или нажал обычную клавишу).
-
-        Атрибуты: 
-            text — готовая строка для вставки в текстовое поле. В отличие от KEYDOWN, здесь приходит именно текст (с учётом раскладки и IME), а не код клавиши.
+        Ввод текста (после завершения IME)
         """
 
-    def keymapchanged(self) -> None:
+    def keymapchanged(self, common: CommonEvent) -> None:
         """
         SDL_KEYMAPCHANGED
-        Когда вызывается: 
-            Система сменила раскладку клавиатуры или язык ввода.
+        Раскладка клавиатуры изменилась системой
+        """
 
-        Атрибуты: 
-            Нет. Позволяет приложению обновить отображаемые подсказки клавиш.
+    def textediting_ext(self, common: CommonEvent, editExt: TextEditingExtEvent) -> None:
+        """
+        SDL_TEXTEDITING_EXT
+        Расширенное редактирование текста (IME)
         """
 
     # События мыши
 
-    def mousemotion(self, pos: tuple[int, int], rel: tuple[int, int], state: bool) -> None:
+    def mousemotion(self, common: CommonEvent, motion: MouseMotionEvent) -> None:
         """
         SDL_MOUSEMOTION
-        Когда вызывается: 
-            Пользователь переместил мышь внутри окна приложения или была вызвана SDL_WarpMouse() (программное перемещение курсора).
-
-        Зачем нужны атрибуты:
-
-            x, y — абсолютные координаты курсора относительно левого верхнего угла окна. 
-            Удобны для позиционирования UI-элементов, курсоров, прицеливания.
-
-            xrel, yrel — относительное смещение с момента предыдущего события. 
-            Критично для управления камерой от первого лица: даже если курсор упрётся в край экрана (при захвате ввода), xrel/yrel продолжат приходить, позволяя бесконечно вращать камеру.
-
-            state — текущее состояние кнопок мыши в момент движения (битовая маска). 
-            Позволяет реализовать перетаскивание (drag) без отслеживания отдельных BUTTONDOWN/UP — достаточно проверять state в MOTION.
+        Перемещение мыши
         """
 
-    def mousebuttondown(self, pos: tuple[int, int], button: int, clicks: int) -> None:
+    def mousebuttondown(self, common: CommonEvent, button: MouseButtonEvent) -> None:
         """
-        SDL_MOUSEBUTTONDOWN / SDL_MOUSEBUTTONUP
-        Когда вызывается: 
-            Кнопка мыши была нажата или отпущена.
-
-        Зачем нужны атрибуты:
-            x, y — координаты курсора в момент нажатия/отпускания. 
-            Нужны для определения, куда именно пришёлся клик.
-
-            button — номер кнопки (SDL_BUTTON_LEFT, SDL_BUTTON_RIGHT, SDL_BUTTON_MIDDLE). 
-            Позволяет различать действия.
-
-            clicks — количество кликов (1 для одиночного, 2 для двойного). 
-            Удобно для обработки двойного клика без ручного замера времени.
-            
+        SDL_MOUSEBUTTONDOWN
+        Кнопка мыши нажата
         """
 
-    def mousebuttonup(self, pos: tuple[int, int], button: int, clicks: int) -> None:
+    def mousebuttonup(self, common: CommonEvent, button: MouseButtonEvent) -> None:
         """
-        SDL_MOUSEBUTTONDOWN / SDL_MOUSEBUTTONUP
-        Когда вызывается: 
-            Кнопка мыши была нажата или отпущена.
-
-        Зачем нужны атрибуты:
-            x, y — координаты курсора в момент нажатия/отпускания. 
-            Нужны для определения, куда именно пришёлся клик.
-
-            button — номер кнопки (SDL_BUTTON_LEFT, SDL_BUTTON_RIGHT, SDL_BUTTON_MIDDLE). 
-            Позволяет различать действия.
-
-            clicks — количество кликов (1 для одиночного, 2 для двойного). 
-            Удобно для обработки двойного клика без ручного замера времени.
-            
+        SDL_MOUSEBUTTONUP
+        Кнопка мыши отпущена
         """
 
-    def mousewheel(self, x: int, y: int, flipped: bool, precise_x: float, precise_y: float) -> None:
+    def mousewheel(self, common: CommonEvent, wheel: MouseWheelEvent) -> None:
         """
         SDL_MOUSEWHEEL
-        Когда вызывается: 
-            Пользователь прокрутил колесо мыши или сделал жест прокрутки на тачпаде.
-
-        Зачем нужны атрибуты:
-
-            x, y — направление и величина прокрутки (целые числа). 
-            y обычно отвечает за вертикальную прокрутку (вверх/вниз), x — за горизонтальную.
-
-            direction — SDL_MOUSEWHEEL_NORMAL (прямое направление) или SDL_MOUSEWHEEL_FLIPPED (обратное, в зависимости от настроек ОС). 
-            Позволяет корректно интерпретировать направление.
-
-            preciseX, preciseY — более точные значения с плавающей точкой (для тачпадов с плавной прокруткой).
-
-            mouseX, mouseY — координаты курсора в момент прокрутки (в некоторых версиях SDL2).
+        Прокрутка колеса мыши
         """
-        
+
+    # Джойстик (классический API)
+    def joyaxismotion(self, common: CommonEvent, jaxis: JoyAxisEvent) -> None:
+        """
+        SDL_JOYAXISMOTION
+        Движение оси джойстика
+        """
+
+    def joyballmotion(self, common: CommonEvent, jball: JoyBallEvent) -> None:
+        """
+        SDL_JOYBALLMOTION
+        Движение трекбола
+        """
+
+    def joyhatmotion(self, common: CommonEvent, jhat: JoyHatEvent) -> None:
+        """
+        SDL_JOYHATMOTION
+        Изменение POV-переключателя (hat)
+        """
+
+    def joybuttondown(self, common: CommonEvent, jbutton: JoyButtonEvent) -> None:
+        """
+        SDL_JOYBUTTONDOWN
+        Кнопка джойстика нажата
+        """
+
+    def joybuttonup(self, common: CommonEvent, jbutton: JoyButtonEvent) -> None:
+        """
+        SDL_JOYBUTTONUP
+        Кнопка джойстика отпущена
+        """
+
+    def joydeviceadded(self, common: CommonEvent, jdevice: JoyDeviceEvent) -> None:
+        """
+        SDL_JOYDEVICEADDED
+        Джойстик подключён
+        """
+
+    def joydeviceremoved(self, common: CommonEvent, jdevice: JoyDeviceEvent) -> None:
+        """
+        SDL_JOYDEVICEREMOVED
+        Джойстик отключён
+        """
+    def joybatteryupdated(self, common: CommonEvent, jbattery: JoyBatteryEvent) -> None:
+        """
+        SDL_JOYBATTERYUPDATED
+        Изменился уровень заряда джойстика
+        """
+
+    # Контроллеры (Game Controller API, SDL2)
+
+    def controlleraxismotion(self, common: CommonEvent, caxis: ControllerAxisEvent) -> None:
+        """
+        SDL_CONTROLLERAXISMOTION
+        Движение оси контроллера
+        """
+
+    def controllerbuttondown(self, common: CommonEvent, cbutton: ControllerButtonEvent) -> None:
+        """
+        SDL_CONTROLLERBUTTONDOWN
+        Кнопка контроллера нажата
+        """
+
+    def controllerbuttonup(self, common: CommonEvent, cbutton: ControllerButtonEvent) -> None:
+        """
+        SDL_CONTROLLERBUTTONUP
+        Кнопка контроллера отпущена
+        """
+
+    def controllerdeviceadded(self, common: CommonEvent, cdevice: ControllerDeviceEvent) -> None:
+        """
+        SDL_CONTROLLERDEVICEADDED
+        Контроллер подключён
+        """
+
+    def controllerdeviceremoved(self, common: CommonEvent, cdevice: ControllerDeviceEvent) -> None:
+        """
+        SDL_CONTROLLERDEVICEREMOVED
+        Контроллер отключён
+        """
+
+    def controllerdeviceremapped(self, common: CommonEvent, cdevice: ControllerDeviceEvent) -> None:
+        """
+        SDL_CONTROLLERDEVICEREMAPPED
+        Раскладка контроллера обновлена
+        """
+
+    def controllertouchpaddown(self, common: CommonEvent, ctouchpad: ControllerTouchpadEvent) -> None:
+        """
+        SDL_CONTROLLERTOUCHPADDOWN
+        Тачпад контроллера нажат
+        """
+
+    def controllertouchpadmotion(self, common: CommonEvent, ctouchpad: ControllerTouchpadEvent) -> None:
+        """
+        SDL_CONTROLLERTOUCHPADMOTION
+        Палец движется по тачпаду контроллера
+        """
+
+    def controllertouchpadup(self, common: CommonEvent, ctouchpad: ControllerTouchpadEvent) -> None:
+        """
+        SDL_CONTROLLERTOUCHPADUP
+        Палец отпущен с тачпада контроллера
+        """
+
+    def controllersensorupdate(self, common: CommonEvent, csensor: ControllerSensorEvent) -> None:
+        """
+        SDL_CONTROLLERSENSORUPDATE
+        Обновились данные сенсора контроллера
+        """
+
+    # Сенсорный ввод и жесты
+
+    def fingerdown(self, common: CommonEvent, tfinger: TouchFingerEvent) -> None:
+        """
+        SDL_FINGERDOWN
+        Палец коснулся экрана
+        """
+
+    def fingerup(self, common: CommonEvent, tfinger: TouchFingerEvent) -> None:
+        """
+        SDL_FINGERUP
+        Палец поднят
+        """
+
+    def fingermotion(self, common: CommonEvent, tfinger: TouchFingerEvent) -> None:
+        """
+        SDL_FINGERMOTION
+        Палец движется
+        """
+
+    def multigesture(self, common: CommonEvent, mgesture: MultiGestureEvent) -> None:
+        """
+        SDL_MULTIGESTURE
+        Мультитач-жест (щипок, вращение)
+        """
+
+    def dollargesture(self, common: CommonEvent, dgesture: DollarGestureEvent) -> None:
+        """
+        SDL_DOLLARGESTURE
+        Распознан долларовый жест (1-жест)
+        """
+
+    def dollarrecord(self, common: CommonEvent, dgesture: DollarGestureEvent) -> None:
+        """
+        SDL_DOLLARRECORD
+        Записан долларовый жест
+        """
+
+    # Аудиоустройства
+
+    def audiodeviceadded(self, common: CommonEvent, adevice: AudioDeviceEvent) -> None:
+        """
+        SDL_AUDIODEVICEADDED
+        Аудиоустройство подключено
+        """
+
+    def audiodeviceremoved(self, common: CommonEvent, adevice: AudioDeviceEvent) -> None:
+        """
+        SDL_AUDIODEVICEREMOVED
+        Аудиоустройство отключено
+        """
+
+    # Drag and Drop (перетаскивание файлов/текста)
+
+    def dropbegin(self, common: CommonEvent, drop: DropEvent) -> None:
+        """
+        SDL_DROPBEGIN
+        Начало перетаскивания
+        """
+
+    def dropfile(self, common: CommonEvent, drop: DropEvent) -> None:
+        """
+        SDL_DROPFILE
+        Файл перетащен в окно
+        """
+
+    def droptext(self, common: CommonEvent, drop: DropEvent) -> None:
+        """
+        SDL_DROPTEXT
+        Текст перетащен в окно
+        """
+
+    def dropcomplete(self, common: CommonEvent, drop: DropEvent) -> None:
+        """
+        SDL_DROPCOMPLETE
+        Перетаскивание завершено
+        """
 
 class PfObject(CoreObject):
     rect: pg.Rect | None = None

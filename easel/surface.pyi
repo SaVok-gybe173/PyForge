@@ -1,5 +1,6 @@
 from typing import overload
 from sdl2.surface import SDL_Surface
+from sdl2.rect import SDL_Rect
 
 class Surface:
     _surface: SDL_Surface
@@ -39,3 +40,31 @@ class Surface:
     def __enter__(self) -> "Surface": ...
 
     def __exit__(self, exc_type, exc_val, exc_tb) -> None: ...
+
+    def set_colorkey(self, color: tuple[int, int, int]) -> None:
+        """
+        Устанавливает цветовой ключ (цвет, который будет прозрачным). 
+        Используйте SDL_SetColorKey
+        """
+
+    def set_alpha(self, alpha: int) -> None:
+        """
+        Устанавливает общую прозрачность поверхности (0–255). Используйте SDL_SetSurfaceAlphaMod.
+        """
+
+    def blit_scaled(self, src: "Surface", dst_rect: SDL_Rect) -> None:
+        """
+        Копирование с масштабированием. Используйте SDL_BlitScaled.
+        """
+
+    def get_at(self, pos: tuple[int, int]) -> tuple[int, int, int, int]:
+        """
+        Прямой доступ к пикселям. 
+        Используйте sdl2.ext.PixelView — он позволяет читать и писать через view[y][x].
+        """
+
+    def set_at(self, pos: tuple[int, int], color: tuple[int, int, int, int]) -> None:
+        """
+        Прямой доступ к пикселям. 
+        Используйте sdl2.ext.PixelView — он позволяет читать и писать через view[y][x].
+        """

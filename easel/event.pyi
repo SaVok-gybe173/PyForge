@@ -1,8 +1,16 @@
+"""
+Обёртка над sdl2, имитирующая pygame.event.
+
+Каждая функция — тонкий слой над соответствующим вызовом SDL2.
+Использование аналогично pygame, но с оговорками, описанными в docstring.
+"""
+
 from sdl2.keyboard import SDL_Keysym, SDL_Scancode, SDL_Keycode
 from sdl2.joystick import SDL_JoystickID, SDL_JoystickPowerLevel
 from sdl2.syswm import SDL_SysWMmsg
 from sdl2.touch import SDL_TouchID, SDL_FingerID
 from sdl2.gesture import SDL_GestureID
+from sdl2.video import SDL_Window
 
 
 type uint32 = int   # беззнаковый 1 байт	0…255
@@ -123,6 +131,179 @@ FIRSTEVENT: uint32              # Значение 0, не использует�
 POLLSENTINEL: uint32            # Сигнализирует о конце цикла опроса событий (0x7F00)
 
 EVENT_NAMES: dict[int, str]
+
+def pump() -> None:
+    """Обновить внутреннее состояние очереди событий SDL.
+
+    Аналог pygame.event.pump().
+
+    Прокачивает очередь: забирает сообщения из оконной системы и
+    кладёт их во внутреннюю очередь SDL. Нужно вызывать только если
+    ты НЕ используешь poll()/wait()/get() — эти функции вызывают
+    SDL_PumpEvents автоматически.
+
+    Соответствие SDL2: sdl2.SDL_PumpEvents()
+
+    Пример:
+        # Если ты не читаешь события, но хочешь, чтобы состояние
+        # клавиатуры/мыши обновлялось:
+        sdl2.SDL_PumpEvents()
+    """
+
+def get() -> list[Event]:
+    """Забрать все накопившиеся события из очереди.
+
+    Аналог pygame.event.get().
+
+    Возвращает список структур Enent. Очередь после вызова пуста.
+    Внутри автоматически вызывает SDL_PumpEvents.
+
+    Соответствие SDL2: sdl2.ext.get_events()
+                      (обёртка над sdl2.SDL_PollEvent в цикле)
+
+    Returns:
+        list[Enent]: список событий (может быть пустым).
+
+    Пример:
+        for event in get():
+            if event.type == QUIT:
+                running = False
+    """
+
+def clear() -> None:
+    """Полностью очистить очередь событий.
+
+    Аналог pygame.event.clear().
+
+    Удаляет все события всех типов. Если нужно удалить только
+    определённые типы — используй set_blocked() до этого или
+    SDL_FlushEvent(type) напрямую.
+
+    Соответствие SDL2: sdl2.SDL_FlushEvents(SDL_FIRSTEVENT, SDL_LASTEVENT)
+
+    Пример:
+        clear()  # выкинуть всё, что накопилось
+    """
+
+def set_blocked(*types: int) -> None:
+    """Заблокировать приём событий указанных типов.
+
+    Аналог pygame.event.set_blocked().
+
+    Заблокированные события не попадают в очередь (сбрасываются
+    в момент генерации). Если не передать ни одного типа — блокирует
+    ВСЕ события.
+
+    Соответствие SDL2: sdl2.SDL_EventState(type, sdl2.SDL_IGNORE)
+
+    Args:
+        *types: типы событий для блокировки (например, SDL_MOUSEMOTION).
+
+    Пример:
+        set_blocked(sdl2.SDL_MOUSEMOTION, sdl2.SDL_MOUSEBUTTONDOWN)
+    """
+
+def get_blocked() -> list:
+    """Получить список заблокированных типов событий.
+
+    Аналог pygame.event.get_blocked().
+
+    В SDL2 нет списка «заблокировано» — состояние спрашивается
+    по одному типу через SDL_EventState(..., SDL_QUERY). Здесь
+    реализовано перебором диапазона SDL_FIRSTEVENT..SDL_LASTEVENT.
+
+    Соответствие SDL2: sdl2.SDL_EventState(type, sdl2.SDL_QUERY)
+
+    Returns:
+        list[int]: типы событий, находящиеся в состоянии IGNORE.
+
+    Пример:
+        blocked = get_blocked()
+        if sdl2.SDL_MOUSEMOTION in blocked:
+            print("мышь заблокирована")
+    """
+
+
+def set_allowed(*types: int) -> None:
+    """Разрешить приём событий указанных типов.
+
+    Аналог pygame.event.set_allowed().
+
+    Снимает блокировку с указанных типов. Если не передать ни
+    одного типа — разрешает ВСЕ события (эквивалент очистки фильтра).
+
+    Соответствие SDL2: sdl2.SDL_EventState(type, sdl2.SDL_ENABLE)
+
+    Args:
+        *types: типы событий для разблокировки.
+
+    Пример:
+        set_allowed(sdl2.SDL_KEYDOWN, sdl2.SDL_KEYUP)
+    """
+
+def post(event: Event) -> bool:
+    """Положить готовое событие в очередь.
+
+    Аналог pygame.event.post().
+
+    ВАЖНО: соответствие в SDL2 — SDL_PushEvent (Push), а НЕ
+    SDL_PeepEvents (Peep). Push кладёт событие в очередь и
+    прогоняет его через фильтр. Peep — подсматривает/вставляет
+    в обход фильтра.
+
+    Для пользовательских событий используй зарегистрированный тип:
+        custom_type = sdl2.SDL_RegisterEvents(1)
+    или стандартный sdl2.SDL_USEREVENT.
+
+    Соответствие SDL2: sdl2.SDL_PushEvent(event)
+
+    Args:
+        event: заранее заполненная структура SDL_Event.
+
+    Returns:
+        bool: True при успехе, False при ошибке.
+
+    Пример:
+        ev = sdl2.SDL_Event()
+        ev.type = sdl2.SDL_USEREVENT
+        ev.user.code = 42
+        post(ev)
+    """
+
+def set_grab(win: SDL_Window, enable: bool) -> None:
+    """Захватить (или отпустить) ввод мышью в пределах окна.
+
+    Аналог pygame.event.set_grab().
+
+    В SDL2 захват привязан к конкретному окну — это окно должно
+    быть создано заранее и передано в функцию. Если окно одно,
+    можно обернуть так, чтобы окно подставлялось автоматически.
+
+    Соответствие SDL2: sdl2.SDL_SetWindowGrab(window, SDL_TRUE/SDL_FALSE)
+
+    Args:
+        enable: True — захватить, False — отпустить.
+
+    Пример:
+        set_grab(True)   # включить (FPS-стиль)
+        set_grab(False)  # выключить
+    """
+
+
+def get_grab(win: SDL_Window) -> bool:
+    """Узнать, захвачен ли ввод окном.
+
+    Аналог pygame.event.get_grab().
+
+    Соответствие SDL2: sdl2.SDL_GetWindowGrab(window)
+
+    Returns:
+        bool: True, если ввод захвачен.
+
+    Пример:
+        if get_grab():
+            print("мышь заперта в окне")
+    """
 
 def event_add(type: int, name: str) -> None:
     "добавляет новый эвент в таблицу"
@@ -344,7 +525,7 @@ class AudioDeviceEvent:         # SDL_AUDIODEVICEADDED, SDL_AUDIODEVICEREMOVED
     which: uint32 # индекс (ADDED) или SDL_AudioDeviceID (REMOVED)
     iscapture: uint8 # iscapture ≠ 0 — микрофон/захват
 
-class Enent:
+class Event:
     type: uint32 # всегда
     common: CommonEvent # всегда
     display: DisplayEvent # SDL_DISPLAYEVENT

@@ -249,9 +249,22 @@ from sdl2.events import (
     SDL_DropEvent as DropEvent,
     SDL_AudioDeviceEvent as AudioDeviceEvent,
 
-    SDL_Event as Enent,  
+    SDL_Event as Enent,
 
+    SDL_EventState,
+    SDL_MOUSEMOTION,
+    SDL_IGNORE,
+    SDL_ENABLE,
+    SDL_QUERY,
+    SDL_FlushEvents,
+    SDL_FIRSTEVENT,
+    SDL_LASTEVENT,
+    SDL_PushEvent,
 )
+
+from sdl2.video import SDL_SetWindowGrab, SDL_GetWindowGrab
+from sdl2.stdinc import SDL_TRUE, SDL_FALSE
+from sdl2.ext import get_events as get
 
 sint64 = int
 sint8 = int
@@ -327,6 +340,55 @@ EVENT_NAMES = {
     DROPCOMPLETE: "DROPCOMPLETE",
 
 }
+
+def clear() -> None:
+    SDL_FlushEvents(SDL_FIRSTEVENT, SDL_LASTEVENT)
+
+def set_blocked(*types):
+    """Аналог pygame.event.set_blocked(). Без аргументов — блокирует всё."""
+    if not types:
+        for t in range(SDL_FIRSTEVENT, SDL_LASTEVENT + 1):
+            SDL_EventState(t, SDL_IGNORE)
+    else:
+        for t in types:
+            SDL_EventState(t, SDL_IGNORE)
+
+def set_allowed(*types):
+    """Аналог pygame.event.set_allowed(). Без аргументов — разрешает всё."""
+    if not types:
+        for t in range(SDL_FIRSTEVENT, SDL_LASTEVENT + 1):
+            SDL_EventState(t, SDL_ENABLE)
+    else:
+        for t in types:
+            SDL_EventState(t, SDL_ENABLE)
+
+def get_blocked():
+    """Аналог pygame.event.get_blocked(). Список заблокированных типов."""
+    result = []
+    for t in range(SDL_FIRSTEVENT, SDL_LASTEVENT + 1):
+        if SDL_EventState(t, SDL_QUERY) == SDL_IGNORE:
+            result.append(t)
+    return result
+
+def post(event):
+    """Аналог pygame.event.post(). Положить событие в очередь.
+
+    Возвращает True при успехе.
+    """
+    return SDL_PushEvent(event) >= 0
+
+def set_grab(win, enable):
+    """Аналог pygame.event.set_grab(). Требует set_window()."""
+    if win is None:
+        raise RuntimeError("Сначала вызови set_window(window)")
+    SDL_SetWindowGrab(win, SDL_TRUE if enable else SDL_FALSE)
+
+
+def get_grab(win):
+    """Аналог pygame.event.get_grab(). Требует set_window()."""
+    if win is None:
+        raise RuntimeError("Сначала вызови set_window(window)")
+    return SDL_GetWindowGrab(win) == SDL_TRUE
 
 def event_add(type: int, name: str) -> None:
     "добавляет новый эвент в таблицу"

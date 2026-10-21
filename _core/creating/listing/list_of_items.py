@@ -2,7 +2,7 @@ import pygame as pg
 from ....easel import PfObject
 from typing import Tuple
 from .structure import ListItems, Governance
-from ....easel.markup import Size, Point
+from ....math.markup import Size, Point
 from .calculations import event_size, update_size
 
 class CoreListOfItems(PfObject):

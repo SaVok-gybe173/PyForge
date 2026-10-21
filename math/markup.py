@@ -3,7 +3,7 @@
 """
 from .._core.locals import GRAPHICS, GRAPHICS_GL_2D_ORTHO, GRAPHICS_PYGAME
 from typing import Type, overload, Final, Literal, TypeAlias
-import pygame as pg
+from ..easel.event import Event, MOUSEBUTTONDOWN
 
 # Флаги для классов
 SIZE_RELATIONSHIP: Final[str]   = "size-relationship"
@@ -274,12 +274,12 @@ class Point(_General):
         else:
             raise ValueError(f"тип: {self.type} не существует")
 
-def cord(event: pg.event.Event, i = 1):
+def cord(event: Event, i = 1):
     """
     coordinate output function
     функция вывода кординат
     """
-    if event.type == pg.MOUSEBUTTONDOWN:
+    if event.type == MOUSEBUTTONDOWN:
         if event.button == i:
             print(event.pos)
             return event.pos
@@ -290,8 +290,8 @@ class MathCord:
     класс для отладки и вывода кординат
     """
     stade = None
-    def event(self, event: pg.event.Event):
-        if event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
+    def event(self, event: Event):
+        if event.type == MOUSEBUTTONDOWN and event.button == 1:
             if self.stade is None:
                 self.stade = cord(event)
                 print(f"сохранено {self.stade}")
@@ -299,5 +299,5 @@ class MathCord:
                 stade = cord(event)
                 print(f"x_y = ({min((self.stade[0], stade[0]))}, {min((self.stade[1], stade[1]))}), w_h = ({abs(self.stade[0]-stade[0])}, {abs(self.stade[1]-stade[1])})")
                 self.stade = None
-    def __call__(self, event: pg.event.Event):
+    def __call__(self, event: Event):
         self.event(event)

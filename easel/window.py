@@ -6,8 +6,8 @@ from threading import Thread
 from traceback import extract_tb
 from .scene import Scene, EVENTS_METOD
 from ..gpu.locals import IS_IMPORT_GL, InitGl
-from .logger import printError, printInfo
-from .time import Clock
+from ..base.logger import printError, printInfo
+from ..math.time import Clock
 from .event import EVENT_NAMES
 from .surface import Surface
 from sdl2.surface import SDL_Surface

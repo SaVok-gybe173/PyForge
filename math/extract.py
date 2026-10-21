@@ -1,6 +1,6 @@
-import pygame as pg
+from ..easel import Surface
 
-def extract_square(surface: pg.Surface, center_x, center_y, size):
+def extract_square(surface: Surface, center_x, center_y, size):
     """
     Вырезает квадратную область из поверхности.
     
@@ -34,7 +34,7 @@ def extract_square(surface: pg.Surface, center_x, center_y, size):
     return square_surface
 
 # Альтернативная версия с использованием subsurface (более эффективная)
-def extract_square_fast(surface: pg.Surface, center_x, center_y, size):
+def extract_square_fast(surface: Surface, center_x, center_y, size):
     """
     Вырезает квадратную область из поверхности с использованием subsurface.
     Более эффективна, но исходная поверхность должна оставаться в памяти.
@@ -65,7 +65,7 @@ def extract_square_fast(surface: pg.Surface, center_x, center_y, size):
     rect = pg.Rect(x, y, size, size)
     return surface.subsurface(rect)
 
-def resize_image_with_aspect_ratio(image: pg.Surface, new_width: int, new_height: int) -> pg.Surface:
+def resize_image_with_aspect_ratio(image: Surface, new_width: int, new_height: int) -> Surface:
     """Изменяет размер изображения, сохраняя пропорции."""
     width, height = image.get_size()
     aspect_ratio = width / height

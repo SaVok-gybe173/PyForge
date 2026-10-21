@@ -1,7 +1,7 @@
 from PyForge import Scene
 from PyForge.easel import Window
 from PyForge.widget.button import Button, AnimationButton, FrameAnimationButton, Increase, Impuls
-from PyForge.lad import start, load
+from PyForge.base.lad import start, load
 from PyForge.widget.list import ListItems, ListOfItems
 from PyForge.widget.input import InputLine
 from PyForge.installer.conductor import select_folder

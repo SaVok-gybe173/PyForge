@@ -4,7 +4,7 @@ import sys
 
 from .animation import FrameAnimationButton
 from ....cpu.creating.image.tools import round_corners_alternative
-
+from ....easel import Surface
     
     
 class Increase(FrameAnimationButton):
@@ -102,7 +102,7 @@ class Impuls(FrameAnimationButton):
             self.shadow_surface.fill(self.shadow)
             self._round_image()
             
-    def draw(self, screen: pg.Surface):
+    def draw(self, screen: Surface):
         screen.blit(self.shadow_surface, (self.button.left, self.button.top))
         #pg.draw.circle(self.shadow_surface, (0,0,0), (50, 25), 20)
     def _round_image(self):
@@ -114,7 +114,7 @@ class Impuls(FrameAnimationButton):
         self._round_image()
     
 class ImageClick(FrameAnimationButton):
-    def __init__(self, retention_image: pg.Surface, click_image: pg.Surface, time_click: int | float = 0.15):
+    def __init__(self, retention_image: Surface, click_image: Surface, time_click: int | float = 0.15):
         self.retention_image = retention_image
         self.click_image = click_image
         self.activites = time_click

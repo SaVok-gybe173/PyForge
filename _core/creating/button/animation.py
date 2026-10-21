@@ -1,5 +1,4 @@
-from pygame import Surface
-from PyForge.tools import PfObject
+from ....easel import PfObject, Surface
 
 class FrameAnimationButton(PfObject):
     # структура посторойки анимациий на кнопки

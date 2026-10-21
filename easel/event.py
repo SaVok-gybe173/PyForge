@@ -249,7 +249,7 @@ from sdl2.events import (
     SDL_DropEvent as DropEvent,
     SDL_AudioDeviceEvent as AudioDeviceEvent,
 
-    SDL_Event as Enent,
+    SDL_Event as Event,
 
     SDL_EventState,
     SDL_MOUSEMOTION,

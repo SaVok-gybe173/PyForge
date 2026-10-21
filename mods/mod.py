@@ -1,4 +1,4 @@
-import pygame as pg
+from ..easel.event import Event
 
 class FrameMod:
     game:object
@@ -13,17 +13,17 @@ class FrameMod:
         '''
         сработает после завершении порграммы
         '''
-    def event(self, event:pg.event.get):
+    def event(self, event: Event):
         '''
-        сработает for event in pg.event.get()
+        сработает for event in Event
         Аргументы:
-            event: pg.event.get
+            event: Event
         '''
-    def draw(self, screen: pg.display.set_mode):
+    def draw(self, screen):
         '''
         сработает при каждом цикле
         Аргументы:
-            screen: pg.display.set_mode
+            screen: Surface
         '''
     def start(self):
         pass

@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from typing import List, Callable
-from .textures import getAppTexture, Texture, TypeTexture, _AppTexture, newAppTexture, makeSheet
+from ..textures import getAppTexture, Texture, TypeTexture, _AppTexture, newAppTexture, makeSheet
 import pygame as pg
 import zlib
 

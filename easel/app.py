@@ -1,9 +1,9 @@
 from .window import Window, T, extract_tb, Scene
 from ..mods.mod import FrameMod
-from .logger import printError
+from ..base.logger import printError
+from .surface import Surface
 
 import importlib.util as util
-import pygame as pg
 import os
 
 class App(Window):
@@ -40,7 +40,7 @@ class App(Window):
         self._mod = not mods_dir is None
         super().__init__(caption, point, size, color, scene, fps=fps, flags=flags)
 
-    def init(self, win: pg.Surface) -> None:
+    def init(self, win: Surface) -> None:
         if self._mod:
             self.load_mods()
             for mod in self.mods_list:

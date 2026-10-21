@@ -1,14 +1,9 @@
-import os, sys
+import os
+import sys
+import sdl2
 from typing import Final
+
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), "_core", "game3D"))
-try:
-    from pygame import OPENGL, DOUBLEBUF
-except ImportError as e:
-    print("102 - error:", e)
-    sys.exit(102)
-        
-OPENGL: Final[int] = DOUBLEBUF | OPENGL
-del DOUBLEBUF
 
 try:
     import multiprocessing
@@ -52,5 +47,5 @@ from .easel.app import App
 from .mods.mod import FrameMod
 
 from .easel.window import Scene
-from .cpu.creating.colisions import point_in_rounded_rect, check_rounded_rect_collision
+
 from .cpu.creating.image import get_none_image, round_image, resize_image_with_aspect_ratio, extract_square_fast, extract_square

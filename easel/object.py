@@ -2,9 +2,9 @@ import pygame as pg
 import os
 from copy import deepcopy
 from .surface import Surface
-from .logger import ObjectMeta
-from .markup import Size, Point, isListType
-from .event import (Enent,
+from ..base.logger import ObjectMeta
+from ..math.markup import Size, Point, isListType
+from .event import (Event,
         CommonEvent,
         DisplayEvent,
         WindowEvent,
@@ -36,7 +36,8 @@ from .event import (Enent,
         DropEvent,
         AudioDeviceEvent
     )
-ControllerTouchpadEvent
+from sdl2.rect import SDL_Rect as Rect
+
 class CoreObject(metaclass=ObjectMeta):
     __abstract__ = True
     """
@@ -70,12 +71,12 @@ class CoreObject(metaclass=ObjectMeta):
             dt (float): Время в секундах
         '''
 
-    def event(self, event: Enent) -> None:
+    def event(self, event: Event) -> None:
         '''
         Сработыет при вызове жвента
 
         Args:
-            event (Enent): Основной класс эвента
+            event (Event): Основной класс эвента
         '''
 
     def size_update(self, old: tuple[int, int], new: tuple[int, int], ratio: tuple[int, int]):
@@ -445,7 +446,7 @@ class CoreObject(metaclass=ObjectMeta):
         """
 
 class PfObject(CoreObject):
-    rect: pg.Rect | None = None
+    rect: Rect | None = None
 
     def __init__(self, left_top: Point | tuple[int, int], width_height: Size | tuple[int, int], *args: CoreObject, **kvargs):
         """

@@ -1,5 +1,6 @@
 import pygame as pg
 import math
+from sdl2 import SDL_Rect as Rect
 try:
     import numpy as np
 except ModuleNotFoundError:
@@ -54,7 +55,7 @@ def collision_maus(surface, pos, mouse_pos, use_pixel_perfect=False):
             return False
     return True
 
-def check_rounded_rect_collision(rect1: pg.Rect, radius1: int, rect2: pg.Rect, radius2: int):
+def check_rounded_rect_collision(rect1: Rect, radius1: int, rect2: Rect, radius2: int):
     """
     Проверяет коллизию между двумя скругленными прямоугольниками
     """
@@ -92,7 +93,7 @@ def check_rounded_rect_collision(rect1: pg.Rect, radius1: int, rect2: pg.Rect, r
     
     return False
 
-def point_in_rounded_rect(point: list[int, int] | tuple[int, int], rect: pg.Rect, radius: int):
+def point_in_rounded_rect(point: list[int, int] | tuple[int, int], rect: Rect, radius: int):
     """
     Проверяет, находится ли точка внутри скругленного прямоугольника
     """
@@ -119,7 +120,7 @@ def point_in_rounded_rect(point: list[int, int] | tuple[int, int], rect: pg.Rect
     
     return False
 
-def point_in_rounded_rect_numpy(point: tuple[int, int], rect: pg.Rect, radius: int) -> bool:
+def point_in_rounded_rect_numpy(point: tuple[int, int], rect: Rect, radius: int) -> bool:
     """
     Проверяет, находится ли точка внутри скругленного прямоугольника, используя NumPy.
     (Предполагает, что точка представлена как NumPy array)

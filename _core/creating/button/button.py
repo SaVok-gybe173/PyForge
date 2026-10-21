@@ -1,7 +1,9 @@
 from copy import copy
 from typing import Callable
 from .animation import FrameAnimationButton
-from ....easel import Point, PfObjectIMG
+from ....easel import Point, PfObjectIMG, Surface
+from ....easel.event import Event
+from sdl2.mouse import SDL_SYSTEM_CURSOR_HAND, SDL_SYSTEM_CURSOR_ARROW
 
 import pygame as pg
 
@@ -16,10 +18,10 @@ class ButtonClick:
 class _Button(PfObjectIMG):
     _event = None
     
-    cursor_hand = pg.SYSTEM_CURSOR_HAND
-    cursor_arrow = pg.SYSTEM_CURSOR_ARROW
+    cursor_hand = SDL_SYSTEM_CURSOR_HAND
+    cursor_arrow = SDL_SYSTEM_CURSOR_ARROW
 
-    def __init__(self, left_top: Point | tuple[int, int], image: pg.Surface, *, is_mask: bool = False, mousebuttondown: Callable[[int], None] | None = None):
+    def __init__(self, left_top: Point | tuple[int, int], image: Surface, *, is_mask: bool = False, mousebuttondown: Callable[[int], None] | None = None):
         '''
         Кнопка может работать в ручном режиме и также в автоматическом.
         
@@ -54,7 +56,7 @@ class _Button(PfObjectIMG):
         self._is_mousemotion = False
         pg.mouse.set_cursor(self.cursor_arrow)
 
-    def click(self,event: pg.event.Event, i: int) -> bool:
+    def click(self,event: Event, i: int) -> bool:
         if event.type == pg.MOUSEBUTTONDOWN:
             if event.button == i and self.rect.collidepoint(event.pos):
                 return True
@@ -62,11 +64,11 @@ class _Button(PfObjectIMG):
     
 
     # Функции для отслежтвания разных нажатий
-    def lcm(self, event: pg.event.Event) -> bool: return self.click(event, ButtonClick.PCM)
-    def pcm(self, event: pg.event.Event) -> bool: return self.click(event, ButtonClick.LCM)
-    def scm(self, event: pg.event.Event) -> bool: return self.click(event, ButtonClick.SCR)
-    def forward(self, event: pg.event.Event) -> bool: return self.click(event, ButtonClick.FORWARD)
-    def back(self, event: pg.event.Event) -> bool: return self.click(event, ButtonClick.BACK)
+    def lcm(self, event: Event) -> bool: return self.click(event, ButtonClick.PCM)
+    def pcm(self, event: Event) -> bool: return self.click(event, ButtonClick.LCM)
+    def scm(self, event: Event) -> bool: return self.click(event, ButtonClick.SCR)
+    def forward(self, event: Event) -> bool: return self.click(event, ButtonClick.FORWARD)
+    def back(self, event: Event) -> bool: return self.click(event, ButtonClick.BACK)
     
     def copy(self):
         cop = copy(self)
@@ -90,7 +92,7 @@ class _Button(PfObjectIMG):
         return fun
 
 class _AnimationButton(_Button):
-    def __init__(self, left_top: list[int, int] | Point, image: pg.Surface,  animation: FrameAnimationButton = FrameAnimationButton(), *, is_mask: bool = False, mousebuttondown: Callable[[int], None] | None = None):
+    def __init__(self, left_top: list[int, int] | Point, image: Surface,  animation: FrameAnimationButton = FrameAnimationButton(), *, is_mask: bool = False, mousebuttondown: Callable[[int], None] | None = None):
         """
         
         Аргументы:

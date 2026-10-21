@@ -1,9 +1,8 @@
-import pygame
-
+from ....easel import Surface
 def get_none_image(size):
-    none_image = pygame.Surface(size)
+    none_image = Surface(size)
     none_image.fill((255,255,255))
-    im = pygame.Surface((size[0]//2, size[1]//2))
+    im = Surface((size[0]//2, size[1]//2))
     im.fill((100, 0, 100))
     none_image.blit(im, (0,0))
     none_image.blit(im, (size[0]//2, size[1]//2))
@@ -11,7 +10,7 @@ def get_none_image(size):
 
 def round_corners_numpy(image, radius):
     rect = image.get_rect()
-    mask = pygame.Surface(rect.size, pygame.SRCALPHA)
+    mask = Surface(rect.size)
     mask.fill((0, 0, 0, 0))
     pygame.draw.rect(mask, (255, 255, 255, 255), rect, border_radius=radius)
     image_alpha = pygame.surfarray.pixels_alpha(image)
@@ -24,7 +23,7 @@ def round_corners_numpy(image, radius):
 def round_corners(image, radius):
     """Скругление углов изображения с заданным радиусом"""
     rect = image.get_rect()
-    mask = pygame.Surface(rect.size, pygame.SRCALPHA)
+    mask = Surface(rect.size)
     mask.fill((0, 0, 0, 0))
     pygame.draw.rect(mask, (255, 255, 255, 255), rect, border_radius=radius)
     for x in range(rect.width):
@@ -36,7 +35,7 @@ def round_corners(image, radius):
 def round_image(image, radius):
     """Скругление изображения с заданным радиусом"""
     rect = image.get_rect()
-    mask = pygame.Surface(rect.size, pygame.SRCALPHA)
+    mask = Surface(rect.size)
     mask.fill((0, 0, 0, 0))
     pygame.draw.rect(mask, (255, 255, 255, 255), rect, border_radius=radius)
     image.blit(mask, (0, 0), special_flags=pygame.BLEND_RGBA_MULT)
@@ -76,7 +75,7 @@ def make_circle_image(image):
     
     return result
 
-def replace_color_on_surface(surface: pygame.Surface, color_to_replace: tuple[int, int, int, int], new_color: tuple[int, int, int, int]) -> pygame.Surface:
+def replace_color_on_surface(surface: Surface, color_to_replace: tuple[int, int, int, int], new_color: tuple[int, int, int, int]) -> Surface:
     """
     Заменяет один определенный цвет на другой на поверхности pygame.Surface,
     не затрагивая другие пиксели.

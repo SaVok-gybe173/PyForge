@@ -1,15 +1,15 @@
-import pygame as pg
+from ....easel import Surface
 try:
-	from ..colisions import collision_surface, collision_maus
+	from ....math.colisions import collision_surface, collision_maus
 except ImportError:
-	from colisions import collision_surface, collision_maus
-from PyForge.tools import PfObject
+	from PyForge.math.colisions import collision_surface, collision_maus
+from ....easel import PfObject
 
 class AnimarionSwitching(PfObject):
 	pass
 
 class Circle(PfObject):
-	def __init__(self, holst: pg.Surface = None, color = (225,25,225), spid = 10):
+	def __init__(self, holst: Surface = None, color = (225,25,225), spid = 10):
 		self.holst = holst
 		self.center = None
 		self.color = color
@@ -115,7 +115,7 @@ class SwitchingButton(PfObject):
 		if switching is None: switching = Switching()
 		self.switching = switching 
 		self.visible = True
-		self.holst = pg.Surface(wigth_height)
+		self.holst = Surface(wigth_height)
 		self.holst.fill((255,255,255))
 		self.x, self.y = x_y
 		self.distance = distance
@@ -126,7 +126,7 @@ class SwitchingButton(PfObject):
 		self.switching.circle.update()
 	def _update(self, wigth_height):
 		self.switching(self, (wigth_height[0]-(self.distance*2),wigth_height[1]-(self.distance*2) ), (self.distance, self.distance))
-	def draw(self, screen: pg.Surface):
+	def draw(self, screen: Surface):
 		if self.visible:
 			self.switching.draw(self.holst)
 			screen.blit(self.holst, (self.x, self.y))

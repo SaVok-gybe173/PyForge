@@ -1,7 +1,7 @@
 from .path import get_ffmpeg
 from .decoder import (MediaContainer,
                       AudioMaster, VideoDecoder)
-from ..easel.markup import Point, Size, isListType
+from ..math.markup import Point, Size, isListType
 import subprocess
 import threading
 import pygame

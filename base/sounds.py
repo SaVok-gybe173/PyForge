@@ -1,6 +1,6 @@
 from pygame.mixer import *
 from typing import Optional, Callable, Union, Dict
-from ._core.resources import TypeFile as TypeSound, load_dir
+from .._core.resources import TypeFile as TypeSound, load_dir
 import pygame as pg
 import zipfile
 import tempfile

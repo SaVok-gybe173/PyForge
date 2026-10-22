@@ -19,3 +19,7 @@ cd _core\game3D
 cd /d "%~dp0"
 cd cpu\game3D
 %PY_VERSION% setup.py build_ext --inplace
+
+cd /d "%~dp0"
+cd math
+%PY_VERSION% setup.py build_ext --inplace

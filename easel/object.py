@@ -71,15 +71,20 @@ class CoreObject(metaclass=ObjectMeta):
             dt (float): Время в секундах
         '''
 
+    def close(self, common: CommonEvent, quit: QuitEvent):
+        """
+        Срабатывает для всех сцен
+        """
+
     def event(self, event: Event) -> None:
         '''
-        Сработыет при вызове жвента
+        Срабатывает при вызове события
 
         Args:
-            event (Event): Основной класс эвента
+            event (Event): Основной класс события
         '''
 
-    def size_update(self, old: tuple[int, int], new: tuple[int, int], ratio: tuple[int, int]):
+    def size_update(self, old: tuple[int, int], new: tuple[int, int], scale: tuple[int, int]):
         '''
         Обновление размер окна
 
@@ -88,15 +93,15 @@ class CoreObject(metaclass=ObjectMeta):
         Args:
             old (tuple[int, int]): Старый размер
             new (tuple[int, int]): Новый размер
-            ratio (tuple[int, int]): Коэфицент между новым и старым размером (new/old)
+            ratio (tuple[int, int]): Коэффициент между новым и старым размером (new/old)
         '''
-    def muve_window(self, old: tuple[int, int], new: tuple[int, int]) -> None:
+    def muve_window(self, old: tuple[int, int], new: tuple[int, int], scale: tuple[int, int]) -> None:
         '''
         Перемещение окна
 
         Args:
             old (tuple[int, int]): Старая позиция
-            new (tuple[int, int]): Новоя позиция
+            new (tuple[int, int]): Новая позиция
         '''
 
     # Системные события

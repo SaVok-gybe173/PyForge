@@ -1,4 +1,4 @@
-from .scene import Scene, EVENTS_METOD
+from .scene import Scene, EVENTS_METHOD
 from ..platform import is_android, is_linux, is_macos, is_ios, is_window
 from .window_processing import Window as WindowProcession
 from .window import Window
@@ -11,7 +11,7 @@ from .event import event_name, event_add, event_type, EVENT_NAMES
 from .surface import Surface
 
 __all__ = [
-    "Scene", "EVENTS_METOD",
+    "Scene", "EVENTS_METHOD",
     "is_android", "is_linux", "is_macos", "is_ios", "is_window",
     "WindowProcession", "Window", "App",
     "isListType", "_General", "Size", "Point", "SizeTup", "PointTup",

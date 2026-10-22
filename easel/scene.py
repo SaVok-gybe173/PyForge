@@ -1,5 +1,5 @@
 """
-Модуль со структурой сценны
+Модуль со структурой сцены
 """
 from typing import Any, TYPE_CHECKING, Self
 from .object import CoreObject, PfObject
@@ -107,47 +107,32 @@ class Scene(CoreObject):
         for object in self.objects:
             object.event(event)
 
-    def activeevent(self, gain, state):
+    def render_targets_reset(self, common):
         for object in self.objects:
-            object.activeevent(gain, state)
-    def videoresize(self, size, w, h):
-        for object in self.objects:
-            object.videoresize(size, w, h)
-    def videoexpose(self):
-        for object in self.objects:
-            object.videoexpose()
-    def render_targets_reset(self):
-        for object in self.objects:
-            object.render_targets_reset()
+            object.render_targets_reset(common)
 
-    def keydown(self, key, mod, unicode, scancode):
+    def keydown(self, common, key):
         for object in self.objects:
-            object.keydown(key, mod, unicode, scancode)
-    def keyup(self, key, mod, scancode):
+            object.keydown(key, common, key)
+    def keyup(self, common, key):
         for object in self.objects:
-            object.keyup(key, mod, scancode)
-    def textediting(self, text, start, length):
-        for object in self.objects:
-            object.textediting(text, start, length)
-    def textinput(self, text):
-        for object in self.objects:
-            object.textinput(text)
+            object.keyup(common, key)
 
-    def mousemotion(self, pos, rel, buttons, touch):
+    def mousemotion(self, common, motion):
         for object in self.objects:
-            object.mousemotion(pos, rel, buttons, touch)
-    def mousebuttondown(self, pos, button, touch):
+            object.mousemotion(common, motion)
+    def mousebuttondown(self, common, button):
         for object in self.objects:
-            object.mousebuttondown(pos, button, touch)
-    def mousebuttonup(self, pos, button, touch):
+            object.mousebuttondown(common, button)
+    def mousebuttonup(self, common, button):
         for object in self.objects:
-            object.mousebuttonup(pos, button, touch)
-    def mousewheel(self, x, y, flipped, precise_x, precise_y):
+            object.mousebuttonup(common, button)
+    def mousewheel(self, common, wheel):
         for object in self.objects:
-            object.mousewheel(x, y, flipped, precise_x, precise_y)
+            object.mousewheel(common, wheel)
 
-# методы эвентов по их типу
-EVENTS_METOD = {
+# методы событий по их типу
+EVENTS_METHOD = {
     event_name(QUIT): (lambda obj, event: obj.quit(event.common, event.quit)),
     event_name(APP_TERMINATING):  (lambda obj, event: obj.app_terminating(event.common)), 
     event_name(APP_LOWMEMORY): (lambda obj, event: obj.app_lowmemory(event.common)), 

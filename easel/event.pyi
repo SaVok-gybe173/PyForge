@@ -5,6 +5,7 @@
 Использование аналогично pygame, но с оговорками, описанными в docstring.
 """
 
+from typing import Final
 from sdl2.keyboard import SDL_Keysym, SDL_Scancode, SDL_Keycode
 from sdl2.joystick import SDL_JoystickID, SDL_JoystickPowerLevel
 from sdl2.syswm import SDL_SysWMmsg
@@ -24,7 +25,7 @@ type sint8 = int    # -128…127
 
 """
 
-Таблица соответствия: атрибут → тип события
+Таблица соответствия: атрибут -> тип события
 Атрибут	    Структура	                Тип(ы) события (event.type)	                                                            Что внутри (основное)
 type	    Uint32	                    всегда	                                                                                номер типа события
 common	    SDL_CommonEvent	            всегда (общие поля)	                                                                    timestamp (мс с момента старта SDL)
@@ -61,76 +62,97 @@ padding	    —	                        —	                                    
 
 """
 
-QUIT: uint32                    # Запрос на закрытие приложения
-APP_TERMINATING: uint32         # Приложение завершается ОС (iOS/Android)	
-APP_LOWMEMORY: uint32           # Приложению не хватает памяти
-APP_WILLENTERBACKGROUND: uint32 # Приложение собирается уйти в фон
-APP_DIDENTERBACKGROUND: uint32  # Приложение ушло в фон
-APP_WILLENTERFOREGROUND: uint32 # Приложение собирается вернуться на передний план
-APP_DIDENTERFOREGROUND: uint32  # Приложение снова активно
-LOCALECHANGED: uint32           # Изменились локальные настройки пользователя
-DISPLAYEVENT: uint32            # Изменение состояния дисплея
-WINDOWEVENT: uint32             # Изменение состояния окна (фокус, размер, перемещение и т.п.)
-SYSWMEVENT: uint32              # Системное событие оконного менеджера
-CLIPBOARDUPDATE: uint32         # Изменилось содержимое буфера обмена
-RENDER_TARGETS_RESET: uint32    # Цели рендеринга сброшены (нужно обновить содержимое)	
-RENDER_DEVICE_RESET: uint32     # Устройство рендеринга сброшено (нужно пересоздать текстуры)
-SENSORUPDATE: uint32            # Обновились данные сенсора
+QUIT: Final[uint32]                     # Запрос на закрытие приложения
+APP_TERMINATING: Final[uint32]          # Приложение завершается ОС (iOS/Android)	
+APP_LOWMEMORY: Final[uint32]            # Приложению не хватает памяти
+APP_WILLENTERBACKGROUND: Final[uint32]  # Приложение собирается уйти в фон
+APP_DIDENTERBACKGROUND: Final[uint32]   # Приложение ушло в фон
+APP_WILLENTERFOREGROUND: Final[uint32]  # Приложение собирается вернуться на передний план
+APP_DIDENTERFOREGROUND: Final[uint32]   # Приложение снова активно
+LOCALECHANGED: Final[uint32]            # Изменились локальные настройки пользователя
+DISPLAYEVENT: Final[uint32]             # Изменение состояния дисплея
+WINDOWEVENT: Final[uint32]              # Изменение состояния окна (фокус, размер, перемещение и т.п.)
+SYSWMEVENT: Final[uint32]               # Системное событие оконного менеджера
+CLIPBOARDUPDATE: Final[uint32]          # Изменилось содержимое буфера обмена
+RENDER_TARGETS_RESET: Final[uint32]     # Цели рендеринга сброшены (нужно обновить содержимое)	
+RENDER_DEVICE_RESET: Final[uint32]      # Устройство рендеринга сброшено (нужно пересоздать текстуры)
+SENSORUPDATE: Final[uint32]             # Обновились данные сенсора
 
-KEYDOWN: uint32                 # Клавиша нажата
-KEYUP: uint32                   # Клавиша отпущена
-TEXTEDITING: uint32             # Редактирование текста (IME, композиция)
-TEXTINPUT: uint32               # Ввод текста (после завершения IME)
-KEYMAPCHANGED: uint32           # Раскладка клавиатуры изменилась системой
-TEXTEDITING_EXT: uint32         # Расширенное редактирование текста (IME)
+KEYDOWN: Final[uint32]                  # Клавиша нажата
+KEYUP: Final[uint32]                    # Клавиша отпущена
+TEXTEDITING: Final[uint32]              # Редактирование текста (IME, композиция)
+TEXTINPUT: Final[uint32]                # Ввод текста (после завершения IME)
+KEYMAPCHANGED: Final[uint32]            # Раскладка клавиатуры изменилась системой
+TEXTEDITING_EXT: Final[uint32]          # Расширенное редактирование текста (IME)
 
-MOUSEMOTION: uint32             # Перемещение мыши
-MOUSEBUTTONDOWN: uint32         # Кнопка мыши нажата
-MOUSEBUTTONUP: uint32           # Кнопка мыши отпущена
-MOUSEWHEEL: uint32              # Прокрутка колеса мыши
+MOUSEMOTION: Final[uint32]              # Перемещение мыши
+MOUSEBUTTONDOWN: Final[uint32]          # Кнопка мыши нажата
+MOUSEBUTTONUP: Final[uint32]            # Кнопка мыши отпущена
+MOUSEWHEEL: Final[uint32]               # Прокрутка колеса мыши
 
-JOYAXISMOTION: uint32           # Движение оси джойстика
-JOYBALLMOTION: uint32           # Движение трекбола
-JOYHATMOTION: uint32            # Изменение POV-переключателя (hat)
-JOYBUTTONDOWN: uint32           # Кнопка джойстика нажата
-JOYBUTTONUP: uint32             # Кнопка джойстика отпущена
-JOYDEVICEADDED: uint32          # Джойстик подключён
-JOYDEVICEREMOVED: uint32        # Джойстик отключён
-JOYBATTERYUPDATED: uint32       # Изменился уровень заряда джойстика
+JOYAXISMOTION: Final[uint32]            # Движение оси джойстика
+JOYBALLMOTION: Final[uint32]            # Движение трекбола
+JOYHATMOTION: Final[uint32]             # Изменение POV-переключателя (hat)
+JOYBUTTONDOWN: Final[uint32]            # Кнопка джойстика нажата
+JOYBUTTONUP: Final[uint32]              # Кнопка джойстика отпущена
+JOYDEVICEADDED: Final[uint32]           # Джойстик подключён
+JOYDEVICEREMOVED: Final[uint32]         # Джойстик отключён
+JOYBATTERYUPDATED: Final[uint32]        # Изменился уровень заряда джойстика
 
-CONTROLLERAXISMOTION: uint32    # Движение оси контроллера
-CONTROLLERBUTTONDOWN: uint32    # Кнопка контроллера нажата
-CONTROLLERBUTTONUP: uint32      # Кнопка контроллера отпущена
-CONTROLLERDEVICEADDED: uint32   # Контроллер подключён
-CONTROLLERDEVICEREMOVED: uint32 # Контроллер отключён
-CONTROLLERDEVICEREMAPPED: uint32# Раскладка контроллера обновлена
-CONTROLLERTOUCHPADDOWN: uint32  # Тачпад контроллера нажат
-CONTROLLERTOUCHPADMOTION: uint32# Палец движется по тачпаду контроллера
-CONTROLLERTOUCHPADUP: uint32    # Палец отпущен с тачпада контроллера
-CONTROLLERSENSORUPDATE: uint32  # Обновились данные сенсора контроллера
+CONTROLLERAXISMOTION: Final[uint32]     # Движение оси контроллера
+CONTROLLERBUTTONDOWN: Final[uint32]     # Кнопка контроллера нажата
+CONTROLLERBUTTONUP: Final[uint32]       # Кнопка контроллера отпущена
+CONTROLLERDEVICEADDED: Final[uint32]    # Контроллер подключён
+CONTROLLERDEVICEREMOVED: Final[uint32]  # Контроллер отключён
+CONTROLLERDEVICEREMAPPED: Final[uint32] # Раскладка контроллера обновлена
+CONTROLLERTOUCHPADDOWN: Final[uint32]   # Тачпад контроллера нажат
+CONTROLLERTOUCHPADMOTION: Final[uint32] # Палец движется по тачпаду контроллера
+CONTROLLERTOUCHPADUP: Final[uint32]     # Палец отпущен с тачпада контроллера
+CONTROLLERSENSORUPDATE: Final[uint32]   # Обновились данные сенсора контроллера
 
-FINGERDOWN: uint32              # Палец коснулся экрана
-FINGERUP: uint32                # Палец поднят
-FINGERMOTION: uint32            # Палец движется
-MULTIGESTURE: uint32            # Мультитач-жест (щипок, вращение)
-DOLLARGESTURE: uint32           # Распознан долларовый жест (1-жест)
-DOLLARRECORD: uint32            # Записан долларовый жест
+FINGERDOWN: Final[uint32]               # Палец коснулся экрана
+FINGERUP: Final[uint32]                 # Палец поднят
+FINGERMOTION: Final[uint32]             # Палец движется
+MULTIGESTURE: Final[uint32]             # Мультитач-жест (щипок, вращение)
+DOLLARGESTURE: Final[uint32]            # Распознан долларовый жест (1-жест)
+DOLLARRECORD: Final[uint32]             # Записан долларовый жест
 
-AUDIODEVICEADDED: uint32        # Аудиоустройство подключено
-AUDIODEVICEREMOVED: uint32      # Аудиоустройство отключено
+AUDIODEVICEADDED: Final[uint32]         # Аудиоустройство подключено
+AUDIODEVICEREMOVED: Final[uint32]       # Аудиоустройство отключено
 
-DROPBEGIN: uint32               # Начало перетаскивания
-DROPFILE: uint32                # Файл перетащен в окно
-DROPTEXT: uint32                # Текст перетащен в окно
-DROPCOMPLETE: uint32            # Перетаскивание завершено
+DROPBEGIN: Final[uint32]                # Начало перетаскивания
+DROPFILE: Final[uint32]                 # Файл перетащен в окно
+DROPTEXT: Final[uint32]                 # Текст перетащен в окно
+DROPCOMPLETE: Final[uint32]             # Перетаскивание завершено
 
-USEREVENT: uint32               # Первый номер для пользовательских событий (значение 0x8000)
-LASTEVENT: uint32               # Верхняя граница зарезервированных типов (0xFFFF)
+USEREVENT: Final[uint32]                # Первый номер для пользовательских событий (значение 0x8000)
+LASTEVENT: Final[uint32]                # Верхняя граница зарезервированных типов (0xFFFF)
 
-FIRSTEVENT: uint32              # Значение 0, не используется (не удалять)
-POLLSENTINEL: uint32            # Сигнализирует о конце цикла опроса событий (0x7F00)
+FIRSTEVENT: Final[uint32]               # Значение 0, не используется (не удалять)
+POLLSENTINEL: Final[uint32]             # Сигнализирует о конце цикла опроса событий (0x7F00)
 
 EVENT_NAMES: dict[int, str]
+
+
+WINDOWEVENT_NONE: Final[uint32]             # нет события (служебное значение).
+WINDOWEVENT_SHOWN: Final[uint32]            # окно показано.
+WINDOWEVENT_HIDDEN: Final[uint32]           # окно скрыто.
+WINDOWEVENT_EXPOSED: Final[uint32]          # содержимое окна нужно перерисовать.
+WINDOWEVENT_MOVED: Final[uint32]            # окно перемещено (новые координаты в data1/data2).
+WINDOWEVENT_RESIZED: Final[uint32]          # окно изменено пользователем/системой (новый размер в data1/data2).
+WINDOWEVENT_SIZE_CHANGED: Final[uint32]     # размер окна изменился (в т.ч. программно).
+WINDOWEVENT_MINIMIZED: Final[uint32]        # окно свёрнуто.
+WINDOWEVENT_MAXIMIZED: Final[uint32]        # окно развёрнуто.
+WINDOWEVENT_RESTORED: Final[uint32]         # окно восстановлено из свёрнутого/развёрнутого.
+WINDOWEVENT_ENTER: Final[uint32]            # курсор мыши вошёл в окно.
+WINDOWEVENT_LEAVE: Final[uint32]            # курсор мыши покинул окно.
+WINDOWEVENT_FOCUS_GAINED: Final[uint32]     # окно получило фокус ввода.
+WINDOWEVENT_FOCUS_LOST: Final[uint32]       # окно потеряло фокус ввода.
+WINDOWEVENT_CLOSE: Final[uint32]            # запрошено закрытие окна.
+WINDOWEVENT_TAKE_FOCUS: Final[uint32]       # запрос на передачу фокуса окну (от WM).
+WINDOWEVENT_HIT_TEST: Final[uint32]         # запрос на hit-test (какие области окна «кликабельны»).
+WINDOWEVENT_ICCPROF_CHANGED: Final[uint32]  # изменился ICC-профиль дисплея.
+WINDOWEVENT_DISPLAY_CHANGED: Final[uint32]  # окно переместилось на другой дисплей.
 
 def pump() -> None:
     """Обновить внутреннее состояние очереди событий SDL.

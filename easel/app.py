@@ -1,4 +1,4 @@
-from .window import Window, T, extract_tb, Scene
+from .window import Window, _T, extract_tb, Scene
 from ..mods.mod import FrameMod
 from ..base.logger import printError
 from .surface import Surface
@@ -9,9 +9,9 @@ import os
 class App(Window):
     
     mods_dir: str                       # Путь к папке с модами 
-    mods_list: list[FrameMod] = []      # Обьеты модов
+    mods_list: list[FrameMod] = []      # Объекты модов
     mod_info = dict()                   # Информация о моде
-    mod_load = [".py", ".pyc", ".pyd"]  # Расшерения которые нужно загрузить
+    mod_load = [".py", ".pyc", ".pyd"]  # Расширения которые нужно загрузить
     
     
     def __init__(self,
@@ -19,22 +19,22 @@ class App(Window):
                 point: tuple[int, int] | None = None,
                 size: tuple[int, int] = (400, 300), 
                 color: tuple[int, int, int] = (255, 255, 255), 
-                scene: list[T] | None = None, 
+                scene: list[_T] | None = None, 
                 *, 
                 fps: int | float = 60, 
                 mods_dir: str | None = None, 
                 flags: int = 0
                 ):
         """
-        Инцизация главного класса управление окном
+        Инициализация главного класса управление окном
         
         Args:
             size (tuple[int, int]): размеры окна (width, height)
             color (tuple[int, int, int]): Цветовая политра RGB заднего фона
-            scene (list[T] | None): список классов сценн наследованые от главного класса (Scene)
+            scene (list[T] | None): список классов сцен наследованные от главного класса (Scene)
             fps (int | float): кадры в секунду
             mod_dir (str | None): путь к папке с модами
-            kwargs_set_mode (KwargsSetMode | None): парамерты для создание окна (pg.display.set_mode)
+            kwargs_set_mode (KwargsSetMode | None): параметры для создание окна (pg.display.set_mode)
         """
         self.mods_dir = mods_dir or os.path.join(os.path.dirname(os.path.abspath(__file__)), 'mods')
         self._mod = not mods_dir is None

@@ -1,5 +1,7 @@
 pygame-ce>=2.5.0
-numpy>=2.0.0
+numpy>=2.1,<3
 setuptools>=84.0.0
 cython>=3.3.0
 requests>=2.34.2
+pysdl2
+pysdl2-dll

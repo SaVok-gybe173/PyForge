@@ -1,21 +1,24 @@
-from pyfiglet import Figlet
-from rich.console import Console
-from termcolor import cprint
 from os import path
-try:
-    from .structure.structure import InvalidPageError, CreatingStructure
-except ImportError:
-    from structure.structure import InvalidPageError, CreatingStructure
+from structure.structure import CreatingStructure
 
 import locale
 locale.setlocale(locale.LC_ALL, "")
+
+print(r"""
+    ____        __  __                   ______                    
+   / __ \__  __/ /_/ /_  ____  ____     / ____/___  _________ ____ 
+  / /_/ / / / / __/ __ \/ __ \/ __ \   / /_  / __ \/ ___/ __ `/ _ \
+ / ____/ /_/ / /_/ / / / /_/ / / / /  / __/ / /_/ / /  / /_/ /  __/
+/_/    \__, /\__/_/ /_/\____/_/ /_/  /_/    \____/_/   \__, /\___/ 
+      /____/                                          /____/       
+""")
 
 language = {
     "RU": {
         "list": ['1 Создать проект', '2 Сделать копию проекта', '3 Запуск проекта'],
         'input': {
             1: '\nВведите число: ',
-            2: '\nВведите дирикторию: ',
+            2: '\nВведите директорию: ',
             3: 'Имя: ',
             4: 'разработчик: '
         },
@@ -37,26 +40,19 @@ language = {
 
 lan = "RU" if locale.getlocale(locale.LC_MONETARY)[0] == "Russian_Russia" else "EN"
 
-console = Console()
-flr = Figlet(font='slant')  # Более стильный шрифт
-ascii_art = flr.renderText("Python Forge!")
-console.print(ascii_art, style="bold blue")
-
-flt = Figlet(font='standard')
-
 print(*language[lan]["list"], "", sep='\n')
 
 N = int(input(language[lan]["input"][1]))
 
 if not 0 < N <= 3:
-    cprint(language[lan]["error"], 'red')
+    print(language[lan]["error"])
     raise TypeError(language[lan]["error"])
 
 F = input(language[lan]["input"][2])
 
 if not path.exists(F):
-    cprint(language[lan]["error"], 'red')
-    raise InvalidPageError()
+    print(language[lan]["error"])
+    raise ValueError()
 
 if N == 1:
     CreatingStructure(F, input(language[lan]["input"][3]), input(language[lan]["input"][4]),).start()

@@ -1,12 +1,6 @@
 import os
 import shutil
 import py_compile
-
-try:
-    from .errors import InvalidPageError
-except ImportError:
-    from errors import InvalidPageError
-
 def mkdir(diricrori):
     os.mkdir(diricrori)
     print(f"Папка '{diricrori}' успешно создана.")
@@ -47,7 +41,7 @@ class CreatingStructure:
             shutil.copytree(os.path.dirname(self.der), os.path.join(self.diricrori, "PyForge"))
 
         else:
-            raise InvalidPageError('Не найдена дериктория.')
+            raise ValueError('Не найдена директория.')
 
 class Compilit:
     def __init__(self, f:str):

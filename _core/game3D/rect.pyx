@@ -1,4 +1,4 @@
-from math3d cimport *
+from .math3d cimport *
 import numpy as np
 
 cdef class Rect3D:

@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 from typing import Any, Dict, List, Optional, Sequence, Tuple, Union
+from .._core.game3D.rect cimport Rect3D
 
 Coordinate = Tuple[int, int]
 RectLike = Union["Rect", Tuple[int, int, int, int], Sequence[int]]

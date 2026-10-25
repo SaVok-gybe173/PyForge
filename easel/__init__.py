@@ -1,5 +1,5 @@
 from .scene import Scene, EVENTS_METHOD
-from ..platform import is_android, is_linux, is_macos, is_ios, is_window
+from .platform import is_android, is_linux, is_macos, is_ios, is_window
 from .window_processing import Window as WindowProcession
 from .window import Window
 from .app import App

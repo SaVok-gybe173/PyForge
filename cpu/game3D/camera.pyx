@@ -1,5 +1,4 @@
-from rect cimport Rect3D
-import pygame
+from ..._core.game3D.rect cimport Rect3D
 
 cdef class Camera:
     cdef float pos_x, pos_y, pos_z
@@ -82,41 +81,41 @@ cdef class Camera:
                 for j in range(idxs.shape[0]):
                     p1 = projected[idxs[j, 0]]
                     p2 = projected[idxs[j, 1]]
-                    if p1 is not None and p2 is not None:
-                        pygame.draw.line(
-                            scene,
-                            self.color_line,
-                            (int(p1[0]), int(p1[1])),
-                            (int(p2[0]), int(p2[1])),
-                            1
-                        )
+                    if p1 is not None and p2 is not None: ...
+                        #pygame.draw.line(
+                        #    scene,
+                        #    self.color_line,
+                        #    (int(p1[0]), int(p1[1])),
+                        #    (int(p2[0]), int(p2[1])),
+                        #    1
+                        #)
             elif n == 3:
                 for j in range(idxs.shape[0]):
                     p1 = projected[idxs[j, 0]]
                     p2 = projected[idxs[j, 1]]
                     p3 = projected[idxs[j, 2]]
-                    if p1 is not None and p2 is not None and p3 is not None:
-                        pygame.draw.line(
-                            scene,
-                            self.color_line,
-                            (int(p1[0]), int(p1[1])),
-                            (int(p2[0]), int(p2[1])),
-                            1
-                        )
-                        pygame.draw.line(
-                            scene,
-                            self.color_line,
-                            (int(p2[0]), int(p2[1])),
-                            (int(p3[0]), int(p3[1])),
-                            1
-                        )
-                        pygame.draw.line(
-                            scene,
-                            self.color_line,
-                            (int(p3[0]), int(p3[1])),
-                            (int(p1[0]), int(p1[1])),
-                            1
-                        )
+                    if p1 is not None and p2 is not None and p3 is not None: ...
+                        #pygame.draw.line(
+                        #    scene,
+                        #    self.color_line,
+                        #    (int(p1[0]), int(p1[1])),
+                        #    (int(p2[0]), int(p2[1])),
+                        #    1
+                        #)
+                        #pygame.draw.line(
+                        #    scene,
+                        #    self.color_line,
+                        #    (int(p2[0]), int(p2[1])),
+                        #    (int(p3[0]), int(p3[1])),
+                        #    1
+                        #)
+                        #pygame.draw.line(
+                        #    scene,
+                        #    self.color_line,
+                        #    (int(p3[0]), int(p3[1])),
+                        #    (int(p1[0]), int(p1[1])),
+                        #    1
+                        #)
 
     def draw_solid(self, scene, color=(255, 255, 255)):
         """
@@ -150,4 +149,4 @@ cdef class Camera:
         triangles.sort(key=lambda t: t[0], reverse=True)
         for depth, pts in triangles:
             pts_int = [(int(x), int(y)) for x, y in pts]
-            pygame.draw.polygon(scene, color, pts_int)
+            #pygame.draw.polygon(scene, color, pts_int)

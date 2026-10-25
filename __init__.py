@@ -3,8 +3,6 @@ import sys
 import sdl2
 from typing import Final
 
-sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), "_core", "game3D"))
-
 try:
     import multiprocessing
     def init():

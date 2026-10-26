@@ -1,4 +1,5 @@
 from ....easel import Surface
+
 def get_none_image(size):
     none_image = Surface(size)
     none_image.fill((255,255,255))

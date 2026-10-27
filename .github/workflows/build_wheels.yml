@@ -1,0 +1,55 @@
+name: Build Wheels
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build_wheels:
+    name: Build wheels on ${{ matrix.os }} for ${{ matrix.platform || 'native' }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            platform: linux
+          - os: windows-latest
+            platform: windows
+          - os: macos-13
+            platform: macos
+          - os: macos-14
+            platform: macos
+          - os: ubuntu-latest
+            platform: android
+          #- os: macos-14
+          #  platform: ios
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up QEMU (for Linux ARM/i686)
+        if: runner.os == 'Linux' && matrix.platform == 'linux'
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: all
+
+      - name: Set up Android SDK (for Android build)
+        if: matrix.platform == 'android'
+        uses: android-actions/setup-android@v3
+
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v3.2.0
+        env:
+          CIBW_PLATFORM: ${{ matrix.platform }}
+          CIBW_ARCHS_LINUX: "auto aarch64 i686"
+          CIBW_ARCHS_ANDROID: "arm64_v8a armeabi_v7a x86_64 x86"
+          CIBW_ARCHS_IOS: "arm64_iphoneos arm64_iphonesimulator x86_64_iphonesimulator"
+          working-directory: ./PyForge
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cibw-wheels-${{ matrix.os }}-${{ matrix.platform }}-${{ strategy.job-index }}
+          path: ./PyForge/wheelhouse/*.whl

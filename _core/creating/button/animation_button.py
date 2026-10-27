@@ -8,21 +8,21 @@ from ....easel import Surface
     
     
 class Increase(FrameAnimationButton):
-    def __init__(self, speed = 0.5, fps = 60, seze = 5, click_size = 0, efects_size = 10):
-        self.efects_size =  efects_size
+    def __init__(self, speed = 0.5, fps = 60, size = 5, click_size = 0, effect_size = 10):
+        self.effect_size =  effect_size
         self.speed = speed
         self.click_size = click_size or speed//2
         self.i = 0
-        self.conif = 1/fps
-        self.seze = seze
+        self.conIf = 1/fps
+        self.size = size
         
-    def efects(self):
-        if self.i >= self.efects_size:
-            self.i -=  self.efects_size
-            self.x += self.efects_size
-            self.y += self.efects_size
-            self.width -= self.efects_size*2
-            self.height -= self.efects_size*2
+    def effect(self):
+        if self.i >= self.effect_size:
+            self.i -=  self.effect_size
+            self.x += self.effect_size
+            self.y += self.effect_size
+            self.width -= self.effect_size*2
+            self.height -= self.effect_size*2
         else:
             self.x += self.i
             self.y += self.i
@@ -31,23 +31,23 @@ class Increase(FrameAnimationButton):
             self.i = 0
     def update(self, dt):
         if self.button.collidepoint(pg.mouse.get_pos()):
-            if self.seze > self.i:
-                self.x = self.x - (self.speed + self.conif)
-                self.y = self.y - (self.speed + self.conif)
+            if self.size > self.i:
+                self.x = self.x - (self.speed + self.conIf)
+                self.y = self.y - (self.speed + self.conIf)
                 
-                self.height = self.height + (self.speed + self.conif)*2
-                self.width = self.width + (self.speed + self.conif)*2
+                self.height = self.height + (self.speed + self.conIf)*2
+                self.width = self.width + (self.speed + self.conIf)*2
                 
-                self.i += self.speed + self.conif
+                self.i += self.speed + self.conIf
         elif 0 < self.i:
 
-            self.x = self.x + (self.speed + self.conif)
-            self.y = self.y + (self.speed + self.conif)
+            self.x = self.x + (self.speed + self.conIf)
+            self.y = self.y + (self.speed + self.conIf)
             
-            self.height = self.height - (self.speed + self.conif)*2
-            self.width = self.width - (self.speed + self.conif)*2
+            self.height = self.height - (self.speed + self.conIf)*2
+            self.width = self.width - (self.speed + self.conIf)*2
             
-            self.i -= self.speed + self.conif
+            self.i -= self.speed + self.conIf
         self.button.left = self.y
         self.button.top = self.x
         
@@ -60,13 +60,13 @@ class Increase(FrameAnimationButton):
         self.width_height = (button.width, button.height)
 
     def mousebuttondown(self, pos, button, touch):
-        self.efects()
+        self.effect()
 
-class Impuls(FrameAnimationButton):
-    def __init__(self, speed: int | float = 0.5, shadow: int = 50, clic_shadow: int = 30, time_click: int | float = 0.1):
+class Impulse(FrameAnimationButton):
+    def __init__(self, speed: int | float = 0.5, shadow: int = 50, click_shadow: int = 30, time_click: int | float = 0.1):
         self.speed = speed
         self.i = 0
-        self.clic_shadow = clic_shadow
+        self.click_shadow = click_shadow
         self.shadow = (0,0,0, shadow)
         self.shadow_srov = (0,0,0,0)
         
@@ -107,10 +107,10 @@ class Impuls(FrameAnimationButton):
         #pg.draw.circle(self.shadow_surface, (0,0,0), (50, 25), 20)
     def _round_image(self):
         self.shadow_surface = round_corners_alternative(self.shadow_surface, self.radius)
-    def efects(self):
+    def effect(self):
         self.a_activites = True
         self.activites = 0
-        self.shadow_surface.fill((self.shadow[0], self.shadow[2], self.shadow[2], self.shadow[3]+self.clic_shadow))
+        self.shadow_surface.fill((self.shadow[0], self.shadow[2], self.shadow[2], self.shadow[3]+self.click_shadow))
         self._round_image()
     
 class ImageClick(FrameAnimationButton):
@@ -130,7 +130,7 @@ class ImageClick(FrameAnimationButton):
     def __call__(self, button):
         self.static_image = button.img
         return super().__call__(button)
-    def efects(self):
+    def effect(self):
         self.activites = 0
 
     def mousebuttondown(self, pos, button, touch):

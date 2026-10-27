@@ -1,10 +1,10 @@
 from .button import _AnimationButton, _Button, ButtonClick
-from .animation_button import FrameAnimationButton, Increase, Impuls, ImageClick
+from .animation_button import FrameAnimationButton, Increase, Impulse, ImageClick
 
 __all__ = [
     "FrameAnimationButton",
     "Increase", 
-    "Impuls",
+    "Impulse",
     "ImageClick",
     "_Button",
     "ButtonClick", 

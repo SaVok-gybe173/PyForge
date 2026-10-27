@@ -36,7 +36,7 @@ from .event import (Event,
         DropEvent,
         AudioDeviceEvent
     )
-from sdl2.rect import SDL_Rect as Rect
+from ..math.rect import Rect
 
 class CoreObject(metaclass=ObjectMeta):
     __abstract__ = True
@@ -57,8 +57,8 @@ class CoreObject(metaclass=ObjectMeta):
     def draw(self, win: Surface):
         '''
 
-        Отрисовка обьектов.
-        Cработает при каждом цикле
+        Отрисовка объектов.
+        Срабатывает при каждом цикле
         
         Args:
             win (pg.Surface): Холст главного окна
@@ -459,7 +459,7 @@ class PfObject(CoreObject):
 
         Принимает размеры и кординаты.
         """
-        self.rect = pg.Rect()
+        self.rect = Rect(0, 0, 0, 0)
         self.left_top = left_top
         self.width_height = width_height
         

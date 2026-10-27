@@ -10,6 +10,7 @@ from ..base.logger import printError, printInfo
 from ..math.time import Clock
 from .event import EVENT_NAMES, CommonEvent, QuitEvent
 from .surface import Surface
+from .display import set_window_size
 from sdl2.video import (
     SDL_WINDOW_FULLSCREEN as WINDOW_FULLSCREEN,
     SDL_WINDOW_FULLSCREEN_DESKTOP as WINDOW_FULLSCREEN_DESKTOP,
@@ -191,6 +192,7 @@ class Window:
             EVENTS_METHOD[name](self._scene[self.condition], event)
 
     def size_update(self, old: tuple[int], new: tuple[int], scale: tuple[int, int]) -> None:
+        set_window_size(new)
         for scene in self._scene:
             scene.size_update(old, new, scale)
 

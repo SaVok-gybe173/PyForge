@@ -1,25 +1,32 @@
 from ....easel import PfObject, Surface
 
 class FrameAnimationButton(PfObject):
-    # структура посторойки анимациий на кнопки
     def __init__(self):
-        # инцилизация
-        pass
-    def update(self, dt):
-        # обновление
-        pass
-    def event(self, event):
-        # при какомто жвенти
-        pass
-    def __call__(self, button): # для получении обьекта кнопки
+        super().__init__((0, 0), (0, 0))
+
+    def __call__(self, button): # для получении объекта кнопки
         self.button = button
-    def efects(self):
-        # при вызове efects
-        pass
-    def draw(self, screen: Surface):
-        # для рисования
-        pass
+
+    def effect(self):
+        "при вызове эффекта"
+        
     def clicking(self):
         pass
 
+    # рабочие функции
+
+    def event(self, event):
+        return super().event(event)
+
+    def draw(self, win):
+        return super().draw(win)
+
+    def update(self, dt):
+        return super().update(dt) 
+
+    def mousebuttondown(self, common, button):
+        return super().mousebuttondown(common, button)
+
+    def mousemotion(self, common, motion):
+        return super().mousemotion(common, motion)
     

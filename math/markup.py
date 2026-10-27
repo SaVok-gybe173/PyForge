@@ -4,6 +4,7 @@
 from .._core.locals import GRAPHICS, GRAPHICS_GL_2D_ORTHO, GRAPHICS_PYGAME
 from typing import Type, overload, Final, Literal, TypeAlias
 from ..easel.event import Event, MOUSEBUTTONDOWN
+from ..easel.display import get_window_size
 
 # Флаги для классов
 SIZE_RELATIONSHIP: Final[str]   = "size-relationship"
@@ -22,11 +23,11 @@ Coord:      TypeAlias = PixelCoord | RelCoord
 
 # функции для преобразовании кординат
 def cordinate_transform(fraction: tuple[float]) -> tuple[int]:
-    size = pg.display.get_window_size()
+    size = get_window_size()
     return size[0]/2*(fraction[0]+1), size[1]/2*(-fraction[1]+1)
 
 def relationship_transform(fraction: tuple[int]) -> tuple[float]:
-    size = pg.display.get_window_size()
+    size = get_window_size()
     return fraction[0]/(size[0]/2)-1, fraction[1]/(size[1]/2)-1
 
 #

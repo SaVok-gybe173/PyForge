@@ -84,10 +84,10 @@ class Window:
     def _ran_scene(self, index: int):
         printInfo(f"[START] {self.temporarily_scene[index].__name__}")
         try:
-            self._scene[index] = self.temporarily_scene[index](self.win)
+            self._scene[index] = self.temporarily_scene[index]()
             printInfo(f"[FINISH] {self.temporarily_scene[index].__name__}")
         except Exception as e:
-            self._scene[index] = Scene(self.win)
+            self._scene[index] = Scene()
             for frame in extract_tb(e.__traceback__):
                 printError(f"[{self.temporarily_scene[index].__name__}] [{frame.name}] {e}")
             raise e

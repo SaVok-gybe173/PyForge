@@ -1,8 +1,7 @@
-import pygame as pg
-import os
 from copy import deepcopy
 from .surface import Surface
 from ..base.logger import ObjectMeta
+from ..math.rect import Rect
 from ..math.markup import Size, Point, isListType
 from .event import (Event,
         CommonEvent,
@@ -36,18 +35,23 @@ from .event import (Event,
         DropEvent,
         AudioDeviceEvent
     )
-from ..math.rect import Rect
+
+from typing import Any, TYPE_CHECKING
+if TYPE_CHECKING:
+    from .window import Window
+else:
+    Window = Any
 
 class CoreObject(metaclass=ObjectMeta):
     __abstract__ = True
     """
     initial class for all objects
-    начальный класс для всех обьектов 
+    начальный класс для всех объектов 
     """
     
     def copy(self):
         """
-        Копирование полностью обьекта
+        Копирование полностью объекта
         """
         return deepcopy(self)
     
@@ -95,7 +99,7 @@ class CoreObject(metaclass=ObjectMeta):
             new (tuple[int, int]): Новый размер
             ratio (tuple[int, int]): Коэффициент между новым и старым размером (new/old)
         '''
-    def muve_window(self, old: tuple[int, int], new: tuple[int, int], scale: tuple[int, int]) -> None:
+    def move_window(self, old: tuple[int, int], new: tuple[int, int], scale: tuple[int, int]) -> None:
         '''
         Перемещение окна
 
@@ -357,7 +361,7 @@ class CoreObject(metaclass=ObjectMeta):
     def controllertouchpadmotion(self, common: CommonEvent, ctouchpad: ControllerTouchpadEvent) -> None:
         """
         SDL_CONTROLLERTOUCHPADMOTION
-        Палец движется по тачпаду контроллера
+        Палец движется по тачпаду контроллера 
         """
 
     def controllertouchpadup(self, common: CommonEvent, ctouchpad: ControllerTouchpadEvent) -> None:
@@ -452,13 +456,15 @@ class CoreObject(metaclass=ObjectMeta):
 
 class PfObject(CoreObject):
     rect: Rect | None = None
+    page: Window
 
     def __init__(self, left_top: Point | tuple[int, int], width_height: Size | tuple[int, int], *args: CoreObject, **kvargs):
         """
         Класс создан для основы остальных классов.
 
-        Принимает размеры и кординаты.
+        Принимает размеры и координаты.
         """
+        min()
         self.rect = Rect(0, 0, 0, 0)
         self.left_top = left_top
         self.width_height = width_height
@@ -545,22 +551,24 @@ class PfObjectIMG(PfObject):
 
     def __init__(self, left_top: Point | tuple[int, int], img: Surface | tuple[bytes, Size | tuple[int, int]] | str, *args, **kvargs):
         """
-        Прокаченый PfObject, но поддерживает хранение изображения.
+        Прокаченный PfObject, но поддерживает хранение изображения.
         """
         if isinstance(img, str):
-            img = pg.image.load(img).convert_alpha()
-            
+            #img = pg.image.load(img).convert_alpha()
+            ...
         elif isinstance(img, bytes):
-            img = pg.image.frombytes(img[0], img[1] if isinstance(img[1], tuple | list) else img[1].pixel)
+            #img = pg.image.frombytes(img[0], img[1] if isinstance(img[1], tuple | list) else img[1].pixel)
+            ...
         elif not isinstance(img, Surface):
-            raise ValueError(f"Ожидаеться Surface, пришло {type(img)}")
+            raise ValueError(f"Ожидается Surface, пришло {type(img)}")
         
         self.img = img
         super().__init__(left_top, img.get_size(), *args, **kvargs)
 
     def to_bytes(self) -> bytes:
-        return self.width.to_bytes(4) + self.height.to_bytes(4) + pg.image.tobytes(self.img)
-    
+        #return self.width.to_bytes(4) + self.height.to_bytes(4) + pg.image.tobytes(self.img)
+        ...
+
     @staticmethod
     def from_bytes(byte: bytes, point: Point | tuple[int, int] = (0, 0)) -> "PfObjectIMG":
         return PfObjectIMG(point, (

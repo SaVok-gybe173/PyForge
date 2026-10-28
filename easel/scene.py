@@ -73,27 +73,29 @@ from .event import (event_name,
         FIRSTEVENT,
         POLLSENTINEL,
         )
-import pygame as pg
 
 if TYPE_CHECKING:
     from .window import Window
 else:
-    type Window = Any
+    Window = Any
 
 class Scene(CoreObject):
     name: str
     page: Window
     
-    def __init__(self, win = None):
-        self._win = win
+    def __init__(self):
         self.name = type(self).__name__
         self.objects: list[PfObject] = []
 
-    def append(self, object: PfObject):
+    def append(self, object: PfObject) -> None:
+        """
+        Добавляет объект в конец списка.
+        """
         self.objects.append(object)
 
     def quit(self, common, quit):
-        return super().quit(common, quit)
+        for object in self.objects:
+            object.draw(common, quit)
 
     def draw(self, win):
         for object in self.objects:

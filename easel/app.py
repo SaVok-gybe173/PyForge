@@ -30,7 +30,7 @@ class App(Window):
         
         Args:
             size (tuple[int, int]): размеры окна (width, height)
-            color (tuple[int, int, int]): Цветовая политра RGB заднего фона
+            color (tuple[int, int, int]): Цветовая палитра RGB заднего фона
             scene (list[T] | None): список классов сцен наследованные от главного класса (Scene)
             fps (int | float): кадры в секунду
             mod_dir (str | None): путь к папке с модами
@@ -70,8 +70,8 @@ class App(Window):
                 spec.loader.exec_module(mod)
                 if hasattr(mod, 'Main'):
                     try:
-                        stucture: FrameMod = mod.Main(self)
-                        self.mods_list.append(stucture)
+                        structure: FrameMod = mod.Main(self)
+                        self.mods_list.append(structure)
                     except Exception as e:
                         for frame in extract_tb(e.__traceback__):
                             printError(f"[{mod.__name__}] [{frame.name}] {e}")

@@ -415,16 +415,16 @@ def get_grab(win):
     return SDL_GetWindowGrab(win) == SDL_TRUE
 
 def event_add(type: int, name: str) -> None:
-    "добавляет новый эвент в таблицу"
+    "добавляет новый тип события в таблицу"
     if USEREVENT < type < LASTEVENT and (not type in EVENT_NAMES):
         EVENT_NAMES[type] = name
     else:
         raise ValueError("Event уже существует")
 
 def event_name(type: int) -> str | None:
-    "возвращает имя эвента"
+    "возвращает имя события"
     return EVENT_NAMES.get(type)
 
 def event_type(name: str) -> int | None:
-    "получает тип эвента по имени"
+    "получает тип события по имени"
     return next((key for key, value in EVENT_NAMES.items() if value == name), None)

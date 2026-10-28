@@ -177,14 +177,14 @@ def get() -> list[Event]:
 
     Аналог pygame.event.get().
 
-    Возвращает список структур Enent. Очередь после вызова пуста.
+    Возвращает список структур Event. Очередь после вызова пуста.
     Внутри автоматически вызывает SDL_PumpEvents.
 
     Соответствие SDL2: sdl2.ext.get_events()
                       (обёртка над sdl2.SDL_PollEvent в цикле)
 
     Returns:
-        list[Enent]: список событий (может быть пустым).
+        list[Event]: список событий (может быть пустым).
 
     Пример:
         for event in get():
@@ -328,13 +328,13 @@ def get_grab(win: SDL_Window) -> bool:
     """
 
 def event_add(type: int, name: str) -> None:
-    "добавляет новый эвент в таблицу"
+    "добавляет новый тип события в таблицу"
 
 def event_name(type: int) -> str | None:
-    "возвращает имя эвента"
+    "возвращает имя события"
 
 def event_type(name: str) -> int | None:
-    "получает тип эвента по имени"
+    "получает тип события по имени"
 
 class CommonEvent: ...          # всегда (общие поля)
 
@@ -453,7 +453,7 @@ class JoyBatteryEvent:          # SDL_JOYBATTERYUPDATED
     level: SDL_JoystickPowerLevel # SDL_JOYSTICK_POWER_* (UNKNOWN/EMPTY/LOW/MEDIUM/FULL/WIRED)
 
 class ControllerAxisEvent:      # SDL_CONTROLLERAXISMOTION
-    # Ось геймпада
+    # Ось геймпада 
     which: SDL_JoystickID 
     axis: uint8 # SDL_CONTROLLER_AXIS_* (LEFTX, TRIGGERRIGHT и т.д.)
     value: sint16
@@ -465,7 +465,7 @@ class ControllerButtonEvent:    # SDL_CONTROLLERBUTTONDOWN, SDL_CONTROLLERBUTTON
     state: uint8
 
 class ControllerDeviceEvent:    # SDL_CONTROLLERDEVICEADDED/REMOVED/REMAPPED
-    # Подключение/отключение/перепривязка геймпада
+    # Подключение/отключение/перепривязка геймпада 
     which: sint32
 
 class ControllerTouchpadEvent:  # SDL_CONTROLLERTOUCHPADDOWN/MOTION/UP

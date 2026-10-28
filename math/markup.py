@@ -1,10 +1,15 @@
 """
-Модуль для работы с кординатами и с размерами
+Модуль для работы с координатами и с размерами
 """
 from .._core.locals import GRAPHICS, GRAPHICS_GL_2D_ORTHO, GRAPHICS_PYGAME
 from typing import Type, overload, Final, Literal, TypeAlias
 from ..easel.event import Event, MOUSEBUTTONDOWN
-from ..easel.display import get_window_size
+
+from typing import Any, TYPE_CHECKING
+if TYPE_CHECKING:
+    from ..easel.window import Window
+else:
+    Window = Any
 
 # Флаги для классов
 SIZE_RELATIONSHIP: Final[str]   = "size-relationship"
@@ -21,13 +26,11 @@ PixelCoord: TypeAlias = tuple[int, int]
 RelCoord:   TypeAlias = tuple[float, float]
 Coord:      TypeAlias = PixelCoord | RelCoord
 
-# функции для преобразовании кординат
-def cordinate_transform(fraction: tuple[float]) -> tuple[int]:
-    size = get_window_size()
+# функции для преобразовании координат
+def coordinate_transform(size: tuple[int, int], fraction: tuple[float, float]) -> tuple[int, int]:
     return size[0]/2*(fraction[0]+1), size[1]/2*(-fraction[1]+1)
 
-def relationship_transform(fraction: tuple[int]) -> tuple[float]:
-    size = get_window_size()
+def relationship_transform(size: tuple[int, int], fraction: tuple[int, int]) -> tuple[float, float]:
     return fraction[0]/(size[0]/2)-1, fraction[1]/(size[1]/2)-1
 
 #
@@ -36,12 +39,12 @@ def isListType(ls: tuple | set | list, len: int = 2, type: Type = int) -> bool:
     Проверяет тип в массиве
     
     Args:
-        ls (tuple | set | list):    Массив в котором храняться данные
+        ls (tuple | set | list):    Массив в котором хранятся данные
         len (int):                  Длина массива
         type (Type):                Тип в массиве
         
     Return:
-        bool: Если в масииве храняться int и длиной 2
+        bool: Если в списке хранятся int и длиной 2
     
     """
     try:
@@ -55,10 +58,11 @@ def isListType(ls: tuple | set | list, len: int = 2, type: Type = int) -> bool:
 
 class _General:
     """
-    Изначальная структура для вычеслений
+    Изначальная структура для вычислений
     """
     _pixel: PixelCoord      # по пиксельно
     _relationship: RelCoord # относительно
+    page: Window
 
     def __init__(self, num1: int, num2: int, type_data: str):
         """
@@ -104,7 +108,7 @@ class _General:
         else:
             return self._relationship
 
-    # попиксельные размеры/кординаты
+    # попиксельные размеры/координаты
     @property
     def pixel(self) -> PixelCoord:
         """Координаты в пикселях экрана."""
@@ -118,7 +122,7 @@ class _General:
             pix: Пара ``(x, y)`` в пикселях.
         """
         self._pixel = pix
-        self._relationship = relationship_transform(pix)
+        self._relationship = relationship_transform(self.page.size, pix)
 
     @property
     def relationship(self) -> RelCoord:
@@ -133,7 +137,7 @@ class _General:
             rel: Пара ``(x, y)`` в диапазоне ``[0.0, 1.0]`` (обычно).
         """
         self._relationship = rel
-        self._pixel = cordinate_transform(rel)
+        self._pixel = coordinate_transform(self.page.size, rel)
 
 
 class Size(_General):
@@ -196,17 +200,17 @@ class Size(_General):
         """
 
         if self.type == SIZE_PIXEL:
-            self.relationship =  relationship_transform(self.data)
+            self.relationship =  relationship_transform(self.page.size, self.data)
             self.pixel = self.data
         elif self.type == SIZE_RELATIONSHIP:
-            self.pixel = cordinate_transform(self.data)
+            self.pixel = coordinate_transform(self.page.size, self.data)
             self.relationship = self.data
         else:
             raise ValueError(f"тип: {self.type} не существует")
     
         
 class Point(_General):
-    """Кординаты прямоугольной области в двух системах координат.
+    """Координаты прямоугольной области в двух системах координат.
     
     Поддерживает два способа создания — парой чисел или кортежем::
     
@@ -267,10 +271,10 @@ class Point(_General):
         """
 
         if self.type == POINT_PIXEL:
-            self._relationship = relationship_transform(self.data)
+            self._relationship = relationship_transform(self.page.size, self.data)
             self._pixel = self.data
         elif self.type == POINT_RELATIONSHIP:
-            self._pixel = cordinate_transform(self.data)
+            self._pixel = coordinate_transform(self.page.size, self.data)
             self._relationship = self.data
         else:
             raise ValueError(f"тип: {self.type} не существует")
@@ -278,7 +282,7 @@ class Point(_General):
 def cord(event: Event, i = 1):
     """
     coordinate output function
-    функция вывода кординат
+    функция вывода координат
     """
     if event.type == MOUSEBUTTONDOWN:
         if event.button == i:
@@ -288,7 +292,7 @@ def cord(event: Event, i = 1):
 class MathCord:
     """
     class for debugging and displaying coordinates
-    класс для отладки и вывода кординат
+    класс для отладки и вывода координат
     """
     stade = None
     def event(self, event: Event):

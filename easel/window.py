@@ -8,7 +8,7 @@ from .scene import Scene, EVENTS_METHOD
 from ..gpu.locals import IS_IMPORT_GL, InitGl
 from ..base.logger import printError, printInfo
 from ..math.time import Clock
-from .event import EVENT_NAMES, CommonEvent, QuitEvent, get as getevent
+from .event import EVENT_NAMES, CommonEvent, QuitEvent, get as getevent, Event
 from .surface import Surface
 from sdl2.video import (
     SDL_WINDOW_FULLSCREEN as WINDOW_FULLSCREEN,
@@ -24,13 +24,8 @@ from sdl2.video import (
     SDL_WINDOWPOS_CENTERED_DISPLAY as WINDOWPOS_CENTERED_DISPLAY,
     SDL_WINDOWPOS_ISCENTERED as WINDOWPOS_ISCENTERED
 )
-from sdl2.surface import SDL_Surface
-from sdl2.video import SDL_CreateWindow, SDL_GL_SwapWindow,  SDL_Window, SDL_DestroyWindow, SDL_GetWindowSurface, SDL_UpdateWindowSurface,  SDL_SetWindowTitle, SDL_GetWindowTitle
-from sdl2.events import SDL_QUIT, SDL_PollEvent, SDL_Event as Event, SDL_WINDOWEVENT
-from sdl2.error import SDL_GetError
-from sdl2 import SDL_MapRGB, ext, SDL_FillRect, SDL_WINDOWEVENT_RESIZED, SDL_Init, SDL_INIT_VIDEO, SDL_DisplayMode, SDL_GetCurrentDisplayMode, SDL_GetNumVideoDisplays, SDL_GetDesktopDisplayMode
-
-
+import sdl2
+import ctypes
 import sys
 
 
@@ -40,6 +35,8 @@ class Window:
     _scene: list[Scene]            # все сцены в приложении
     condition: int = 0          # номер сцены которая активна
     min_size: tuple[int, int] = (50, 50)    # минимальный размер
+    button_state: int           # состояние кнопки мыши
+    mouse_pos: tuple[int, int]   # ординаты мышки в окне
 
     def addScene(self, *scene: _T) -> None: # Добавляет в конец и инициализирует сцену
         for sc in scene:
@@ -109,25 +106,25 @@ class Window:
         """
         Главный цикл для работы
         """
-        SDL_Init(SDL_INIT_VIDEO)
-        if SDL_GetNumVideoDisplays() < self.__display_index:
-            self.__display_index = SDL_GetNumVideoDisplays()
+        sdl2.SDL_Init(sdl2.SDL_INIT_VIDEO)
+        if sdl2.SDL_GetNumVideoDisplays() < self.__display_index:
+            self.__display_index = sdl2.SDL_GetNumVideoDisplays()
         elif self.__display_index < 0:
-            self.__display_index = SDL_GetNumVideoDisplays()-self.__display_index
+            self.__display_index = sdl2.SDL_GetNumVideoDisplays()-self.__display_index
 
-        mode = SDL_DisplayMode()
-        SDL_GetCurrentDisplayMode(self.__display_index, mode)
+        mode = sdl2.SDL_DisplayMode()
+        sdl2.SDL_GetCurrentDisplayMode(self.__display_index, mode)
         self.__point = self.__point if not self.__point is None else (int((mode.w-self.__size[0])/2), int((mode.h-self.__size[1])/2))
 
         # главное окно
-        self.win: SDL_Window = SDL_CreateWindow(
+        self.win: sdl2.SDL_Window = sdl2.SDL_CreateWindow(
             self.__caption,
             self.__point[0], self.__point[1],
             self.__size[0], self.__size[1],
             self.__flags,
         )
         if not self.win:
-            printError(SDL_GetError().decode())
+            printError(sdl2.SDL_GetError().decode())
 
         # Инициализация подсистем
         self.initOpenGL()
@@ -138,6 +135,10 @@ class Window:
 
         self.surface = Surface(self.holst, owned=False)
         self.clock_fps = Clock()
+
+        # ссылка на координаты мышки на экране
+        x = ctypes.c_int(0)
+        y = ctypes.c_int(0)
 
         while self.running:
             use_gl = self.opengl and IS_IMPORT_GL
@@ -150,14 +151,19 @@ class Window:
                 # self.color должен быть кортежем (r,g,b) или sdl2.SDL_Color
                 self.surface.fill(self.color)
 
+            # 
+            self.button_state = sdl2.mouse.SDL_GetMouseState(ctypes.byref(x), ctypes.byref(y))
+            self.mouse_pos =  (x.value, y.value)
+
             # обновление активной сцены
+            
             self.update(dt)
 
             for event in getevent():
-                if event.type == SDL_QUIT:
+                if event.type == sdl2.SDL_QUIT:
                     self.close(event.common, event.quit)
-                elif event.type == SDL_WINDOWEVENT and \
-                 event.window.event == SDL_WINDOWEVENT_RESIZED:
+                elif event.type == sdl2.SDL_WINDOWEVENT and \
+                 event.window.event == sdl2.SDL_WINDOWEVENT_RESIZED:
                     new_w = event.window.data1
                     new_h = event.window.data2
                     old_w, old_h = self.__size
@@ -178,11 +184,11 @@ class Window:
 
             self.draw(self.surface)
             if use_gl:
-                SDL_GL_SwapWindow(self.win)
+                sdl2.SDL_GL_SwapWindow(self.win)
             else:
-                SDL_UpdateWindowSurface(self.win)
+                sdl2.SDL_UpdateWindowSurface(self.win)
                # ограничение фпс и тпс
-        SDL_DestroyWindow(self.win)
+        sdl2.SDL_DestroyWindow(self.win)
         sys.exit()
 
     def eventManager(self, event: Event) -> None:
@@ -232,8 +238,8 @@ class Window:
 
     # поверхность
     @property
-    def holst(self) -> SDL_Surface:
-        return SDL_GetWindowSurface(self.win)
+    def holst(self) -> sdl2.SDL_Surface:
+        return sdl2.SDL_GetWindowSurface(self.win)
 
     # название
     @property
@@ -253,6 +259,6 @@ class Window:
         elif not type(caption) is str:
             caption = str(caption)
         self.__caption = caption.encode("utf-8")
-        SDL_SetWindowTitle(self.win, self.__caption)
+        sdl2.SDL_SetWindowTitle(self.win, self.__caption)
     
 

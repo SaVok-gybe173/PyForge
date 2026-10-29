@@ -17,17 +17,18 @@ class _Button(PfObjectIMG):
     cursor_hand = SDL_SYSTEM_CURSOR_HAND # как выглядит мыш при наведение
     cursor_arrow = SDL_SYSTEM_CURSOR_ARROW # как выглядит мыш когда убираем мыш с кнопки
 
-    def __init__(self, left_top: Point | tuple[int, int], image: Surface, *, is_click: Callable[[int], None] | None = None):
+    def __init__(self, page, left_top: Point | tuple[int, int], image: Surface, *, is_click: Callable[[int], None] | None = None):
         """
         Кнопка может работать в ручном режиме и также в автоматическом.
         
         Аргументы:
+            page - ссылка на главное окно
             left_top: list[int, int] - координаты
             image: Surface - изображение (размеры)
             is_click: Callable[[int], None] - ссылка на функцию, которая принимает тип клика ButtonClick
         """
-        super().__init__(left_top, image)
-        self._IsActiveSystemCursor # активный ли курсор
+        super().__init__(page, left_top, image)
+        self._IsActiveSystemCursor = False # активный ли курсор
         self.is_click = (lambda _: None) if is_click is None else is_click
 
 
@@ -80,19 +81,19 @@ class _Button(PfObjectIMG):
         return fun
 
 class _AnimationButton(_Button):
-    def __init__(self, left_top: list[int, int] | Point, image: Surface,  animation: FrameAnimationButton = FrameAnimationButton(), *, is_click: Callable[[int], None] | None = None):
+    def __init__(self, page, left_top: list[int, int] | Point, image: Surface,  animation: FrameAnimationButton = FrameAnimationButton(), *, is_click: Callable[[int], None] | None = None):
         """
         Этот класс похож на Button, он она принимает также класс анимации.
 
         Аргументы:
-            
+            page - ссылка на главное окно
             left_top - координаты
             image: Surface - изображение (размеры)
             animation: FrameAnimationButton - класс анимации
             
             is_click: Callable[[int], None] - ссылка на функцию, которая принимает тип клика ButtonClick
         """
-        super().__init__(left_top, image, is_click=is_click)
+        super().__init__(page, left_top, image, is_click=is_click)
         self.animation = animation
         self.animation(self)
     

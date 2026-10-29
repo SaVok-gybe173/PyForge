@@ -83,7 +83,8 @@ class Scene(CoreObject):
     name: str
     page: Window
     
-    def __init__(self):
+    def __init__(self, page: Window):
+        self.page = page
         self.name = type(self).__name__
         self.objects: list[PfObject] = []
 

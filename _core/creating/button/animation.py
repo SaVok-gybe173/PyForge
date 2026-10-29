@@ -2,7 +2,7 @@ from ....easel import PfObject, Surface
 
 class FrameAnimationButton(PfObject):
     def __init__(self):
-        super().__init__((0, 0), (0, 0))
+        super().__init__(None, (0, 0), (0, 0))
 
     def __call__(self, button): # для получении объекта кнопки
         self.button = button

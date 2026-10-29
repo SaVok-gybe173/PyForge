@@ -456,15 +456,16 @@ class CoreObject(metaclass=ObjectMeta):
 
 class PfObject(CoreObject):
     rect: Rect | None = None
-    page: Window
+    _page: Window | None = None
 
-    def __init__(self, left_top: Point | tuple[int, int], width_height: Size | tuple[int, int], *args: CoreObject, **kvargs):
+    def __init__(self, page: Window | None, left_top: Point | tuple[int, int], width_height: Size | tuple[int, int], *args: CoreObject, **kvargs):
         """
         Класс создан для основы остальных классов.
 
-        Принимает размеры и координаты.
+        Принимает page, размеры (width_height) и координаты (left_top).
+        page - ссылка на главное окно
         """
-        min()
+        self._page = page
         self.rect = Rect(0, 0, 0, 0)
         self.left_top = left_top
         self.width_height = width_height
@@ -504,9 +505,11 @@ class PfObject(CoreObject):
             self._left_top = Point(left_top[0], left_top[1])
         else:
             raise ValueError(f"Не верный аргумент {self._left_top}")
+        self._left_top.page = self.page
 
         if not self.rect is None:
-            self.rect.left, self.top = self._left_top.pixel
+            self.rect.left, self.rect.top = self._left_top.pixel
+
         
     # Size
     @property
@@ -541,15 +544,27 @@ class PfObject(CoreObject):
             self._width_height = Point(width_height[0], width_height[1])
         else:
             raise ValueError(f"Не верный аргумент {self._width_height}")
+        self._width_height.page = self.page
 
         if not self.rect is None:
             self.rect.width, self.rect.height = self._width_height.pixel
 
+    @property
+    def page(self) -> Window | None:
+        return self._page
+
+    @page.setter
+    def page(self, page: Window | None) -> None:
+        self._page = page
+        self._width_height.page = page
+        self._left_top.page = page
+        self._width_height.update()
+        self._left_top.update()
 
 class PfObjectIMG(PfObject):
     img: Surface # изображение
 
-    def __init__(self, left_top: Point | tuple[int, int], img: Surface | tuple[bytes, Size | tuple[int, int]] | str, *args, **kvargs):
+    def __init__(self, page: Window | None, left_top: Point | tuple[int, int], img: Surface | tuple[bytes, Size | tuple[int, int]] | str, *args, **kvargs):
         """
         Прокаченный PfObject, но поддерживает хранение изображения.
         """
@@ -563,7 +578,7 @@ class PfObjectIMG(PfObject):
             raise ValueError(f"Ожидается Surface, пришло {type(img)}")
         
         self.img = img
-        super().__init__(left_top, img.get_size(), *args, **kvargs)
+        super().__init__(page, left_top, (img.width, img.height), *args, **kvargs)
 
     def to_bytes(self) -> bytes:
         #return self.width.to_bytes(4) + self.height.to_bytes(4) + pg.image.tobytes(self.img)

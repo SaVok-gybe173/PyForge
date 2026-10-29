@@ -102,3 +102,6 @@ class Surface:
 
     def set_at(self, pos, color):
         self._view()[pos[1]][pos[0]] = color
+
+    def get_size(self) -> tuple[int, int]:
+        return self.width, self.height

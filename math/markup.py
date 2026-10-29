@@ -33,7 +33,6 @@ def coordinate_transform(size: tuple[int, int], fraction: tuple[float, float]) -
 def relationship_transform(size: tuple[int, int], fraction: tuple[int, int]) -> tuple[float, float]:
     return fraction[0]/(size[0]/2)-1, fraction[1]/(size[1]/2)-1
 
-#
 def isListType(ls: tuple | set | list, len: int = 2, type: Type = int) -> bool:
     """
     Проверяет тип в массиве
@@ -62,7 +61,7 @@ class _General:
     """
     _pixel: PixelCoord      # по пиксельно
     _relationship: RelCoord # относительно
-    page: Window
+    _page: Window | None = None
 
     def __init__(self, num1: int, num2: int, type_data: str):
         """
@@ -81,7 +80,6 @@ class _General:
         """
         self.type = type_data
         self.data = (num1, num2)
-        self.update()
 
     def update(self) -> None: 
         """Пересчитывает координаты во всех поддерживаемых системах.
@@ -139,6 +137,14 @@ class _General:
         self._relationship = rel
         self._pixel = coordinate_transform(self.page.size, rel)
 
+    @property
+    def page(self) -> Window:
+        return self._page
+
+    @page.setter
+    def page(self, page: Window) -> None:
+        self._page = page
+        self.update()
 
 class Size(_General):
     """Размер прямоугольной области в двух системах координат.
@@ -200,10 +206,16 @@ class Size(_General):
         """
 
         if self.type == SIZE_PIXEL:
-            self.relationship =  relationship_transform(self.page.size, self.data)
+            if not self.page is None:
+                self.relationship =  relationship_transform(self.page.size, self.data)
+            else:
+                self.relationship = self.data
             self.pixel = self.data
         elif self.type == SIZE_RELATIONSHIP:
-            self.pixel = coordinate_transform(self.page.size, self.data)
+            if not self.page is None:
+                self.pixel = coordinate_transform(self.page.size, self.data)
+            else:
+                self.pixel = self.data
             self.relationship = self.data
         else:
             raise ValueError(f"тип: {self.type} не существует")
@@ -271,10 +283,16 @@ class Point(_General):
         """
 
         if self.type == POINT_PIXEL:
-            self._relationship = relationship_transform(self.page.size, self.data)
+            if not self.page is None:
+                self._relationship = relationship_transform(self.page.size, self.data)
+            else:
+                self._relationship = self.data
             self._pixel = self.data
         elif self.type == POINT_RELATIONSHIP:
-            self._pixel = coordinate_transform(self.page.size, self.data)
+            if not self.page is None:
+                self._pixel = coordinate_transform(self.page.size, self.data)
+            else:
+                self._pixel = self.data
             self._relationship = self.data
         else:
             raise ValueError(f"тип: {self.type} не существует")

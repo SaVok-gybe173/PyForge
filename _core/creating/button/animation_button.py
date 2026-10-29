@@ -29,6 +29,7 @@ class Increase(FrameAnimationButton):
             self.width -= self.i*2
             self.height -= self.i*2
             self.i = 0
+
     def update(self, dt):
         if self.button.collidepoint(pg.mouse.get_pos()):
             if self.size > self.i:

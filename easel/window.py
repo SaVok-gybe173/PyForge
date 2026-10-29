@@ -8,9 +8,8 @@ from .scene import Scene, EVENTS_METHOD
 from ..gpu.locals import IS_IMPORT_GL, InitGl
 from ..base.logger import printError, printInfo
 from ..math.time import Clock
-from .event import EVENT_NAMES, CommonEvent, QuitEvent
+from .event import EVENT_NAMES, CommonEvent, QuitEvent, get as getevent
 from .surface import Surface
-from .display import set_window_size
 from sdl2.video import (
     SDL_WINDOW_FULLSCREEN as WINDOW_FULLSCREEN,
     SDL_WINDOW_FULLSCREEN_DESKTOP as WINDOW_FULLSCREEN_DESKTOP,
@@ -84,7 +83,7 @@ class Window:
     def _ran_scene(self, index: int):
         printInfo(f"[START] {self.temporarily_scene[index].__name__}")
         try:
-            self._scene[index] = self.temporarily_scene[index]()
+            self._scene[index] = self.temporarily_scene[index](self)
             printInfo(f"[FINISH] {self.temporarily_scene[index].__name__}")
         except Exception as e:
             self._scene[index] = Scene()
@@ -154,7 +153,7 @@ class Window:
             # обновление активной сцены
             self.update(dt)
 
-            for event in ext.get_events():
+            for event in getevent():
                 if event.type == SDL_QUIT:
                     self.close(event.common, event.quit)
                 elif event.type == SDL_WINDOWEVENT and \
@@ -192,7 +191,6 @@ class Window:
             EVENTS_METHOD[name](self._scene[self.condition], event)
 
     def size_update(self, old: tuple[int], new: tuple[int], scale: tuple[int, int]) -> None:
-        set_window_size(new)
         for scene in self._scene:
             scene.size_update(old, new, scale)
 

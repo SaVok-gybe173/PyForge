@@ -1,10 +1,16 @@
 from ....easel import PfObject, Surface
+from typing import Any, TYPE_CHECKING
+if TYPE_CHECKING:
+    from .button import _AnimationButton
+else:
+    _AnimationButton = Any
+
 
 class FrameAnimationButton(PfObject):
     def __init__(self):
         super().__init__(None, (0, 0), (0, 0))
 
-    def __call__(self, button): # для получении объекта кнопки
+    def __call__(self, button: _AnimationButton): # для получении объекта кнопки
         self.button = button
 
     def effect(self):

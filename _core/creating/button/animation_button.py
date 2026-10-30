@@ -1,11 +1,7 @@
-import pygame as pg
-import os
-import sys
-
 from .animation import FrameAnimationButton
 from ....cpu.creating.image.tools import round_corners_alternative
 from ....easel import Surface
-    
+
     
 class Increase(FrameAnimationButton):
     def __init__(self, speed = 0.5, fps = 60, size = 5, click_size = 0, effect_size = 10):

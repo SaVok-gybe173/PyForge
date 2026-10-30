@@ -21,6 +21,8 @@ class Window:
     _scene: list[_T]                        # все сцены в приложении
     condition = 0                           # номер сцены которая активна
     min_size: tuple[int, int] = (50, 50)    # минимальный размер
+    button_state: int                       # состояние кнопки мыши
+    mouse_pos: tuple[int, int]              # ординаты мышки в окне
 
     def start(self) -> None:
         """

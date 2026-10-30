@@ -11,25 +11,25 @@ import os
 # КОНСТАНТЫ
 
 ERROR           = "[ERROR]"             # тип ошибки
-ERROR_LOGGER    = "[ERROR LOGGER]"      # ошибка связана с работой логовой системой (ошибки вызваны во время работы логера)
+ERROR_LOGGER    = "[ERROR LOGGER]"      # ошибка связана с работой логирования(ошибки вызваны во время работы лог структуры)
 INFO            = "[INFO]"              # тип информации 
-INFO_LOGGER     = "[INFO LOGGER]"       # лог инфо связан с работой логовой системой (информация в пработе логера)
+INFO_LOGGER     = "[INFO LOGGER]"       # лог инфо связан с работой логирования (информация в работе лог структуры)
 REQUESTS_INFO   = "[REQUESTS INFO]"     # ошибка запросов на сервер и ответ
 
 
 _is_open_file: bool = False         # открыт ли фаил
-_open_file: TextIOWrapper           # открытый текстовый фаил .log или другой с праметром 'a'
+_open_file: TextIOWrapper           # открытый текстовый фаил .log или другой с параметром 'a'
 _file_log: str                      # путь к файлу
 _log_list_not_file: List[str] = []  # все логи который не удалось записать в фаил
 
-DEBUGGING = True                    # дебаг режим
+DEBUGGING = True                    # режим отладки
 LOG_PATH = 'logs'                   # путь к папке к логам
 
 def setFileLog(file: str) -> bool:
     """
     Устанавливает фаил лог и делает запись в него.
     
-    Обновляет все логи и делает проверку на действительнось файла.
+    Обновляет все логи и делает проверку на действительность файла.
     Если есть логи которые не записались в прошлый фаил, то они будут записаны в новый лог фаил.
     
     Args:
@@ -45,14 +45,14 @@ def setFileLog(file: str) -> bool:
     global _is_open_file
     global _open_file
 
-    updateLog() # сохраняет не сохраненые логи в старый фаил
+    updateLog() # сохраняет не сохраненные логи в старый фаил
 
-    # зарытие старго файла есть он открыт
+    # закрытие старого файла есть он открыт
     if _is_open_file:
         _open_file.close()
         _is_open_file = False
 
-    # проверка на существование файла, если он существут то открывает его и возвращает True
+    # проверка на существование файла, если он существует то открывает его и возвращает True
     if os.path.isfile(file):
         _file_log = file
         try:
@@ -60,17 +60,17 @@ def setFileLog(file: str) -> bool:
             _is_open_file = True
         except Exception as e:
             printLog('logger.py > setFileLog:', e, types = ERROR_LOGGER) # лог об ошибки
-    else:   # если файла не существет возвращает False
+    else:   # если файла не существует возвращает False
         _file_log = None
         return False
 
-    updateLog() # записывает не сохраненые логи в новый фаил его его получилось открыть
+    updateLog() # записывает не сохраненные логи в новый фаил его его получилось открыть
     return True
 
 @overload
 def createFileLog() -> bool:
     """
-    Cоздает свой фаил
+    Создает свой фаил
 
     Return:
         Возвращает bool значение, определяющие успешно ли открылся фаил. 
@@ -106,10 +106,10 @@ def createFileLog(name: str | None = None) -> bool:
 
 def _print(data: str) -> None:
     """
-    Запись в фаил и вывод в консоль при включеном DEBUGGING
+    Запись в фаил и вывод в консоль при включенном DEBUGGING
 
     Args:
-        data (data): текск котрый нужно добавить в логи
+        data (data): текст который нужно добавить в логи
     """
     global _is_open_file
     global _open_file
@@ -135,10 +135,10 @@ def printLog(*values: object, types: str | None = None, sep: str | None = " ",
             flush: None = None) -> None:
     """
     Обновляет список логов и переделывает все в формат логов.
-    При включеным DEBUGGING выводит все логи в консоль.
+    При включенным DEBUGGING выводит все логи в консоль.
     
     Args:
-        *values (object): Обьекты которые отправляються в консоль.
+        *values (object): Объекты которые отправляются в консоль.
         types (str): тип ошибки (пример: '[INFO]').
 
             константы: 
@@ -173,10 +173,10 @@ def printInfo(*values, sep: str | None = " ",
             file: None = None,
             flush: None = None):
     """
-    Запись логов с типо [INFO]
+    Запись логов с типом [INFO]
 
     Args:
-        *values (object): Обьекты которые отправляються в консоль.
+        *values (object): Объекты которые отправляются в консоль.
         sep (str): Разделитель текста (работает как в print)
     """
     return printLog(*values, types=INFO, sep=sep)
@@ -187,10 +187,10 @@ def printError(*values, sep: str | None = " ",
             file: None = None,
             flush: None = None):
     """
-    Запись логов с типо [ERROR]
+    Запись логов с типом [ERROR]
 
     Args:
-        *values (object): Обьекты которые отправляються в консоль.
+        *values (object): Объекты которые отправляются в консоль.
         sep (str): Разделитель текста (работает как в print)
     """
     return printLog(*values, types=ERROR, sep=sep)
@@ -200,15 +200,15 @@ def updateLog() -> None:
     """
     Обновление списка логов:
 
-        Переберает список не записаных логов.
-        Записывает несохраненые логи если они не были сохранены.
+        Перебирает список не записанных логов.
+        Записывает несохраненные логи если они не были сохранены.
         Обновляет состояние работы записи в случае ошибки.
     """
     global _is_open_file
     global _log_list_not_file
     global _open_file
 
-    # выход из фунции
+    # выход из функции
     if not _is_open_file:       return
     if not _log_list_not_file:  return
 
@@ -260,7 +260,7 @@ def setLogPath(log_path: str) -> None:
 
 def getLogPath() -> str:
     """
-    Возвращет путь к логам
+    Возвращает путь к логам
     """
     global LOG_PATH
     return LOG_PATH
@@ -280,14 +280,14 @@ class ObjectMeta(type):
         printLog(f"[{cls}]", args, kwds, types="[CREATURE]")
         return super().__call__(*args, **kwds)
 
-def init(path: str | None = None): # инцилизация всего
+def init(path: str | None = None): # Инициализация всего
     # стандарт - создает фаил
     if not path is None:
         setLogPath(path)
     else:
         createFileLog()
 
-# Стуктура для пустого логирования
+# Структура для пустого логирования
 # метод для отправки логов в мусорку
 def null(*args, **kargs) -> None:
     global _log_list_not_file
@@ -299,7 +299,7 @@ def directionNull() -> None:
     """
     Делает так, что бы все логи удалялись.
     
-    (Остаеться вывод только в консоль)
+    (Остается вывод только в консоль)
     """
     global _is_open_file, _open_file, _file_log, _log_list_not_file
     _is_open_file = True

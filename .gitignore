@@ -1,3 +1,6 @@
+# test
+easel/surface_py.py
+
 # Python
 __pycache__/
 build/
@@ -8,6 +11,8 @@ _core/game3D/rect.c
 cpu/game3D/camera.c
 math/rect.c
 math/time.c
+easel/surface.c
+_core/creating/progress/__init__.c
 
 *.html
 

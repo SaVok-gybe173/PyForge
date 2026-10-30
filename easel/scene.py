@@ -96,7 +96,7 @@ class Scene(CoreObject):
 
     def quit(self, common, quit):
         for object in self.objects:
-            object.draw(common, quit)
+            object.quit(common, quit)
 
     def draw(self, win):
         for object in self.objects:

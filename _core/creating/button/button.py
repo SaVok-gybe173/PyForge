@@ -2,7 +2,7 @@ from copy import copy
 from typing import Callable
 from .animation import FrameAnimationButton
 from ....easel import Point, PfObjectIMG, Surface
-from ....easel.event import Event, CommonEvent, MouseMotionEvent, MouseButtonEvent, MOUSEBUTTONDOWN
+from ....easel.event import Event, CommonEvent, MouseMotionEvent, MouseButtonEvent, MOUSEBUTTONDOWN, MouseWheelEvent
 from sdl2.mouse import SDL_SYSTEM_CURSOR_HAND, SDL_SYSTEM_CURSOR_ARROW, SDL_CreateSystemCursor, SDL_SetCursor
 
 class ButtonClick:
@@ -115,6 +115,6 @@ class _AnimationButton(_Button):
         self.animation.mousemotion(common, motion)
         super().mousemotion(common, motion)
     
-    def mousebuttondown(self, pos, button, touch):
-        super().mousebuttondown(pos, button, touch)
-        self.animation.mousebuttondown(pos, button, touch)
+    def mousebuttondown(self, common: CommonEvent, wheel: MouseWheelEvent):
+        super().mousebuttondown(common, wheel)
+        self.animation.mousebuttondown(common, wheel)

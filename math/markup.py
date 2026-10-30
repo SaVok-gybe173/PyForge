@@ -120,7 +120,8 @@ class _General:
             pix: Пара ``(x, y)`` в пикселях.
         """
         self._pixel = pix
-        self._relationship = relationship_transform(self.page.size, pix)
+        if not self.page is None:
+            self._relationship = relationship_transform(self.page.size, pix)
 
     @property
     def relationship(self) -> RelCoord:
@@ -135,7 +136,8 @@ class _General:
             rel: Пара ``(x, y)`` в диапазоне ``[0.0, 1.0]`` (обычно).
         """
         self._relationship = rel
-        self._pixel = coordinate_transform(self.page.size, rel)
+        if not self.page is None:
+            self._pixel = coordinate_transform(self.page.size, rel)
 
     @property
     def page(self) -> Window:

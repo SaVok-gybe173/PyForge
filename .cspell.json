@@ -110,6 +110,18 @@
     "mcls",
     "kargs",
     "typefile",
-    "pyforge"
+    "pyforge",
+    "SRCALPHA",
+    "RMASK",
+    "GMASK",
+    "BMASK",
+    "AMASK",
+    "PREALLOC",
+    "RLEACCEL",
+    "MULT",
+    "blendmode",
+    "пиксельный",
+    "смапленное",
+    "PIXELFORMAT"
   ]
 }

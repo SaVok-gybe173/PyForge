@@ -1,6 +1,6 @@
 from ..._core.creating.progress.structure import _ProgressBar
-import pygame as pg
+from ...easel.draw import rect
 
 class ProgressBar(_ProgressBar):
     def draw(self, scene):
-        pg.draw.rect(scene, self.color, self.rect)
+        rect(scene, self.color, self.rect)

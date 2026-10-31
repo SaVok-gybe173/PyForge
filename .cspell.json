@@ -137,5 +137,12 @@
     "nonecheck",
     "клампится",
     "перевычисляется",
+    "Bresenham",
+    "aaline",
+    "Xiaolin",
+    "антиалиасинг",
+    "aalines",
+    "aacircle",
+    "scanline"
   ]
 }

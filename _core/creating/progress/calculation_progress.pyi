@@ -1,63 +1,61 @@
+class ProgressBarCalc:
+    """Калькулятор состояния прогресс-бара.
 
-class  ProgressBarCalc:
-    _is_quantity: bool
-    _quantity_main: int
-    _quantity: int
-    _percent: float # от 0 до 100
-    _pixel_progress: int
+    Хранит счётчики (percent/quantity) и вычисляет длину заливки в пикселях.
+    Геометрия передаётся снаружи в update_progress().
+    """
 
-    _left_top: tuple[int, int]
-    _width_height: tuple[int, int]
+    def __init__(self) -> None: ...
 
-    def __init__(self,  left_top: tuple[int, int], width_height: tuple[int, int]) -> None: ...
+    def update_progress(self, width_height: tuple[int, int]) -> None:
+        """Пересчитать _pixel_progress по текущему состоянию и (w, h).
 
-    def update_progress(self) -> None: ...
-    def math_quantity(self) -> None: ...
+        Если включён quantity-режим, _percent перевычисляется из
+        _quantity/_quantity_main; иначе используется текущий _percent.
+        Результат сохраняется в _pixel_progress (целое, усечённое).
+        """
 
-    def set_pixel(self, pixel: int) -> None: ... # установка прогресс в пикселей
-    def get_pixel(self) -> int: ... # получение текущего расположения
+    def math_quantity(self) -> None:
+        """Пересчитать _quantity из _percent (только в quantity-режиме)."""
 
+    # pixel
+    def set_pixel(self, pixel: int) -> None:
+        """Установить _pixel_progress напрямую, без ограничений."""
 
-    def set_percent(self, percent: float): ... # установка процента
-    def get_percent(self, ) -> float: ... # получение процента
-    def add_percent(self, percent: float): ... # добавление процента
-    
-    def set_quantity_main(self, quantity: int): ... # добавление кочичества
-    def get_quantity_main(self, quantity: int): ... # возвращает максимальное количество
-    def add_quantity_main(self, quantity: int): ... # добавляет к основному количество
-    
-    def get_quantity(self) -> int: ... # возвращает текущие количество
-    def set_quantity(self, quantity: int): ... # устанавливает количество
-    def add_quantity(self, quantity: int): ... # добавляет к прогресу
-    def clear_quantity(self): ... # очищает прогресс
-    def del_quantity(self): ... # удаляет прогресс
+    def get_pixel(self) -> int:
+        """Текущая длина заливки в пикселях."""
 
-    @property
-    def left(self) -> int: ...
-    @left.setter
-    def left(self, left: int) -> None: ...
-    @property
-    def top(self) -> int: ...
-    @top.setter
-    def top(self, top: int) -> None: ...
-    
-    @property
-    def left_top(self) -> tuple[int, int]: ...
-    @left_top.setter
-    def left_top(self, left_top: tuple[int, int]) -> None: ...
+    # percent
+    def set_percent(self, percent: float) -> None:
+        """Установить процент (0..100). update_progress не вызывается."""
 
-    @property
-    def width(self) -> int: ...
-    @width.setter
-    def width(self, width: int) -> None: ...
+    def get_percent(self) -> float:
+        """Текущий процент (0..100)."""
 
-    @property
-    def height(self) -> int: ...
-    @height.setter
-    def height(self, height: int) -> None: ...
-    
-    @property
-    def width_height(self) -> tuple[int, int]: ... 
-    @width_height.setter
-    def width_height(self, width_height: tuple[int, int]) -> None: ...
-    
+    def add_percent(self, percent: float) -> None:
+        """Прибавить к проценту (может выйти за 0..100 — клампится в update_progress)."""
+
+    # quantity 
+    def set_quantity_main(self, quantity: int) -> None:
+        """Включить quantity-режим и задать «всего»."""
+
+    def get_quantity_main(self) -> int:
+        """Текущее значение «всего»."""
+
+    def add_quantity_main(self, quantity: int) -> None:
+        """Включить quantity-режим и прибавить к «всего»."""
+
+    def get_quantity(self) -> int:
+        """Текущее значение «сделано»."""
+
+    def set_quantity(self, quantity: int) -> None:
+        """Включить quantity-режим и задать «сделано»."""
+
+    def add_quantity(self, quantity: int) -> None:
+        """Включить quantity-режим и прибавить к «сделано»."""
+
+    def clear_quantity(self) -> None:
+        """Включить quantity-режим и сбросить «сделано» в 0."""
+
+    def del_quantity(self) -> None:
+        """Выключить quantity-режим; сбросить _quantity в 0, _quantity_main в 100."""

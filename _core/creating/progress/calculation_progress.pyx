@@ -1,130 +1,109 @@
-class ProgressBarCalc:
-    _is_quantity: bool = False
-    _quantity_main: int = 100
-    _quantity: int = 0
-    _percent: float = 0.0 # от 0 до 100
-    _pixel_progress: int = 0
+# cython: language_level=3
+# cython: boundscheck=False
+# cython: wraparound=False
+# cython: cdivision=True
+# cython: initializedcheck=False
+# cython: nonecheck=False
 
-    _left_top: tuple[int, int]
-    _width_height: tuple[int, int]
 
-    def __init__(self, tuple[int, int] left_top, tuple[int, int] width_height) -> None:
-        self._left_top = left_top
-        self._width_height = width_height
+cdef class ProgressBarCalc:
+    cdef bint   _is_quantity
+    cdef int    _quantity_main
+    cdef int    _quantity
+    cdef double _percent          # 0..100
+    cdef int    _pixel_progress
 
-    def update_progress(self) -> None:
-        if self._percent > 100:
-            self._percent = 100.0
-        elif self._percent < 0:
-            self._percent = 0
+    def __cinit__(self):
+        self._is_quantity    = False
+        self._quantity_main  = 100
+        self._quantity       = 0
+        self._percent        = 0.0
+        self._pixel_progress = 0
+
+    cpdef void update_progress(self, width_height):
+        """
+        Пересчитать _pixel_progress из текущего состояния и переданной геометрии.
+        width_height — (w, h).
+        """
+        cdef double p = self._percent
+        if p > 100.0:
+            p = 100.0
+        elif p < 0.0:
+            p = 0.0
 
         if self._is_quantity:
             if self._quantity_main <= 0:
                 self._quantity_main = 100
-        
+
             if self._quantity > self._quantity_main:
                 self._quantity = self._quantity_main
             elif self._quantity < 0:
                 self._quantity = 0
 
             if self._quantity == 0:
-                self._percent = 0.0
+                p = 0.0
             else:
-                self._percent = (self._quantity / self._quantity_main) * 100.0
-        
-        if self._width_height[0] > self._width_height[1]:
-            self._pixel_progress = (self._percent/100)*self.width
+                p = (<double>self._quantity / <double>self._quantity_main) * 100.0
+
+        self._percent = p
+
+        cdef int w = <int>width_height[0]
+        cdef int h = <int>width_height[1]
+        cdef double scale = p * 0.01
+        if w > h:
+            self._pixel_progress = <int>(scale * w)
         else:
-            self._pixel_progress = (self._percent/100)*self.height
+            self._pixel_progress = <int>(scale * h)
 
-    def math_quantity(self) -> None:
+    cpdef void math_quantity(self):
         if self._is_quantity:
-            self._quantity = int(self._quantity_main * (self._percent / 100))
+            self._quantity = <int>(self._quantity_main * (self._percent * 0.01))
 
-    def set_pixel(self, int pixel) -> None: # без ограничений
-        self._pixel_progress = pixel
-    def get_pixel(self) -> int:
+    # pixel/percent
+    cpdef void set_pixel(self, pixel):
+        self._pixel_progress = <int>pixel
+
+    cpdef int get_pixel(self):
         return self._pixel_progress
 
-    def set_percent(self, float percent) -> None:
-        self._percent = percent
-        self.update_progress()
-    def get_percent(self, ) -> float:
+    cpdef void set_percent(self, percent):
+        self._percent = <double>percent
+        # update_progress вызывается снаружи при рендере
+
+    cpdef double get_percent(self):
         return self._percent
-    def add_percent(self, float percent) -> None:
-        self.set_percent(self.get_percent()+percent)
 
-    def set_quantity_main(self, int quantity) -> None:
-        self._is_quantity = True
-        self._quantity_main = quantity
-        self.update_progress()
-    def get_quantity_main(self) -> int:
+    cpdef void add_percent(self, percent):
+        self._percent += <double>percent
+
+    # quantity
+    cpdef void set_quantity_main(self, quantity):
+        self._is_quantity   = True
+        self._quantity_main = <int>quantity
+
+    cpdef int get_quantity_main(self):
         return self._quantity_main
-    def add_quantity_main(self, quantity: int) -> None:
-        self._is_quantity = True
-        self._quantity_main += quantity
-        self.update_progress()
 
-    def get_quantity(self) -> int:
+    cpdef void add_quantity_main(self, quantity):
+        self._is_quantity   = True
+        self._quantity_main += <int>quantity
+
+    cpdef int get_quantity(self):
         return self._quantity
-    def set_quantity(self, quantity: int) -> None:
+
+    cpdef void set_quantity(self, quantity):
         self._is_quantity = True
-        self._quantity = quantity
-        self.update_progress()
-    def add_quantity(self, quantity: int) -> None:
+        self._quantity    = <int>quantity
+
+    cpdef void add_quantity(self, quantity):
         self._is_quantity = True
-        self._quantity += quantity
-        self.update_progress()
-    def clear_quantity(self) -> None:
+        self._quantity   += <int>quantity
+
+    cpdef void clear_quantity(self):
         self._is_quantity = True
-        self._quantity = 0
-        self.update_progress()
-    def del_quantity(self) -> None:
-        self._quantity = 0
+        self._quantity    = 0
+
+    cpdef void del_quantity(self):
+        self._quantity      = 0
         self._quantity_main = 100
-        self._is_quantity = False
-        self.update_progress()
-    
-    @property
-    def left(self) -> int:
-        return self._left_top[0]
-    @left.setter
-    def left(self, int left) -> None:
-        self._left_top = (left, self._left_top[1])
-
-    @property
-    def top(self) -> int:
-        return self._left_top[1]
-    @top.setter
-    def top(self, int top) -> None:
-        self._left_top = (self._left_top[0], top)
-    
-    @property
-    def left_top(self) -> tuple[int, int]:
-        return self._left_top
-    @left_top.setter
-    def left_top(self, tuple[int, int] left_top) -> None:
-        self._left_top = left_top
-
-    @property
-    def width(self) -> int:
-        return self._width_height[0]
-    @width.setter
-    def width(self, int width) -> None:
-        self._width_height = (width, self._width_height[1])
-
-    @property
-    def height(self) -> int:
-        return self._width_height[1]
-    @height.setter
-    def height(self, int height) -> None:
-        self._width_height = (self._width_height[0], height)
-    
-    @property
-    def width_height(self) -> tuple[int, int]:
-        return self._width_height
-    @width_height.setter
-    def width_height(self, tuple[int, int] width_height) -> None:
-        self._width_height = width_height
-    
-    
+        self._is_quantity   = False

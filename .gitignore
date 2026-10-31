@@ -13,6 +13,7 @@ math/rect.c
 math/time.c
 easel/surface.c
 _core/creating/progress/__init__.c
+easel/draw.c
 
 *.html
 

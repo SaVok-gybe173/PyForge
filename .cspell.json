@@ -123,6 +123,19 @@
     "пиксельный",
     "смапленное",
     "PIXELFORMAT",
-    "cimport"
+    "cimport",
+    "cdef",
+    "cython",
+    "bint",
+    "cpdef",
+    "elif",
+    "рендере",
+    "cinit",
+    "boundscheck",
+    "cdivision",
+    "initializedcheck",
+    "nonecheck",
+    "клампится",
+    "перевычисляется",
   ]
 }

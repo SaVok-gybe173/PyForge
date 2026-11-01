@@ -14,6 +14,7 @@ import sdl2.surface as sdl2_surface
 import sdl2.pixels  as sdl2_pixels
 import sdl2.rect    as sdl2_rect
 
+from ..math.rect cimport Rect
 from ..base.logger import printInfo, printError
 
 
@@ -61,15 +62,13 @@ cdef class Surface:
         if self._surface is None:
             raise RuntimeError(f"Не удалось создать поверхность: {sdl2.SDL_GetError().decode()}")
 
-        # --- кэшируем всё, что нужно для быстрого пиксельного доступа ---
+        # кэшируем всё, что нужно для быстрого пиксельного доступа
         self._freed = False
         cdef object cont = self._surface.contents
         self._w = cont.w
         self._h = cont.h
         self._pitch_u32 = cont.pitch // 4
         self._fmt_ctype = cont.format
-
-        # сырой C-указатель на пиксели (одна ctypes-операция за всю жизнь объекта)
         cdef uintptr_t addr = 0
         if cont.pixels:
             addr = <uintptr_t>cont.pixels
@@ -140,12 +139,15 @@ cdef class Surface:
         self._check()
         src._check()
         cdef object rect
-        if isinstance(dst_rect, (tuple, list)):
+        if isinstance(dst_rect, Rect):
+            rect = sdl2_rect.SDL_Rect(dst_rect.x, dst_rect.y,
+                                      dst_rect.w, dst_rect.h)
+        elif isinstance(dst_rect, (tuple, list)):
             rect = sdl2_rect.SDL_Rect(
                 int(dst_rect[0]), int(dst_rect[1]),
                 int(dst_rect[2]), int(dst_rect[3]))
         else:
-            rect = dst_rect
+            rect = dst_rect          
         sdl2_surface.SDL_BlitScaled(src._surface, None, self._surface, rect)
 
     # colorkey / alpha
@@ -220,6 +222,45 @@ cdef class Surface:
         else:
             v = <uint32_t>int(color)
         self._px[y * self._pitch_u32 + x] = v
+
+    # clip
+    cpdef void set_clip(self, clip):
+        """
+        Установить область отсечения для blit-ов.
+        clip — Rect, (x, y, w, h), ((x, y), (w, h)) или None (снять ограничение).
+        """
+        self._check()
+        cdef object r
+        if clip is None:
+            sdl2_surface.SDL_SetClipRect(self._surface, None)
+            return
+        if isinstance(clip, Rect):
+            r = sdl2_rect.SDL_Rect(clip.x, clip.y, clip.w, clip.h)
+        elif isinstance(clip, (tuple, list)):
+            if len(clip) == 4:
+                r = sdl2_rect.SDL_Rect(int(clip[0]), int(clip[1]),
+                                       int(clip[2]), int(clip[3]))
+            elif len(clip) == 2:
+                pos, size = clip
+                r = sdl2_rect.SDL_Rect(int(pos[0]), int(pos[1]),
+                                       int(size[0]), int(size[1]))
+            else:
+                raise ValueError("clip должен быть Rect, (x,y,w,h), ((x,y),(w,h)) или None")
+        else:
+            raise TypeError("clip должен быть Rect, tuple, list или None")
+        sdl2_surface.SDL_SetClipRect(self._surface, r)
+
+    cpdef object get_clip(self):
+        """Вернуть текущую область отсечения как Rect."""
+        self._check()
+        cdef object r = sdl2_rect.SDL_Rect(0, 0, 0, 0)
+        sdl2_surface.SDL_GetClipRect(self._surface, r)
+        cdef Rect out = Rect.__new__(Rect)
+        out.x = r.x
+        out.y = r.y
+        out.w = r.w
+        out.h = r.h
+        return out
 
     # жизненный цикл
     def free(self):

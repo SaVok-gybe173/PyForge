@@ -1,12 +1,11 @@
-# easel/surface.pxd
 from libc.stdint cimport uint32_t, uint8_t
 
 cdef class Surface:
-    cdef public object _surface # PySDL2 SDL_Surface (ctypes pointer)
-    cdef object        _fmt_ctype # ctypes POINTER(SDL_PixelFormat), cached
+    cdef public object _surface
+    cdef object        _fmt_ctype
     cdef public bint   _owned
     cdef bint          _freed
-    cdef uint32_t*     _px # прямой C-указатель на пиксели
+    cdef uint32_t*     _px
     cdef int           _pitch_u32
     cdef int           _w, _h
     cdef uint32_t      _Rmask, _Gmask, _Bmask, _Amask
@@ -23,3 +22,5 @@ cdef class Surface:
     cpdef int  get_blendmode(self)
     cpdef tuple get_at(self, pos)
     cpdef void set_at(self, pos, color)
+    cpdef void set_clip(self, clip)
+    cpdef object get_clip(self)

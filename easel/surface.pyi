@@ -1,6 +1,7 @@
-from typing import Final, overload
+from typing import Final, Tuple, Union, overload
 from sdl2.surface import SDL_Surface
 from sdl2.rect import SDL_Rect
+from ..math.rect import Rect
 
 # Флаги поверхности (аналог флагов в pygame при создании Surface)
 PREALLOC: Final[int]    # 0x00000001 Поверхность использует предварительно выделенную память.
@@ -50,7 +51,7 @@ class Surface:
         Копирует другую поверхность (source_surface) в позицию dest_pos (x, y).
         """
 
-    def blit_scaled(self, src: "Surface", dst_rect: SDL_Rect) -> None:
+    def blit_scaled(self, src: "Surface", dst_rect: Rect) -> None:
         """
         Копирование с масштабированием. Используйте SDL_BlitScaled.
         """
@@ -100,6 +101,26 @@ class Surface:
         Прямой доступ к пикселям.
         Принимает кортеж (R, G, B) / (R, G, B, A) либо уже смапленное значение (int).
         Используйте sdl2.ext.PixelView — он позволяет читать и писать через view[y][x].
+        """
+
+    # clip
+    def set_clip(self, clip: Union[Rect, Tuple[int, int, int, int], Tuple[Tuple[int, int], Tuple[int, int]], None]) -> None:
+        """Установить область отсечения для blit-ов.
+
+        :param clip: Rect, (x, y, w, h), ((x, y), (w, h)) или None (снять ограничение)
+        :raises TypeError: если тип не подходит
+        :raises ValueError: если tuple не длины 4 и не «пара пар»
+
+        Аналог ``pygame.Surface.set_clip``.
+        """
+
+    def get_clip(self) -> Rect:
+        """Текущая область отсечения.
+
+        После ``set_clip(None)`` возвращает ``Rect(0, 0, width, height)`` —
+        так же, как pygame возвращает ``Rect``, а не ``None``.
+
+        Аналог ``pygame.Surface.get_clip``.
         """
 
     #  жизненный цикл

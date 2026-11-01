@@ -1,9 +1,29 @@
+"""
+Виртуальный список с рендером только видимого диапазона
+Полностью избавляемся от items_holst/holst/image_streak - вместо этого
+храним префиксные суммы размеров и индексы [visible_start, visible_end]
+
+Математика в _list_math (Cython, с Python-fallback)
+"""
+
 import pygame as pg
-from ....easel import PfObject
+from array import array
+
 from typing import Tuple
-from .structure import ListItems, Governance
+from ....easel import PfObject
 from ....math.markup import Size, Point
+
+from ._list_math import (
+    build_prefix, total_length, find_visible_range, find_index_at,
+    scroll_metrics, thumb_from_scroll, clamp,
+)
+
 from .calculations import event_size, update_size
+
+
+class Governance:
+    DOWN = 0b101
+    RiGHTWARDS = 0b110
 
 class CoreListOfItems(PfObject):
     def __init__(self, left_top: Point|tuple[int, int], width_height: Size|tuple[int, int], items: list[ListItems] | None = None, governance = Governance.DOWN, distance: int = 10, size_streak = 10, color_streak = (170, 170, 170), speed = 10):
@@ -11,20 +31,18 @@ class CoreListOfItems(PfObject):
         список элементов ListItems
         
         Args:
-            left_top: Point - кординаты
+            left_top: Point - координаты
             width_height: Size - размеры
             
             items: list[ListItems] - элементы в списке
             governance: направление куда будет смотреть список
-            distance: int - растояние между элементами
+            distance: int - расстояние между элементами
 
             size_streak - линия нахождения
             color_streak - цвет линии
             
-            speed - скорость пролистования
+            speed - скорость
         
-        не передаваемые:
-            fons - задний фон
         '''
 
 

@@ -143,6 +143,11 @@
     "антиалиасинг",
     "aalines",
     "aacircle",
-    "scanline"
+    "scanline",
+    "ssize",
+    "memoryview",
+    "pyarray",
+    "стабы",
+    "рендером",
   ]
 }

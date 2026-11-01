@@ -31,7 +31,7 @@ from array import array
 from ....easel.object import PfObject, PfObjectIMG
 from ....easel.surface import Surface
 from ....easel.window import Window
-from ....easel.event import Event, MOUSEBUTTONDOWN, MOUSEWHEEL
+from ....easel.event import Event, MOUSEBUTTONDOWN, MOUSEWHEEL, CommonEvent, MouseButtonEvent, MouseWheelEvent
 from ....math.markup import Size, Point
 from ....math.rect import Rect
 
@@ -68,9 +68,9 @@ class CoreListOfItemsBase(PfObject):
             color_streak: цвет полосы/ползунка.
             speed: пикселей за один тик колеса.
         """
-        self.page = page
-        self.left_top = left_top if isinstance(left_top, Point) else Point(*left_top)
-        self.width_height = width_height if isinstance(width_height, Size) else Size(*width_height)
+        self._page = page
+        self.left_top = left_top 
+        self.width_height = width_height 
         self.distance = distance
         self.size_streak = size_streak
         self.min_thumb = min_thumb
@@ -152,45 +152,23 @@ class CoreListOfItemsBase(PfObject):
         idx = find_index_at(self._prefix, self._sizes, content_pos)
         return idx if idx >= 0 else None
 
-    def event(self, event: Event) -> bool:
+    def mousebuttondown(self, common: CommonEvent, button: MouseButtonEvent):
         """Обрабатывает колесо. Возвращает True, если прокрутил."""
-        if event.type == MOUSEBUTTONDOWN and event.button in (4, 5):
-            if not self.retention(event.pos):
-                return False
-            self._scroll_by(self.speed if event.button == 5 else -self.speed)
-            return True
+        if not self.retention((button.x, button.y)): return False
+        self._scroll_by(self.speed if button.button == 5 else -self.speed)
+        return True
 
-        if event.type == MOUSEWHEEL:
-            if not self.retention(self.page.mouse_pos):
-                return False
-            self._scroll_by(-event.y * self.speed)
-            return True
-
-        return False
+    def mousewheel(self, common: CommonEvent, wheel: MouseWheelEvent):
+        """Обрабатывает колесо. Возвращает True, если прокрутил."""
+        if not self.retention(self.page.mouse_pos): return False
+        self._scroll_by(-wheel.y * self.speed)
+        return True
 
     def _scroll_by(self, delta: int):
         new = clamp(self.scroll_offset + delta, 0, self._max_scroll)
         if new != self.scroll_offset:
             self.scroll_offset = new
             self._update_visible()
-
-    def draw(self, screen: Surface):
-        """Рендерит только видимые элементы. Никаких промежуточных поверхностей."""
-        if self.visible_start <= self.visible_end:
-            old_clip = screen.get_clip()
-            screen.set_clip(self._view_rect())
-            try:
-                offset = self._axis_offset() - self.scroll_offset
-                prefix = self._prefix
-                items = self.items
-                for i in range(self.visible_start, self.visible_end + 1):
-                    self._blit_item(screen, items[i], offset + prefix[i])
-            finally:
-                screen.set_clip(old_clip)
-
-        if self._max_scroll > 0:
-            thumb_pos = thumb_from_scroll(self.scroll_offset, self._max_scroll, self._thumb_travel,)
-            self._draw_thumb(screen, thumb_pos)
 
     @property
     def visible(self) -> list:

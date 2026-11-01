@@ -3,14 +3,14 @@ from typing import List, Sequence, Tuple, Union
 from .surface import Surface
 from ..math.rect import Rect
 
-_Color = Union[
+type _Color = Union[
     Tuple[int, int, int],
     Tuple[int, int, int, int],
     List[int],
     int,
 ]
-_Point = Tuple[int, int]
-_RectLike = Union[
+type _Point = Tuple[int, int]
+type _RectLike = Union[
     Tuple[int, int, int, int],
     List[int],
     Rect,

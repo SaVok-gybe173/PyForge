@@ -30,16 +30,10 @@ def is_linux():
     return False
 
 def is_window():
-    if sys.platform.startswith('win32'):
-        return True
-    return False
+    return sys.platform == "win32"
 
 def is_ios():
-    if sys.platform == 'ios':
-        return True
-    return False
+    return sys.platform == 'ios'
 
 def is_macos():
-    if sys.platform == 'darwin':
-        return True
-    return False
+    return sys.platform == "darwin"

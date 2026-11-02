@@ -44,6 +44,4 @@ except:
 from .easel.app import App
 from .mods.mod import FrameMod
 
-from .easel.window import Scene
-
-from .cpu.creating.image import get_none_image, round_image, resize_image_with_aspect_ratio, extract_square_fast, extract_square
+from .easel.scene import Scene

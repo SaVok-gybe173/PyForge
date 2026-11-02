@@ -1,5 +1,4 @@
 from .animation import FrameAnimationButton
-from ....cpu.creating.image.tools import round_corners_alternative
 from ....easel import Surface
 from ....easel.event import Event, CommonEvent, MouseMotionEvent, MouseButtonEvent, MOUSEBUTTONDOWN, MouseWheelEvent
     

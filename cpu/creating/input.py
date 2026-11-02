@@ -1,17 +1,13 @@
 import pygame as pg
+import sdl2
 from functools import wraps
 from typing import Callable
-try:
-    from typing_extensions import (
-        deprecated,  # added in 3.13
-    )
-except ModuleNotFoundError:
-    def deprecated(mess):
-        def wrap(fun):
-            return fun
-        return wrap
-    
-from PyForge.tools import PfObject
+
+from typing_extensions import (
+    deprecated,  # added in 3.13
+)
+
+from ...easel.object import PfObject
 from ...widget.button import Button
 
 def set_txt_bufer(text_string):

@@ -1,0 +1,114 @@
+
+cdef class InputTextCore:
+    cdef public str _text
+    cdef public int _shift
+    cdef int selectionX
+    cdef int selectionY
+    cdef bint selection
+
+    def __init__(self, str text = ""):
+        self._text = text
+        self._shift = 0
+        self.clear_selection()
+    
+    @property
+    def text(self):
+        return self._text
+    @text.setter
+    def text(self, text):
+        self._text = text
+        if self._shift >= len(text):
+            self._shift = len(text)
+    
+    cpdef void addText(self, str text):
+        """Вставка с заменой выделения (если оно есть)."""
+        if self.has_selection():
+            self.delete_selection()
+        self._text = self._text[:self._shift] + text + self._text[self._shift:]
+        self._shift += len(text)
+        self.clear_selection()
+
+    @property
+    def shift(self):
+        return self._shift
+
+    @shift.setter
+    def shift(self, shift):
+        if shift <= 0:
+            self._shift = 0
+        elif shift >= len(self._text):
+            self._shift = len(self._text)
+        else:
+            self._shift = shift
+
+    cpdef bint ShiftRight(self):
+        if self._shift < len(self._text):
+            self._shift += 1
+            return True
+        return False
+
+    cpdef bint ShiftLeft(self):
+        if self._shift > 0:
+            self._shift -= 1
+            return True
+        return False
+
+    # выделение текста
+    cpdef void clear_selection(self):
+        self.selectionY = 0
+        self.selectionX = 0
+        self.selection = False
+
+    cpdef void start_selection(self):
+        """Начать выделение в текущей позиции курсора."""
+        self.selectionY = self._shift
+        self.selectionX = self._shift
+        self.selection = True
+
+    cpdef void update_selection(self):
+        """Обновить конец выделения по текущему курсору."""
+        if not self.selection:
+            self.selectionY = self._shift
+            self.selection = True
+        self.selectionX = self._shift
+        self._normalize()
+
+    cdef void _normalize(self):
+        # 0 <= selectionY <= selectionX <= len(_text)
+        cdef int n = len(self._text)
+        if self.selectionX < 0: self.selectionX = 0
+        if self.selectionX > n: self.selectionX = n
+        if self.selectionY < 0: self.selectionY = 0
+        if self.selectionY > n: self.selectionY = n
+        if self.selectionY > self.selectionX:
+            self.selectionY, self.selectionX = self.selectionX, self.selectionY
+
+
+    cpdef str get_selected_text(self):
+        "Возвращает выделенный текст"
+        if not self.selection:
+            return ""
+        self._normalize()
+        return self._text[self.selectionY:self.selectionX]
+
+    cpdef bint has_selection(self):
+        return self.selection and self.selectionX > self.selectionY
+
+    cpdef void select_all(self):
+        self.selectionY = 0
+        self.selectionX = len(self._text)
+        self._shift = self.selectionX
+        self.selection = True
+
+    cpdef void delete_selection(self):
+        """
+        Удалить выделенный фрагмент
+        курсор ставится на место выделения.
+        """
+        if not self.has_selection():
+            self.clear_selection()
+            return
+        cdef int start = self.selectionY
+        self._text = self._text[:start] + self._text[self.selectionX:]
+        self._shift = start
+        self.clear_selection()

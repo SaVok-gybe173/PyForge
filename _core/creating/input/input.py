@@ -7,30 +7,9 @@ from typing_extensions import (
     deprecated,  # added in 3.13
 )
 
-from ...easel.object import PfObject
-from ...widget.button import Button
+from ....easel.object import PfObject
+from ....widget.button import Button
 
-def set_txt_bufer(text_string):
-    """
-    Помещает заданную строку текста в буфер обмена.
-    """
-    if pg.scrap.get_init():
-        pg.scrap.put(pg.SCRAP_TEXT, text_string.encode('cp1251'))
-            
-    else:
-        raise TypeError("Буфер обмена не инициализирован, не удалось поместить текст.")
-
-def ger_txt_bufer():
-    if pg.scrap.get_init():
-        clipboard_text_bytes = pg.scrap.get(pg.SCRAP_TEXT)
-        if clipboard_text_bytes:
-            try:
-                return clipboard_text_bytes.decode('cp1251').replace('\x00', '')
-            except UnicodeDecodeError: ...
-        return "" 
-            
-    else:
-        raise TypeError("Буфер обмена не инициализирован, не удалось поместить текст.")
 
 class InputLine(PfObject):
     _log_txt_func: list[Callable]

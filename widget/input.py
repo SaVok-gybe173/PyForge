@@ -1,8 +1,6 @@
-from ..cpu.creating.input import InputLine, ger_txt_bufer, set_txt_bufer
+from .._core.creating.input.input import InputLine
 
 
 __all__ = [
     "InputLine", 
-    "ger_txt_bufer", 
-    "set_txt_bufer"
 ]

@@ -28,6 +28,16 @@ cdef class InputTextCore:
         self._shift += len(text)
         self.clear_selection()
 
+    cpdef bint backText(self):
+        if self.has_selection():
+            self.delete_selection()
+            return True
+        if self._shift > 0:
+            self._text = self._text[:self._shift-1] + self._text[self._shift:]
+            self._shift -= 1
+            return True
+        return False
+
     cpdef bint delText(self):
         """Удалит символ или удали выделенную часть"""
         if self.has_selection():

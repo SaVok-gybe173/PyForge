@@ -11,6 +11,8 @@ class InputTextCore:
     def delText(self) -> bool:
         """Удалит символ или удали выделенную часть"""
 
+    def backText(self) -> bool:...
+
     @property
     def text(self) -> str: ...
     @text.setter

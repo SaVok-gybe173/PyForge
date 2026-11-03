@@ -15,6 +15,7 @@ easel/surface.c
 _core/creating/progress/__init__.c
 easel/draw.c
 _core/creating/listing/_list_math.c
+_core/creating/input/core.c
 
 *.html
 

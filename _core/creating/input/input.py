@@ -1,15 +1,13 @@
-import pygame as pg
 import sdl2
-from functools import wraps
 from typing import Callable
-
-from typing_extensions import (
-    deprecated,  # added in 3.13
-)
-
+from .core import InputTextCore
 from ....easel.object import PfObject
+from ....easel.window import Window
 from ....widget.button import Button
-
+from ....math.markup import Point, Size
+from ....easel.event import KeyboardEvent, CommonEvent
+from ....base.scrap import get_text_buffer, set_text_buffer
+from ....base.logger import printError
 
 class InputLine(PfObject):
     _log_txt_func: list[Callable]
@@ -19,8 +17,84 @@ class InputLine(PfObject):
     _log_index_func: list[Callable]
 
     active: bool = False # активен ли ввод
+    index: int = -1
+    text: InputTextCore
 
-    index = -1
+    def __init__(self, 
+                page: Window,
+                left_top: Point | tuple[int, int],
+                width_height: Size | tuple[int, int],
+                text: str='',
+                color = (255,255,255),
+                line_time: float = 1.0
+                ) -> None:
+        PfObject.__init__(page, left_top, width_height)
+        self.text = InputTextCore(text)
+        self.text.shift = len(self.text)+1
+        self.color = color
+        self.time = line_time
+
+    def __bool__(self):
+        return self.active
+
+    # обработка клавиш
+    def keyup(self, common: CommonEvent, key: KeyboardEvent):
+        if key.keysym.sym == sdl2.SDLK_SPACE: # пробел
+            for f in self._log_txt_func:
+                f(self.text)
+        elif key.keysym.sym == sdl2.SDLK_v and (key.keysym.mod & sdl2.KMOD_CTRL): # ctrl + v
+            try:
+                self.text.addText(get_text_buffer())
+            except BufferError as e:
+                printError(f"[{self}] [BufferError] {e}")
+        elif key.keysym.sym == sdl2.SDLK_c and (key.keysym.mod & sdl2.KMOD_CTRL): # ctrl + c
+            try:
+                if self.text.selection:
+                    set_text_buffer(self.text.get_selected_text())
+                else:
+                    set_text_buffer(self.text)
+            except BufferError as e:
+                printError(f"[{self}] [BufferError] Не удалось положить текст в буфер.")
+            except Exception as e:
+                printError(f"[{self}] [{type(e).__name__}] {e}")
+                raise e
+        elif key.keysym.sym == sdl2.SDLK_BACKSPACE: # удаление символа
+            if self.text.backText():
+                for f in self._log_delte_func:
+                    f(self.text)
+            else:
+                printError(f"[{self}] [keyup] Ошибка при удаление символа")
+        elif key.keysym.sym == sdl2.SDLK_LEFT: # влево
+            self.text.ShiftLeft()
+        elif key.keysym.sym == sdl2.SDLK_RIGHT:
+            self.text.ShiftRight()
+        else:
+            
+            
+
+    # дикораторы
+    def log_enter(self, func: Callable):
+        """вызывается при нажании энтр fun(text)"""
+        self._log_txt_func.append(func)
+        return func
+    def log_delte(self, func: Callable):
+        """вызывается при нажатии кнопки удалить fun(text)"""
+        self._log_delte_func.append(func)
+        return func
+    def log_key(self, func: Callable):
+        """вызывается при нажатии на кнопку fun(text)"""
+        self._log_key_func.append(func)
+        return func
+    def log_clik(self, func: Callable):
+        """вызывается при нажатии fun(text)"""
+        self._log_click_func.append(func)
+        return func
+    def log_index(self, func: Callable):
+        """вызывается при смещении"""
+        self._log_index_func.append(func)
+        return func
+
+class InputLine(PfObject):
 
     def __bool__(self):
         return bool(self.active)

@@ -98,43 +98,81 @@ class WindowsClipboard(ClipboardBackend):
             user32.SetClipboardData(user32.RegisterClipboardFormatW("PNG"), h)
 
     def get(self, mime: str) -> ClipboardData | None:
-        if not user32.OpenClipboard(None): return None
+        if not user32.OpenClipboard(None):
+            return None
         try:
-            if mime == "text/plain" and user32.IsClipboardFormatAvailable(CF_UNICODETEXT):
+            if mime == "text/plain":
+                if not user32.IsClipboardFormatAvailable(CF_UNICODETEXT): return None
                 h = user32.GetClipboardData(CF_UNICODETEXT)
+                if not h: return None
                 p = kernel32.GlobalLock(h)
-                kernel32.GlobalUnlock(h)
-                return Text(ctypes.wstring_at(p).rstrip("\x00"))
-            if mime == "text/uri-list" and user32.IsClipboardFormatAvailable(CF_HDROP):
-                count = shell32.DragQueryFileW(user32.GetClipboardData(CF_HDROP), 0xFFFFFFFF, None, 0)
-                paths = []
+                if not p: return None
+                try:
+                    text = ctypes.wstring_at(p).rstrip("\x00")
+                finally:
+                    kernel32.GlobalUnlock(h)
+                return Text(text)
+
+            if mime == "text/uri-list":
+                if not user32.IsClipboardFormatAvailable(CF_HDROP): return None
+                h = user32.GetClipboardData(CF_HDROP)
+                if not h: return None
+                count = shell32.DragQueryFileW(h, 0xFFFFFFFF, None, 0)
+                if count == 0:
+                    return None
+                paths: list[Path] = []
                 for i in range(count):
                     buf = ctypes.create_unicode_buffer(32768)
-                    shell32.DragQueryFileW(h, i, buf, len(buf))
-                    paths.append(Path(buf.value))
+                    got = shell32.DragQueryFileW(h, i, buf, len(buf))
+                    if got:
+                        paths.append(Path(buf.value))
                 return FileList(paths) if paths else None
+
             if mime == "image/png":
-                
                 fmt = user32.RegisterClipboardFormatW("PNG")
-                if user32.IsClipboardFormatAvailable(fmt):
-                    h = user32.GetClipboardData(fmt)
+                if fmt and user32.IsClipboardFormatAvailable(fmt):
+                    h = user32.GetClipboardData(fmt) 
+                    if not h:
+                        return None
                     p = kernel32.GlobalLock(h)
                     size = kernel32.GlobalSize(h)
-                    data = ctypes.string_at(p, size)
-                    kernel32.GlobalUnlock(h)
+                    try:
+                        data = ctypes.string_at(p, size)
+                    finally:
+                        kernel32.GlobalUnlock(h)
                     return Png(data)
+
                 if user32.IsClipboardFormatAvailable(CF_DIB):
                     try:
                         h = user32.GetClipboardData(CF_DIB)
+                        if not h: return None
                         p = kernel32.GlobalLock(h)
                         size = kernel32.GlobalSize(h)
-                        dib = ctypes.string_at(p, size)
-                        kernel32.GlobalUnlock(h)
+                        try:
+                            dib = ctypes.string_at(p, size)
+                        finally:
+                            kernel32.GlobalUnlock(h)
+                        bmp_header = struct.pack("<2sIHHI", b"BM", 14 + size, 0, 0, 14)
+                        img = Image.open(io.BytesIO(bmp_header + dib))
                         out = io.BytesIO()
-                        Image.open(io.BytesIO(struct.pack("<2sIHHI", b"BM", 14 + size, 0, 0, 14) + dib)).save(out, format="PNG")
+                        img.save(out, format="PNG")
                         return Png(out.getvalue())
-                    except ImportError:
+                    except Exception:
                         return None
+                if user32.IsClipboardFormatAvailable(CF_HDROP):
+                    h = user32.GetClipboardData(CF_HDROP)
+                    if not h:
+                        return None
+                    count = shell32.DragQueryFileW(h, 0xFFFFFFFF, None, 0)
+                    for i in range(count):
+                        buf = ctypes.create_unicode_buffer(32768)
+                        if not shell32.DragQueryFileW(h, i, buf, len(buf)):
+                            continue
+                        p = Path(buf.value)
+                        if p.suffix.lower() == ".png" and p.is_file():
+                            return Png(p.read_bytes())
+                return None
+
             return None
         finally:
             user32.CloseClipboard()

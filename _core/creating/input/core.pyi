@@ -1,11 +1,15 @@
 class InputTextCore:
-    _text: str
-    _shift: int
+    selectionX: int
+    selectionY: int
+    selection: bool
 
     def __init__(self, text: str = '') -> None: ...
 
     def addText(self, text: str) -> None:
         """Вставка с заменой выделения (если оно есть)."""
+
+    def delText(self) -> bool:
+        """Удалит символ или удали выделенную часть"""
 
     @property
     def text(self) -> str: ...

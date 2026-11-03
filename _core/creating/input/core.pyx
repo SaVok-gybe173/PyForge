@@ -28,6 +28,16 @@ cdef class InputTextCore:
         self._shift += len(text)
         self.clear_selection()
 
+    cpdef bint delText(self):
+        """Удалит символ или удали выделенную часть"""
+        if self.has_selection():
+            self.delete_selection()
+            return True
+        if self._shift < len(self._text):
+            self._text = self._text[:self._shift] + self._text[self._shift+1:]
+            return True
+        return False
+
     @property
     def shift(self):
         return self._shift
@@ -41,15 +51,29 @@ cdef class InputTextCore:
         else:
             self._shift = shift
 
-    cpdef bint ShiftRight(self):
+    cpdef bint ShiftRight(self, bint keep_selection=False):
+        if not keep_selection and self.has_selection():
+            # как в редакторах: стрелка вправо снимает выделение,
+            # курсор встаёт в конец выделения
+            self._shift = self.selectionX
+            self.clear_selection()
+            return True
         if self._shift < len(self._text):
             self._shift += 1
+            if keep_selection:
+                self.update_selection()
             return True
         return False
 
-    cpdef bint ShiftLeft(self):
+    cpdef bint ShiftLeft(self, bint keep_selection=False):
+        if not keep_selection and self.has_selection():
+            self._shift = self.selectionY
+            self.clear_selection()
+            return True
         if self._shift > 0:
             self._shift -= 1
+            if keep_selection:
+                self.update_selection()
             return True
         return False
 
@@ -112,3 +136,9 @@ cdef class InputTextCore:
         self._text = self._text[:start] + self._text[self.selectionX:]
         self._shift = start
         self.clear_selection()
+
+    def __len__(self) -> int:
+        return len(self._text)
+
+    def __str__(self) -> str:
+        return self._text

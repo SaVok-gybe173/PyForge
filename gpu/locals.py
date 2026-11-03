@@ -25,11 +25,6 @@ import sys
 from .._core.locals import changing_graphics, GRAPHICS_GL_2D_ORTHO, GRAPHICS_GL_3D_PERSPECTIVE, GRAPHICS_GL_2D_PIXEL_PERSPECTIVE, GRAPHICS_GL_CUSTOM_SETUP, GRAPHICS_GL_3D_ISOMERIC
 
 try:
-    import pygame as pg
-except ImportError as e:
-    sys.exit(102)
-
-try:
     from pygame.locals import *
     from OpenGL.GL import *
     from OpenGL.GLU import *

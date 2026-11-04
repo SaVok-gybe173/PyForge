@@ -3,20 +3,20 @@ cimport cython
 @cython.dataclasses.dataclass
 cdef class FontDirectory:
     cdef public str tag         # 4 байта, 4 символа ASCII
-    cdef public int checkSum    # 4 байта, uint32
-    cdef public int offset      # 4 байта, uint32
-    cdef public int length      # 4 байта, uint32
+    cdef public long long checkSum    # 4 байта, uint32
+    cdef public long long offset      # 4 байта, uint32
+    cdef public long long length      # 4 байта, uint32
 
 @cython.dataclasses.dataclass
 cdef class head:                        # заголовок шрифта
-    cdef public int version             # 0x00010000
+    cdef public long long version             # 0x00010000
     cdef public int fontRevision        # 0x00010000
-    cdef public int checkSumAdjustment  
+    cdef public long long checkSumAdjustment  
     cdef public int magicNumber         # 0x5F0F3CF5
     cdef public int flags   
     cdef public int unitsPerEm          # 1024 или 2048 (иногда 1000, 2000)
-    cdef public int created
-    cdef public int modified
+    cdef public long long created
+    cdef public long long modified
     cdef public int xMin
     cdef public int yMin
     cdef public int xMax
@@ -32,7 +32,7 @@ cdef class head:                        # заголовок шрифта
 
 @cython.dataclasses.dataclass
 cdef class maxp: #максимумы
-    cdef public int version
+    cdef public long long version
     cdef public int numGlyphs
     cdef public int maxPoints
     cdef public int maxContours
@@ -113,7 +113,7 @@ cdef class cmap:
 
 @cython.dataclasses.dataclass
 cdef class hhea:
-    cdef int version
+    cdef long long version
     cdef int ascender
     cdef int descender
     cdef int lineGap
@@ -163,7 +163,7 @@ cdef class post:
     cdef public int italicAngle
     cdef public int underlinePosition
     cdef public int underlineThickness
-    cdef public int isFixedPitch
+    cdef public long long isFixedPitch
     cdef public int minMemType42
     cdef public int maxMemType42
     cdef public int minMemType1

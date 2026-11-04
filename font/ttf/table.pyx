@@ -17,26 +17,6 @@ cdef class FontDirectory:
 
 @cython.dataclasses.dataclass
 cdef class head: # заголовок шрифта
-    """
-    Смещение в head	Размер	Тип	    Имя
-    0x00	        4	    uint32	version
-    0x04	        4	    uint32	fontRevision
-    0x08	        4	    uint32	checkSumAdjustment
-    0x0C	        4	    uint32	magicNumber
-    0x10	        2	    uint16	flags
-    0x12	        2	    uint16	unitsPerEm
-    0x14	        8	    int64	created
-    0x1C	        8	    int64	modified
-    0x24	        2	    int16	xMin
-    0x26	        2	    int16	yMin
-    0x28	        2	    int16	xMax
-    0x2A	        2	    int16	yMax
-    0x2C	        2	    uint16	macStyle
-    0x2E	        2	    uint16	lowestRecPPEM
-    0x30	        2	    int16	fontDirectionHint
-    0x32	        2	    int16	indexToLocFormat
-    0x34	        2	    int16	glyphDataFormat
-    """
     cdef public int version            # 0x00010000
     cdef public int fontRevision       # 0x00010000
     cdef public int checkSumAdjustment
@@ -57,21 +37,6 @@ cdef class head: # заголовок шрифта
 
     @staticmethod
     cdef head _from(bytes datahead):
-        """
-        Зачем нужна: 
-            хранит глобальные параметры шрифта. Без неё не понять, в каких единицах заданы координаты и как читать другие таблицы.
-
-        Что внутри:
-            unitsPerEm — система координат (1024 или 2048 обычно).
-            indexToLocFormat — короткий или длинный формат loca.
-            magicNumber — маркер, что это действительно head (0x5F0F3CF5).
-            Даты создания/изменения.
-            Bounding box всего шрифта.
-            Флаги стиля (bold, italic).
-
-        Кто использует: 
-            парсер берёт unitsPerEm для масштабирования координат и indexToLocFormat для чтения loca
-        """
         return head(
                 int.from_bytes(datahead[0x00 : 0x04]),
                 int.from_bytes(datahead[0x04 : 0x08]),
@@ -116,24 +81,6 @@ cdef class head: # заголовок шрифта
 
 @cython.dataclasses.dataclass
 cdef class maxp: # максимумы
-    """
-    Смещение    Размер	Тип	    Имя
-    0x00	    4	    Fixed	version
-    0x04	    2	    uint16	numGlyphs
-    0x06	    2	    uint16	maxPoints
-    0x08	    2	    uint16	maxContours
-    0x0A	    2	    uint16	maxCompositePoints
-    0x0C	    2	    uint16	maxCompositeContours
-    0x0E	    2	    uint16	maxZones
-    0x10	    2	    uint16	maxTwilightPoints
-    0x12	    2	    uint16	maxStorage
-    0x14	    2	    uint16	maxFunctionDefs
-    0x16	    2	    uint16	maxInstructionDefs
-    0x18	    2	    uint16	maxStackElements
-    0x1A	    2	    uint16	maxSizeOfInstructions
-    0x1C	    2	    uint16	maxComponentElements
-    0x1E	    2	    uint16	maxComponentDepth
-    """
     cdef public int version
     cdef public int numGlyphs
     cdef public int maxPoints
@@ -152,15 +99,6 @@ cdef class maxp: # максимумы
 
     @staticmethod
     cdef maxp _from(bytes datamaxp):
-        """
-        Зачем нужна: 
-            содержит numGlyphs — сколько всего глифов в шрифте. Без этого не понять, какой длины массивы в loca и hmtx.
-        Что внутри:
-            numGlyphs — ключевое поле.
-            Различные максимумы (maxPoints, maxContours, maxStackElements) — нужны для хинтинга.
-        Кто использует: 
-            парсер — чтобы знать размер loca (numGlyphs + 1 записей). Рендер — чтобы понимать границы допустимых glyph_id.
-        """
         return maxp(
             int.from_bytes(datamaxp[0x00 : 0x04]),
             int.from_bytes(datamaxp[0x04 : 0x06]),
@@ -181,17 +119,10 @@ cdef class maxp: # максимумы
 
 @cython.dataclasses.dataclass
 cdef class loca: # индекс местоположений глифов
-    """
-    Смещение в loca	Размер	Тип	Имя
-    2*i (короткий)	2	uint16	offset[i], реальное = значение * 2
-    4*i (длинный)	4	uint32	offset[i], реальное = значение
-    Длина массива — numGlyphs + 1 элементов.
-    """
-
     cdef public list offsets
     
     @staticmethod
-    def _from(bytes data, int num_glyphs, int index_to_loc_format):
+    cdef loca _from(bytes data, int num_glyphs, int index_to_loc_format):
         cdef int count = num_glyphs + 1
         cdef list offsets = []
         cdef int i
@@ -213,27 +144,6 @@ cdef class loca: # индекс местоположений глифов
 
 @cython.dataclasses.dataclass
 cdef class glyf: # контуры глифов
-    """
-    Границы глифа берутся из loca: глиф №i занимает байты [loca[i], loca[i+1]) от начала glyf.
-
-    Заголовок глифа (10 байт):
-
-    Смещение    Размер	Тип	    Имя
-    0x00	    2	    int16	numberOfContours
-    0x02	    2	    int16	xMin
-    0x04	    2	    int16	yMin
-    0x06	    2	    int16	xMax
-    0x08	    2	    int16	yMax
-    Дальше для простого глифа (numberOfContours => 0), смещения — от начала глифа:
-
-    Поле	            Тип	                        Описание
-    endPtsOfContours	uint16[numContours]	        Индекс последней точки каждого контура
-    instructionLength	uint16	                    Длина инструкций
-    instructions	    uint8[instructionLength]	Байт-код хинтинга
-    flags	            uint8[перем.]	            Флаги точек (с Repeat)
-    xCoordinates	    uint8/int16[]	            X-координаты, дельта-кодированные
-    yCoordinates	    uint8/int16[]	            Y-координаты, дельта-кодированные
-    """
 
     @staticmethod
     cdef glyf _from(bytes data):

@@ -419,13 +419,13 @@ class MouseWheelEvent:          # SDL_MOUSEWHEEL
 
 class JoyAxisEvent:             # SDL_JOYAXISMOTION
     # Движение оси джойстика
-    which: SDL_JoystickID
+    which: SDL_JoystickID # sint32
     axis: uint8 # индекс оси
     value: uint16   # value ∈ [-32768, 32767]
 
 class JoyBallEvent:             # SDL_JOYBALLMOTION
     # Движение трекбола
-    which: SDL_JoystickID 
+    which: SDL_JoystickID # sint32
     ball: uint8
     # xrel,yrel — относительное смещение
     xrel: sint16
@@ -433,13 +433,13 @@ class JoyBallEvent:             # SDL_JOYBALLMOTION
 
 class JoyHatEvent:              # SDL_JOYHATMOTION
     # Движение POV-«шляпки»
-    which: SDL_JoystickID
+    which: SDL_JoystickID # sint32
     hat: uint8
     value: uint8 # комбинация SDL_HAT_UP/DOWN/LEFT/RIGHT/CENTERED
 
 class JoyButtonEvent:           # SDL_JOYBUTTONDOWN, SDL_JOYBUTTONUP
     # Нажатие/отпускание кнопки джойстика
-    which: SDL_JoystickID
+    which: SDL_JoystickID # sint32
     button: uint8
     state: uint8 # SDL_PRESSED/SDL_RELEASED
 
@@ -449,18 +449,18 @@ class JoyDeviceEvent:           # SDL_JOYDEVICEADDED, SDL_JOYDEVICEREMOVED
 
 class JoyBatteryEvent:          # SDL_JOYBATTERYUPDATED
     # Изменение заряда джойстика
-    which: SDL_JoystickID
+    which: SDL_JoystickID # sint32
     level: SDL_JoystickPowerLevel # SDL_JOYSTICK_POWER_* (UNKNOWN/EMPTY/LOW/MEDIUM/FULL/WIRED)
 
 class ControllerAxisEvent:      # SDL_CONTROLLERAXISMOTION
     # Ось геймпада 
-    which: SDL_JoystickID 
+    which: SDL_JoystickID # sint32 # sint32
     axis: uint8 # SDL_CONTROLLER_AXIS_* (LEFTX, TRIGGERRIGHT и т.д.)
     value: sint16
 
 class ControllerButtonEvent:    # SDL_CONTROLLERBUTTONDOWN, SDL_CONTROLLERBUTTONUP
     # Кнопка геймпада
-    which: SDL_JoystickID
+    which: SDL_JoystickID # sint32
     button: uint8 # SDL_CONTROLLER_BUTTON_* (A, B, X, Y и т.д.).
     state: uint8
 
@@ -470,7 +470,7 @@ class ControllerDeviceEvent:    # SDL_CONTROLLERDEVICEADDED/REMOVED/REMAPPED
 
 class ControllerTouchpadEvent:  # SDL_CONTROLLERTOUCHPADDOWN/MOTION/UP
     # Тачпад геймпада (DualShock 4)
-    which: SDL_JoystickID
+    which: SDL_JoystickID # sint32
     touchpad: sint32
     finger: sint32
     # Координаты нормализованы 0…1
@@ -480,7 +480,7 @@ class ControllerTouchpadEvent:  # SDL_CONTROLLERTOUCHPADDOWN/MOTION/UP
 
 class ControllerSensorEvent:    # SDL_CONTROLLERSENSORUPDATE
     # Данные сенсора геймпада (акселерометр, гироскоп)
-    which: SDL_JoystickID
+    which: SDL_JoystickID # sint32
     sensor: sint32
     data: tuple[float, float, float] # 3 значения
 

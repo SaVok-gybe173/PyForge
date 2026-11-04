@@ -5,18 +5,18 @@
 
 """
 
-from dataclasses import dataclass
+cimport cython
 
-@dataclass
-class FontDirectory:
-    tag: str        # 4 байта, 4 символа ASCII
-    checkSum: int   # 4 байта, uint32
-    offset: int     # 4 байта, uint32
-    length: int     # 4 байта, uint32
+@cython.dataclasses.dataclass
+cdef class FontDirectory:
+    cdef public str tag         # 4 байта, 4 символа ASCII
+    cdef public int checkSum    # 4 байта, uint32
+    cdef public int offset      # 4 байта, uint32
+    cdef public int length      # 4 байта, uint32
 
 
-@dataclass
-class head: # заголовок шрифта
+@cython.dataclasses.dataclass
+cdef class head: # заголовок шрифта
     """
     Смещение в head	Размер	Тип	    Имя
     0x00	        4	    uint32	version
@@ -37,23 +37,23 @@ class head: # заголовок шрифта
     0x32	        2	    int16	indexToLocFormat
     0x34	        2	    int16	glyphDataFormat
     """
-    version: int            # 0x00010000
-    fontRevision: int       # 0x00010000
-    checkSumAdjustment: int
-    magicNumber: int        # 0x5F0F3CF5
-    flags: int
-    unitsPerEm: int         # 1024 или 2048 (иногда 1000, 2000)
-    created: int
-    modified: int
-    xMin: int
-    yMin: int
-    xMax: int
-    yMax: int
-    macStyle: int
-    lowestRecPPEM: int
-    fontDirectionHint: int
-    indexToLocFormat: int   # 0 или 1
-    glyphDataFormat: int    # 0
+    cdef public int version            # 0x00010000
+    cdef public int fontRevision       # 0x00010000
+    cdef public int checkSumAdjustment
+    cdef public int magicNumber        # 0x5F0F3CF5
+    cdef public int flags
+    cdef public int unitsPerEm         # 1024 или 2048 (иногда 1000, 2000)
+    cdef public int created
+    cdef public int modified
+    cdef public int xMin
+    cdef public int yMin
+    cdef public int xMax
+    cdef public int yMax
+    cdef public int macStyle
+    cdef public int lowestRecPPEM
+    cdef public int fontDirectionHint
+    cdef public int indexToLocFormat   # 0 или 1
+    cdef public int glyphDataFormat    # 0
 
     @staticmethod
     def _from(datahead: bytes) -> "head":
@@ -113,7 +113,9 @@ class head: # заголовок шрифта
             self.glyphDataFormat.to_bytes(2)
         )
 
-class maxp: # максимумы
+
+@cython.dataclasses.dataclass
+cdef class maxp: # максимумы
     """
     Смещение    Размер	Тип	    Имя
     0x00	    4	    Fixed	version
@@ -134,21 +136,21 @@ class maxp: # максимумы
 
     """
 
-    version: int
-    numGlyphs: int
-    maxPoints: int
-    maxContours: int
-    maxCompositePoints: int
-    maxCompositeContours: int
-    maxZones: int
-    maxTwilightPoints: int
-    maxStorage: int
-    maxFunctionDefs: int
-    maxInstructionDefs: int
-    maxStackElements: int
-    maxSizeOfInstructions: int
-    maxComponentElements: int
-    maxComponentDepth: int
+    cdef public int version
+    cdef public int numGlyphs
+    cdef public int maxPoints
+    cdef public int maxContours
+    cdef public int maxCompositePoints
+    cdef public int maxCompositeContours
+    cdef public int maxZones
+    cdef public int maxTwilightPoints
+    cdef public int maxStorage
+    cdef public int maxFunctionDefs
+    cdef public int maxInstructionDefs
+    cdef public int maxStackElements
+    cdef public int maxSizeOfInstructions
+    cdef public int maxComponentElements
+    cdef public int maxComponentDepth
 
     @staticmethod
     def _from(datamaxp: bytes) -> "maxp":
@@ -181,8 +183,8 @@ class maxp: # максимумы
             int.from_bytes(datamaxp[0x1E : 0x20]),
         )
 
-@dataclass
-class loca: # индекс местоположений глифов
+@cython.dataclasses.dataclass
+cdef class loca: # индекс местоположений глифов
     """
     Смещение в loca	Размер	Тип	Имя
     2*i (короткий)	2	uint16	offset[i], реальное = значение * 2
@@ -205,8 +207,8 @@ class loca: # индекс местоположений глифов
             рендер — чтобы вырезать байты конкретного глифа.
         """
 
-@dataclass
-class glyf: # контуры глифов
+@cython.dataclasses.dataclass
+cdef class glyf: # контуры глифов
     """
     Границы глифа берутся из loca: глиф №i занимает байты [loca[i], loca[i+1]) от начала glyf.
 
@@ -246,8 +248,8 @@ class glyf: # контуры глифов
             Это ядро отрисовки.
         """
 
-@dataclass
-class cmap: # сопоставление символов и глифов
+@cython.dataclasses.dataclass
+cdef class cmap: # сопоставление символов и глифов
     """
     Смещение    	    Размер	Тип	    Имя
     0x00	            2	    uint16	version
@@ -287,8 +289,8 @@ class cmap: # сопоставление символов и глифов
         Кто использует: 
             рендер текста — первый шаг. Символ => glyph_id => дальше ищем контуры.
         """
-@dataclass
-class hhea: # горизонтальный заголовок
+@cython.dataclasses.dataclass
+cdef class hhea: # горизонтальный заголовок
     """
     Смещение    Размер	Тип	    Имя
     0x00	    4	    Fixed	version
@@ -324,8 +326,8 @@ class hhea: # горизонтальный заголовок
             Парсер hmtx — чтобы понять, сколько записей читать.
         """
 
-@dataclass
-class hmtx: # горизонтальные метрики
+@cython.dataclasses.dataclass
+cdef class hmtx: # горизонтальные метрики
     """
     Смещение 	    Размер	Тип	    Имя
     0x00 + 4*i	    2	    uint16	advanceWidth[i] (для i < N)
@@ -351,8 +353,8 @@ class hmtx: # горизонтальные метрики
 
         """
 
-@dataclass
-class name: # имена
+@cython.dataclasses.dataclass
+cdef class name: # имена
     """
     Смещение            Размер	Тип	    Имя
     0x00	            2	    uint16	format
@@ -383,8 +385,8 @@ class name: # имена
             Для рендера не нужна, но полезна для отладки («что я вообще открыл»).
         """
 
-@dataclass
-class post: # PostScript-информация
+@cython.dataclasses.dataclass
+cdef class post: # PostScript-информация
     """
     Смещение    Размер	Тип	    Имя
     0x00	    4	    Fixed	version
@@ -417,8 +419,8 @@ class post: # PostScript-информация
 
 # Опциональные, но почти всегда присутствуют
 
-@dataclass
-class OSH2: # OS/2 (H = F+2) — метрики для Windows
+@cython.dataclasses.dataclass
+cdef class OSH2: # OS/2 (H = F+2) — метрики для Windows
     """
     Смещение    Размер	Тип	        Имя
     0x00	    2	    uint16	    version
@@ -466,8 +468,8 @@ class OSH2: # OS/2 (H = F+2) — метрики для Windows
         Зачем нужна: без неё Windows не признаёт шрифт «полноценным» и не использует в некоторых местах.
 
         Что внутри:
-            usWeightClass — 400 (normal), 700 (bold).
-            usWidthClass — 1..9, 5 = normal.
+            usWeightcdef class — 400 (normal), 700 (bold).
+            usWidthcdef class — 1..9, 5 = normal.
             fsSelection — italic, bold, regular.
             sTypoAscender / sTypoDescender / sTypoLineGap — альтернативные метрики строки.
             usWinAscent / usWinDescent — метрики для Windows.
@@ -480,8 +482,8 @@ class OSH2: # OS/2 (H = F+2) — метрики для Windows
         """
         return OSH2()
 
-@dataclass
-class kern: # кернинг
+@cython.dataclasses.dataclass
+cdef class kern: # кернинг
     @staticmethod
     def _from(data: bytes) -> "kern":
         """
@@ -499,8 +501,8 @@ class kern: # кернинг
 
         """
 
-@dataclass
-class GPOS: # OpenType-позиционирование
+@cython.dataclasses.dataclass
+cdef class GPOS: # OpenType-позиционирование
     @staticmethod
     def _from(data: bytes) -> "GPOS":
         """
@@ -517,8 +519,8 @@ class GPOS: # OpenType-позиционирование
             cовременные шрифты с качественной типографикой.
         """
 
-@dataclass
-class GSUB: # OpenType-подстановки
+@cython.dataclasses.dataclass
+cdef class GSUB: # OpenType-подстановки
     @staticmethod
     def _from(data: bytes) -> "GSUB":
         """
@@ -532,8 +534,8 @@ class GSUB: # OpenType-подстановки
             продвинутая типографика.
         """
 
-@dataclass
-class GDEF: # классы глифов
+@cython.dataclasses.dataclass
+cdef class GDEF: # классы глифов
     @staticmethod
     def _from(data: bytes) -> "GDEF":
         """
@@ -553,8 +555,8 @@ class GDEF: # классы глифов
 # Хинтинг — это подсказки рендереру, как правильно округлять глифы при мелких размерах. 
 # Реализовать его очень сложно (это интерпретатор байт-кода). 
 
-@dataclass
-class cvt: # Control Values Table
+@cython.dataclasses.dataclass
+cdef class cvt: # Control Values Table
     @staticmethod
     def _from(data: bytes) -> "cvt":
         """
@@ -566,8 +568,8 @@ class cvt: # Control Values Table
             массив int16
         """    
 
-@dataclass
-class fpgm: #  Font Program
+@cython.dataclasses.dataclass
+cdef class fpgm: #  Font Program
     @staticmethod
     def _from(data: bytes) -> "fpgm":
         """
@@ -579,8 +581,8 @@ class fpgm: #  Font Program
             байт-код для виртуальной машины TrueType.
         """
 
-@dataclass
-class prep: # Pre-Program
+@cython.dataclasses.dataclass
+cdef class prep: # Pre-Program
     @staticmethod
     def _from(data: bytes) -> "prep":
         """
@@ -591,8 +593,8 @@ class prep: # Pre-Program
         Что внутри: 
             байт-код.
         """
-@dataclass
-class gasp:
+@cython.dataclasses.dataclass
+cdef class gasp:
     @staticmethod
     def _from(data: bytes) -> "gasp":
         """
@@ -611,8 +613,8 @@ class gasp:
 
 # Опциональные, специальные
 
-@dataclass
-class DSIG: # цифровая подпись
+@cython.dataclasses.dataclass
+cdef class DSIG: # цифровая подпись
     @staticmethod
     def _from(data: bytes) -> "DSIG":
         """
@@ -628,8 +630,8 @@ class DSIG: # цифровая подпись
             системы проверки легитимности шрифта.
         """
 
-@dataclass
-class hdmx:
+@cython.dataclasses.dataclass
+cdef class hdmx:
     @staticmethod
     def _from(data: bytes) -> "hdmx": # Horizontal Device Metrics
         """
@@ -645,8 +647,8 @@ class hdmx:
             Современный рендер обходится.
         """
 
-@dataclass
-class LTSH: # Linear Threshold
+@cython.dataclasses.dataclass
+cdef class LTSH: # Linear Threshold
     @staticmethod
     def _from(data: bytes) -> "LTSH":
         """
@@ -660,8 +662,8 @@ class LTSH: # Linear Threshold
             вместе с хинтингом.
         """
 
-@dataclass
-class VDMX: #  Vertical Device Metrics
+@cython.dataclasses.dataclass
+cdef class VDMX: #  Vertical Device Metrics
     @staticmethod
     def _from(data: bytes) -> "VDMX":
         """
@@ -676,8 +678,8 @@ class VDMX: #  Vertical Device Metrics
             Windows для вертикального позиционирования.
         """
 
-@dataclass
-class ttcf: # TTC / ttcf — TrueType Collection
+@cython.dataclasses.dataclass
+cdef class ttcf: # TTC / ttcf — TrueType Collection
     @staticmethod
     def _from(data: bytes) -> "ttcf":
         """
@@ -693,8 +695,8 @@ class ttcf: # TTC / ttcf — TrueType Collection
         Для парсера: 
             если видишь sfntVersion = 'ttcf', значит файл — коллекция, и работать надо чуть иначе.
         """
-@dataclass
-class EBLC: # EBLC / EBDT — встроенные bitmap-глифы
+@cython.dataclasses.dataclass
+cdef class EBLC: # EBLC / EBDT — встроенные bitmap-глифы
     @staticmethod
     def _from(data: bytes) -> "EBLC":
         """
@@ -709,8 +711,8 @@ class EBLC: # EBLC / EBDT — встроенные bitmap-глифы
             рендереры для повышения чёткости на малых размерах. 
         """
 
-@dataclass
-class SVG: # SVG-глифы
+@cython.dataclasses.dataclass
+cdef class SVG: # SVG-глифы
     @staticmethod
     def _from(data: bytes) -> "SVG":
         """
@@ -724,8 +726,8 @@ class SVG: # SVG-глифы
         Кто использует: 
             современные браузеры для цветных шрифтов.
         """
-@dataclass
-class COLR: # COLR / CPAL — цветные глифы
+@cython.dataclasses.dataclass
+cdef class COLR: # COLR / CPAL — цветные глифы
     @staticmethod
     def _from(data: bytes) -> "COLR":
         """

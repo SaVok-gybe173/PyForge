@@ -17,6 +17,7 @@ easel/draw.c
 _core/creating/listing/_list_math.c
 _core/creating/input/core.c
 font/ttf/table.c
+font/ttf/font.c
 
 *.html
 

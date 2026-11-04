@@ -56,7 +56,7 @@ cdef class head: # заголовок шрифта
     cdef public int glyphDataFormat    # 0
 
     @staticmethod
-    def _from(datahead: bytes) -> "head":
+    cdef head _from(bytes datahead):
         """
         Зачем нужна: 
             хранит глобальные параметры шрифта. Без неё не понять, в каких единицах заданы координаты и как читать другие таблицы.
@@ -92,7 +92,7 @@ cdef class head: # заголовок шрифта
                 int.from_bytes(datahead[0x34 : 0x36], signed=True),
             )
 
-    def _to(self) -> bytes:
+    cdef bytes _to(self):
         return (
             self.version.to_bytes(4) +
             self.fontRevision.to_bytes(4) +
@@ -133,9 +133,7 @@ cdef class maxp: # максимумы
     0x1A	    2	    uint16	maxSizeOfInstructions
     0x1C	    2	    uint16	maxComponentElements
     0x1E	    2	    uint16	maxComponentDepth
-
     """
-
     cdef public int version
     cdef public int numGlyphs
     cdef public int maxPoints
@@ -153,15 +151,13 @@ cdef class maxp: # максимумы
     cdef public int maxComponentDepth
 
     @staticmethod
-    def _from(datamaxp: bytes) -> "maxp":
+    cdef maxp _from(bytes datamaxp):
         """
         Зачем нужна: 
             содержит numGlyphs — сколько всего глифов в шрифте. Без этого не понять, какой длины массивы в loca и hmtx.
-
         Что внутри:
             numGlyphs — ключевое поле.
             Различные максимумы (maxPoints, maxContours, maxStackElements) — нужны для хинтинга.
-
         Кто использует: 
             парсер — чтобы знать размер loca (numGlyphs + 1 записей). Рендер — чтобы понимать границы допустимых glyph_id.
         """
@@ -190,22 +186,30 @@ cdef class loca: # индекс местоположений глифов
     2*i (короткий)	2	uint16	offset[i], реальное = значение * 2
     4*i (длинный)	4	uint32	offset[i], реальное = значение
     Длина массива — numGlyphs + 1 элементов.
-
     """
-    @staticmethod
-    def _from(data: bytes) -> "loca":
-        """
-        Зачем нужна: 
-            говорит, где именно в таблице glyf лежит каждый глиф. 
-            Без неё glyf — просто куча байт, в которой не найти нужный глиф.
 
-        Что внутри: 
-            массив из numGlyphs + 1 смещений. 
-            Границы глифа glyph_id — это loca[glyph_id] и loca[glyph_id + 1] (относительно начала glyf).
-        
-        Кто использует: 
-            рендер — чтобы вырезать байты конкретного глифа.
-        """
+    cdef public list offsets
+    
+    @staticmethod
+    def _from(bytes data, int num_glyphs, int index_to_loc_format):
+        cdef int count = num_glyphs + 1
+        cdef list offsets = []
+        cdef int i
+        cdef int raw
+
+        if index_to_loc_format == 0:
+            if len(data) < count * 2:
+                raise ValueError("loca: недостаточно байт для короткого формата")
+            for i in range(count):
+                offsets.append(int.from_bytes(data[i*2 : i*2 + 2], 'big') * 2)
+        elif index_to_loc_format == 1:
+            if len(data) < count * 4:
+                raise ValueError("loca: недостаточно байт для длинного формата")
+            for i in range(count):
+                offsets.append(int.from_bytes(data[i*4 : i*4 + 4], 'big'))
+        else:
+            raise ValueError(f"loca: неизвестный index_to_loc_format = {index_to_loc_format}")
+        return loca(offsets)
 
 @cython.dataclasses.dataclass
 cdef class glyf: # контуры глифов
@@ -232,7 +236,7 @@ cdef class glyf: # контуры глифов
     """
 
     @staticmethod
-    def _from(data: bytes) -> "glyf":
+    cdef glyf _from(bytes data):
         """
         Зачем нужна: 
             сама форма буквы. Здесь лежат контуры всех глифов шрифта — точки, кривые Безье, флаги.
@@ -247,6 +251,7 @@ cdef class glyf: # контуры глифов
             рендер — читает контуры, строит полигоны, растеризует. 
             Это ядро отрисовки.
         """
+        return glyf()
 
 @cython.dataclasses.dataclass
 cdef class cmap: # сопоставление символов и глифов
@@ -276,7 +281,7 @@ cdef class cmap: # сопоставление символов и глифов
 
     """
     @staticmethod
-    def _from(data: bytes) -> "cmap":
+    cdef cmap _from(bytes data):
         """
         Зачем нужна: 
             переводит код символа (Unicode) в номер глифа (glyph_id). 
@@ -289,6 +294,8 @@ cdef class cmap: # сопоставление символов и глифов
         Кто использует: 
             рендер текста — первый шаг. Символ => glyph_id => дальше ищем контуры.
         """
+        return cmap()
+
 @cython.dataclasses.dataclass
 cdef class hhea: # горизонтальный заголовок
     """
@@ -307,24 +314,21 @@ cdef class hhea: # горизонтальный заголовок
     0x18	    8	    —	    reserved (4 * int16 = 0)
     0x20	    2	    int16	metricDataFormat
     0x22	    2	    uint16	numberOfHMetrics
-
     """
-
     @staticmethod
-    def _from(data: bytes) -> "hhea":
+    cdef hhea _from(data: bytes):
         """
         Зачем нужна: 
             метрики строки и указание, сколько записей в hmtx.
-
         Что внутри:
             ascender / descender / lineGap — высота над baseline, глубина под baseline, межстрочный интервал.
             advanceWidthMax — максимальная ширина глифа.
             numberOfHMetrics — сколько глифов имеют собственную ширину в hmtx.
-
         Кто использует: 
             рендер текста — для вертикального позиционирования строки. 
             Парсер hmtx — чтобы понять, сколько записей читать.
         """
+        return hhea()
 
 @cython.dataclasses.dataclass
 cdef class hmtx: # горизонтальные метрики
@@ -333,25 +337,20 @@ cdef class hmtx: # горизонтальные метрики
     0x00 + 4*i	    2	    uint16	advanceWidth[i] (для i < N)
     0x02 + 4*i	    2	    int16	leftSideBearing[i] (для i < N)
     4*N + 2*(i - N)	2	    int16	leftSideBearing[i] (для i >= N)
-
     где N = numberOfHMetrics из hhea.
     """
-
     @staticmethod
-    def _from(data: bytes) -> "hmtx":
+    cdef hmtx _from(bytes data):
         """
         Зачем нужна: 
             говорит, на сколько сдвинуть курсор после каждого глифа и какой у него левый отступ.
-
         Что внутри:
             advanceWidth[glyph_id] — ширина ячейки глифа (на сколько пикселей сдвинуть перо).
             leftSideBearing[glyph_id] — отступ от левого края ячейки до первой точки контура.
-
         Кто использует: 
             рендер строки — расстановка глифов. Без этой таблицы все буквы налезут друг на друга.
-
-
         """
+        return hmtx()
 
 @cython.dataclasses.dataclass
 cdef class name: # имена
@@ -398,24 +397,22 @@ cdef class post: # PostScript-информация
     0x14	    4	    uint32	maxMemType42
     0x18	    4	    uint32	minMemType1
     0x1C	    4	    uint32	maxMemType1
-
     Дальше — зависит от версии (в 2.0 идёт массив имён глифов, в 3.0 ничего).
     """
 
     @staticmethod
-    def _from(data: bytes) -> "post":
+    cdef post _from(bytes data):
         """
         Зачем нужна: 
             метрики для совместимости с PostScript и признак моноширинности.
-
         Что внутри:
             isFixedPitch — 0 для пропорционального шрифта, ≠0 для моноширинного.
             italicAngle, underlinePosition, underlineThickness.
             В версии 2.0 — имена всех глифов.
-
         Кто использует: 
             в основном системы печати. Для рендера полезна только isFixedPitch — если шрифт моноширинный, можно упростить расстановку.
         """
+        return post()
 
 # Опциональные, но почти всегда присутствуют
 

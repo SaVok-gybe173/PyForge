@@ -38,23 +38,23 @@ cdef class head: # заголовок шрифта
     @staticmethod
     cdef head _from(bytes datahead):
         return head(
-                int.from_bytes(datahead[0x00 : 0x04]),
-                int.from_bytes(datahead[0x04 : 0x08]),
-                int.from_bytes(datahead[0x08 : 0x0C]),
-                int.from_bytes(datahead[0x0C : 0x10]),
-                int.from_bytes(datahead[0x10 : 0x12]),
-                int.from_bytes(datahead[0x12 : 0x14]),
-                int.from_bytes(datahead[0x14 : 0x1C], signed=True),
-                int.from_bytes(datahead[0x1C : 0x24], signed=True),
-                int.from_bytes(datahead[0x24 : 0x26], signed=True),
-                int.from_bytes(datahead[0x26 : 0x28], signed=True),
-                int.from_bytes(datahead[0x28 : 0x2A], signed=True),
-                int.from_bytes(datahead[0x2A : 0x2C], signed=True),
-                int.from_bytes(datahead[0x2C : 0x2E]),
-                int.from_bytes(datahead[0x2E : 0x30]),
-                int.from_bytes(datahead[0x30 : 0x32], signed=True),
-                int.from_bytes(datahead[0x32 : 0x34], signed=True),
-                int.from_bytes(datahead[0x34 : 0x36], signed=True),
+                int.from_bytes(datahead[0x00 : 0x04], "big"),
+                int.from_bytes(datahead[0x04 : 0x08], "big"),
+                int.from_bytes(datahead[0x08 : 0x0C], "big"),
+                int.from_bytes(datahead[0x0C : 0x10], "big"),
+                int.from_bytes(datahead[0x10 : 0x12], "big"),
+                int.from_bytes(datahead[0x12 : 0x14], "big"),
+                int.from_bytes(datahead[0x14 : 0x1C], "big", signed=True),
+                int.from_bytes(datahead[0x1C : 0x24], "big", signed=True),
+                int.from_bytes(datahead[0x24 : 0x26], "big", signed=True),
+                int.from_bytes(datahead[0x26 : 0x28], "big", signed=True),
+                int.from_bytes(datahead[0x28 : 0x2A], "big", signed=True),
+                int.from_bytes(datahead[0x2A : 0x2C], "big", signed=True),
+                int.from_bytes(datahead[0x2C : 0x2E], "big"),
+                int.from_bytes(datahead[0x2E : 0x30], "big"),
+                int.from_bytes(datahead[0x30 : 0x32], "big", signed=True),
+                int.from_bytes(datahead[0x32 : 0x34], "big", signed=True),
+                int.from_bytes(datahead[0x34 : 0x36], "big", signed=True),
             )
 
     cdef bytes _to(self):
@@ -100,21 +100,21 @@ cdef class maxp: # максимумы
     @staticmethod
     cdef maxp _from(bytes datamaxp):
         return maxp(
-            int.from_bytes(datamaxp[0x00 : 0x04]),
-            int.from_bytes(datamaxp[0x04 : 0x06]),
-            int.from_bytes(datamaxp[0x06 : 0x08]),
-            int.from_bytes(datamaxp[0x08 : 0x0A]),
-            int.from_bytes(datamaxp[0x0A : 0x0C]),
-            int.from_bytes(datamaxp[0x0C : 0x0E]),
-            int.from_bytes(datamaxp[0x0E : 0x10]),
-            int.from_bytes(datamaxp[0x10 : 0x12]),
-            int.from_bytes(datamaxp[0x12 : 0x14]),
-            int.from_bytes(datamaxp[0x14 : 0x16]),
-            int.from_bytes(datamaxp[0x16 : 0x18]),
-            int.from_bytes(datamaxp[0x18 : 0x1A]),
-            int.from_bytes(datamaxp[0x1A : 0x1C]),
-            int.from_bytes(datamaxp[0x1C : 0x1E]),
-            int.from_bytes(datamaxp[0x1E : 0x20]),
+            int.from_bytes(datamaxp[0x00 : 0x04], "big"),
+            int.from_bytes(datamaxp[0x04 : 0x06], "big"),
+            int.from_bytes(datamaxp[0x06 : 0x08], "big"),
+            int.from_bytes(datamaxp[0x08 : 0x0A], "big"),
+            int.from_bytes(datamaxp[0x0A : 0x0C], "big"),
+            int.from_bytes(datamaxp[0x0C : 0x0E], "big"),
+            int.from_bytes(datamaxp[0x0E : 0x10], "big"),
+            int.from_bytes(datamaxp[0x10 : 0x12], "big"),
+            int.from_bytes(datamaxp[0x12 : 0x14], "big"),
+            int.from_bytes(datamaxp[0x14 : 0x16], "big"),
+            int.from_bytes(datamaxp[0x16 : 0x18], "big"),
+            int.from_bytes(datamaxp[0x18 : 0x1A], "big"),
+            int.from_bytes(datamaxp[0x1A : 0x1C], "big"),
+            int.from_bytes(datamaxp[0x1C : 0x1E], "big"),
+            int.from_bytes(datamaxp[0x1E : 0x20], "big"),
         )
 
 @cython.dataclasses.dataclass
@@ -132,12 +132,12 @@ cdef class loca: # индекс местоположений глифов
             if len(data) < count * 2:
                 raise ValueError("loca: недостаточно байт для короткого формата")
             for i in range(count):
-                offsets.append(int.from_bytes(data[i*2 : i*2 + 2], 'big') * 2)
+                offsets.append(int.from_bytes(data[i*2 : i*2 + 2], "big") * 2)
         elif index_to_loc_format == 1:
             if len(data) < count * 4:
                 raise ValueError("loca: недостаточно байт для длинного формата")
             for i in range(count):
-                offsets.append(int.from_bytes(data[i*4 : i*4 + 4], 'big'))
+                offsets.append(int.from_bytes(data[i*4 : i*4 + 4], "big"))
         else:
             raise ValueError(f"loca: неизвестный index_to_loc_format = {index_to_loc_format}")
         return loca(offsets)
@@ -149,32 +149,32 @@ cdef class glyph:
     cdef public int xMax
     cdef public int yMax
     cdef public list endPtsOfContours   # [int, ...] - конец каждого контура
-    cdef public list xCoordinates                    # [int, ...] - все X-координаты
-    cdef public list yCoordinates                    # [int, ...] - все Y-координаты
-    cdef public list flags                 # [int, ...] - биты on_curve и т.д.
+    cdef public list xCoordinates       # [int, ...] - все X-координаты
+    cdef public list yCoordinates       # [int, ...] - все Y-координаты
+    cdef public list flags              # [int, ...] - биты on_curve и т.д.
 
     @staticmethod
     def _from(bytes data):
         cdef glyph g = glyph()
-        cdef int n_contours = int.from_bytes(data[0x00:0x02], 'big', signed=True)
+        cdef int n_contours = int.from_bytes(data[0x00:0x02], "big", signed=True)
         cdef int pos
 
         if n_contours < 0: return None
 
         g.numberOfContours = n_contours
-        g.xMin = int.from_bytes(data[0x02:0x04], 'big', signed=True)
-        g.yMin = int.from_bytes(data[0x04:0x06], 'big', signed=True)
-        g.xMax = int.from_bytes(data[0x06:0x08], 'big', signed=True)
-        g.yMax = int.from_bytes(data[0x08:0x0A], 'big', signed=True)
+        g.xMin = int.from_bytes(data[0x02:0x04], "big", signed=True)
+        g.yMin = int.from_bytes(data[0x04:0x06], "big", signed=True)
+        g.xMax = int.from_bytes(data[0x06:0x08], "big", signed=True)
+        g.yMax = int.from_bytes(data[0x08:0x0A], "big", signed=True)
         g.endPtsOfContours = []
         for ci in range(n_contours):
             off = 0x0A + 2 * ci
             g.endPtsOfContours.append(
-                int.from_bytes(data[off:off + 2], 'big')
+                int.from_bytes(data[off:off + 2], "big")
             )
         cdef int num_points = g.endPtsOfContours[-1] + 1
         pos = 0x0A + 2 * n_contours
-        cdef int instr_len = int.from_bytes(data[pos:pos + 2], 'big')
+        cdef int instr_len = int.from_bytes(data[pos:pos + 2], "big")
         pos += 2 + instr_len
         g.flags = []
         cdef int flag, repeat
@@ -195,7 +195,7 @@ cdef class glyph:
                 if flag & 0x10:                  # Same X
                     dx = 0
                 else:
-                    dx = int.from_bytes(data[pos:pos + 2], 'big', signed=True)
+                    dx = int.from_bytes(data[pos:pos + 2], "big", signed=True)
                     pos += 2
             x += dx
             g.xCoordinates.append(x)
@@ -210,7 +210,7 @@ cdef class glyph:
                 if flag & 0x20:                  # Same Y
                     dy = 0
                 else:
-                    dy = int.from_bytes(data[pos:pos + 2], 'big', signed=True)
+                    dy = int.from_bytes(data[pos:pos + 2], "big", signed=True)
                     pos += 2
             y += dy
             g.yCoordinates.append(y)
@@ -240,47 +240,149 @@ cdef class glyf: # контуры глифов
         return result
 
 @cython.dataclasses.dataclass
+cdef class EncodingRecords:
+    cdef public int platformID
+    cdef public int encodingID
+    cdef public int subtableOffset
+
+@cython.dataclasses.dataclass
+cdef class Format4:
+    cdef public int offset              # позиция подтаблицы внутри cmap (для приоритета)
+    cdef public int format
+    cdef public int length
+    cdef public int language
+    cdef public int segCountX2
+    cdef public int searchRange
+    cdef public int entrySelector
+    cdef public int rangeShift
+    cdef public list endCode            # list[int], длина = segCount
+    cdef public int reservedPad
+    cdef public list startCode          # list[int], длина = segCount
+    cdef public list idDelta            # list[int], длина = segCount (signed)
+    cdef public list idRangeOffset      # list[int], длина = segCount
+    cdef public list glyphIdArray       # list[int]
+
+    @property
+    cpdef int segCount(self):
+        return <int>(self.segCountX2/2)
+
+    cpdef int lookup(self, int char_code):
+        cdef int seg_count = self.segCount
+        cdef int i, gid, idx
+
+        for i in range(seg_count):
+            if self.startCode[i] <= char_code <= self.endCode[i]:
+                if self.idRangeOffset[i] == 0:
+                    gid = (char_code + self.idDelta[i]) & 0xFFFF
+                else:
+                    idx = (self.idRangeOffset[i] // 2 + (char_code - self.startCode[i]) - (seg_count - i))
+                    if 0 <= idx < len(self.glyphIdArray):
+                        gid = self.glyphIdArray[idx]
+                        if gid != 0:
+                            gid = (gid + self.idDelta[i]) & 0xFFFF
+                    else:
+                        gid = 0
+                return gid if gid != 0 else 0
+        return 0
+
+    @staticmethod
+    cdef Format4 _parse_format4(bytes sub, int cmap_offset):
+        cdef int fmt           = int.from_bytes(sub[0x00:0x02], "big")
+        cdef int length        = int.from_bytes(sub[0x02:0x04], "big")
+        cdef int language      = int.from_bytes(sub[0x04:0x06], "big")
+        cdef int segCountX2    = int.from_bytes(sub[0x06:0x08], "big")
+        cdef int searchRange   = int.from_bytes(sub[0x08:0x0A], "big")
+        cdef int entrySelector = int.from_bytes(sub[0x0A:0x0C], "big")
+        cdef int rangeShift    = int.from_bytes(sub[0x0C:0x0E], "big")
+        cdef int seg_count     = <int>(segCountX2//2)
+
+        cdef list end_code = []
+        cdef list start_code = []
+        cdef list id_delta = []
+        cdef list id_range_offset = []
+        cdef list glyph_id_array = []
+
+        cdef int gia_base = 0x10 + 8 * seg_count
+        cdef int pos = gia_base
+        cdef int iro_base = 0x10 + 6 * seg_count
+        cdef int id_base = 0x10 + 4 * seg_count
+        cdef int sc_base = 0x10 + 2 * seg_count
+        cdef int reserved_pad_off = 0x0E + 2 * seg_count
+        cdef int reserved_pad = int.from_bytes(sub[reserved_pad_off:reserved_pad_off + 2], "big")
+        cdef int off
+        cdef int i
+
+        for i in range(seg_count):
+            off = 0x0E + 2 * i
+            end_code.append(int.from_bytes(sub[off:off + 2], "big"))
+
+        for i in range(seg_count):
+            off = sc_base + 2 * i
+            start_code.append(int.from_bytes(sub[off:off + 2], "big"))
+
+        for i in range(seg_count):
+            off = id_base + 2 * i
+            id_delta.append(int.from_bytes(sub[off:off + 2], "big", signed=True))
+
+        for i in range(seg_count):
+            off = iro_base + 2 * i
+            id_range_offset.append(int.from_bytes(sub[off:off + 2], "big"))
+    
+        while pos + 2 <= length:
+            glyph_id_array.append(int.from_bytes(sub[pos:pos + 2], "big"))
+            pos += 2
+
+        return Format4(offset=cmap_offset, format=fmt, length=length, language=language, segCountX2=segCountX2, searchRange=searchRange, entrySelector=entrySelector, rangeShift=rangeShift, endCode=end_code, reservedPad=reserved_pad, startCode=start_code, idDelta=id_delta, idRangeOffset=id_range_offset, glyphIdArray=glyph_id_array, )
+
+@cython.dataclasses.dataclass
 cdef class cmap: # сопоставление символов и глифов
-    """
-    Смещение    	    Размер	Тип	    Имя
-    0x00	            2	    uint16	version
-    0x02	            2	    uint16	numTables
-    0x04 + 8*i + 0x00	2	    uint16	platformID (запись №i)
-    0x04 + 8*i + 0x02	2	    uint16	encodingID
-    0x04 + 8*i + 0x04	4	    uint32	subtableOffset
+    cdef public int version
+    cdef public int numTables
+    cdef public list encodingRecords    # list[EncodingRecords]
+    cdef public list format4            # list[Format4] - все Format 4 в cmap
 
-    Подтаблица Format 4 - от начала подтаблицы:
-    Смещение            Размер	    Тип	    Имя
-    0x00	            2	        uint16	format (= 4)
-    0x02	            2	        uint16	length
-    0x04	            2	        uint16	language
-    0x06	            2	        uint16	segCountX2
-    0x08	            2	        uint16	searchRange
-    0x0A	            2	        uint16	entrySelector
-    0x0C	            2	        uint16	rangeShift
-    0x0E	            2*segCount	uint16	endCode[]
-    0x0E + 2*segCount	2	        uint16	reservedPad
-    0x10 + 2*segCount	2*segCount	uint16	startCode[]
-    0x10 + 4*segCount	2*segCount	int16	idDelta[]
-    0x10 + 6*segCount	2*segCount	uint16	idRangeOffset[]
-    0x10 + 8*segCount	перем.	    uint16	glyphIdArray[]
+    cpdef int lookup(self, int char_code):
+        cdef EncodingRecords rec
+        cdef Format4 f4
 
-    """
+        for rec in self.encodingRecords:
+            if rec.platformID == 3 and rec.encodingID == 1:
+                for f4 in self.format4:
+                    if f4.offset == rec.subtableOffset:
+                        return f4.lookup(char_code)
+        for rec in self.encodingRecords:
+            if rec.platformID == 0:
+                for f4 in self.format4:
+                    if f4.offset == rec.subtableOffset:
+                        return f4.lookup(char_code)
+        if self.format4: return self.format4[0].lookup(char_code)
+        return 0
+
+
     @staticmethod
     cdef cmap _from(bytes data):
-        """
-        Зачем нужна: 
-            переводит код символа (Unicode) в номер глифа (glyph_id). 
-            Без неё ты не знаешь, какой глиф соответствует букве 'A'.
+        cdef int version   = int.from_bytes(data[0x00:0x02], "big")
+        cdef int numTables = int.from_bytes(data[0x02:0x04], "big")
 
-        Что внутри: 
-            одна или несколько подтаблиц. 
-            Основная - Format 4 (Unicode BMP) с сегментами startCode…endCode и массивом glyphIdArray.
+        cdef list records = []
+        cdef list format4_list = []
+        cdef set seen_offsets = set()
 
-        Кто использует: 
-            рендер текста - первый шаг. Символ => glyph_id => дальше ищем контуры.
-        """
-        return cmap()
+        cdef int base, i
+        cdef int platform_id, encoding_id, offset
+
+        for i in range(numTables):
+            base = 0x04 + 8 * i
+            platform_id = int.from_bytes(data[base  : base+2], "big")
+            encoding_id = int.from_bytes(data[base+2: base+4], "big")
+            offset      = int.from_bytes(data[base+4: base+8], "big")
+            records.append(EncodingRecords(platform_id, encoding_id, offset))
+            if offset in seen_offsets: continue
+            seen_offsets.add(offset)
+            if offset + 2 > len(data): continue
+            if int.from_bytes(data[offset:offset + 2], "big") == 4:
+                format4_list.append(Format4._parse_format4(data[offset:], offset))
+        return cmap(version, numTables, records, format4_list)
 
 @cython.dataclasses.dataclass
 cdef class hhea: # горизонтальный заголовок
@@ -339,66 +441,99 @@ cdef class hmtx: # горизонтальные метрики
         return hmtx()
 
 @cython.dataclasses.dataclass
+cdef class NameRecord:
+    cdef public int platform_id
+    cdef public int encoding_id
+    cdef public int language_id
+    cdef public int name_id
+    cdef public int length
+    cdef public int offset
+    cdef public str text          # уже декодированная строка
+
+@cython.dataclasses.dataclass
 cdef class name: # имена
-    """
-    Смещение            Размер	Тип	    Имя
-    0x00	            2	    uint16	format
-    0x02	            2	    uint16	count
-    0x04	            2	    uint16	stringOffset
-    0x06 + 12*i + 0x00	2	    uint16	platformID (запись №i)
-    0x06 + 12*i + 0x02	2	    uint16	encodingID
-    0x06 + 12*i + 0x04	2	    uint16	languageID
-    0x06 + 12*i + 0x06	2	    uint16	nameID
-    0x06 + 12*i + 0x08	2	    uint16	length
-    0x06 + 12*i + 0x0A	2	    uint16	offset
-    
-    Сами строки лежат по адресу stringOffset + offset от начала name.
-    """
+    cdef public int format
+    cdef public int count
+    cdef public int string_offset
+    cdef public list records          # list[NameRecord]
+    cdef public dict by_name_id       # {nameID: str}, только (3,1) и (0,*) - для удобства
 
+    def get(self, int name_id, str default = None):
+        """Быстрый доступ по nameID. Вернёт первую найденную строку."""
+        return self.by_name_id.get(name_id, default)
     @staticmethod
-    def _from(data: bytes) -> "name":
-        """
-        Зачем нужна: 
-            человекочитаемая информация о шрифте - что это за шрифт, кто автор, версия, лицензия.
+    cdef name _from(bytes data):
+        cdef int fmt      = int.from_bytes(data[0x00:0x02], "big")
+        cdef int cnt      = int.from_bytes(data[0x02:0x04], "big")
+        cdef int str_off  = int.from_bytes(data[0x04:0x06], "big")
 
-        Что внутри: 
-            набор записей nameID => строка. 
-            Полезные: семейство, подсемейство (Regular/Bold), полное имя, версия, PostScript-имя.
+        cdef list records = []
+        cdef dict by_id   = {}
+        cdef int i, base, pid, eid, lid, nid, ln, off, start, end
+        cdef bytes raw
+        cdef str text
+        cdef NameRecord rec
 
-        Кто использует: 
-            операционная система для отображения имени шрифта в списке. 
-            Для рендера не нужна, но полезна для отладки («что я вообще открыл»).
-        """
+        for i in range(cnt):
+            base = 0x06 + 12 * i
+            pid = int.from_bytes(data[base    : base + 2], "big")
+            eid = int.from_bytes(data[base + 2: base + 4], "big")
+            lid = int.from_bytes(data[base + 4: base + 6], "big")
+            nid = int.from_bytes(data[base + 6: base + 8], "big")
+            ln  = int.from_bytes(data[base + 8: base + 10], "big")
+            off = int.from_bytes(data[base + 10: base + 12], "big")
+
+            start = str_off + off
+            end   = start + ln
+            if end > len(data):
+                continue
+            raw = data[start:end]
+            if pid == 0 or pid == 3:
+                # Unicode / Windows -> UTF-16BE
+                try:
+                    text = raw.decode('utf-16-be')
+                except UnicodeDecodeError:
+                    text = ''
+            elif pid == 1:
+                try:
+                    text = raw.decode('latin-1')
+                except UnicodeDecodeError:
+                    text = ''
+            else:
+                text = ''
+
+            rec = NameRecord(pid, eid, lid, nid, ln, off, text)
+            records.append(rec)
+            if text and nid not in by_id:
+                by_id[nid] = text
+            elif text and pid == 3 and eid == 1:
+                by_id[nid] = text
+        return name(fmt, cnt, str_off, records, by_id)
 
 @cython.dataclasses.dataclass
 cdef class post: # PostScript-информация
-    """
-    Смещение    Размер	Тип	    Имя
-    0x00	    4	    Fixed	version
-    0x04	    4	    Fixed	italicAngle
-    0x08	    2	    int16	underlinePosition
-    0x0A	    2	    int16	underlineThickness
-    0x0C	    4	    uint32	isFixedPitch
-    0x10	    4	    uint32	minMemType42
-    0x14	    4	    uint32	maxMemType42
-    0x18	    4	    uint32	minMemType1
-    0x1C	    4	    uint32	maxMemType1
-    Дальше - зависит от версии (в 2.0 идёт массив имён глифов, в 3.0 ничего).
-    """
+    cdef public int version
+    cdef public int italicAngle
+    cdef public int underlinePosition
+    cdef public int underlineThickness
+    cdef public int isFixedPitch
+    cdef public int minMemType42
+    cdef public int maxMemType42
+    cdef public int minMemType1
+    cdef public int maxMemType1
+    cdef public bytes tail
 
     @staticmethod
     cdef post _from(bytes data):
-        """
-        Зачем нужна: 
-            метрики для совместимости с PostScript и признак моноширинности.
-        Что внутри:
-            isFixedPitch - 0 для пропорционального шрифта, ≠0 для моноширинного.
-            italicAngle, underlinePosition, underlineThickness.
-            В версии 2.0 - имена всех глифов.
-        Кто использует: 
-            в основном системы печати. Для рендера полезна только isFixedPitch - если шрифт моноширинный, можно упростить расстановку.
-        """
-        return post()
+        return post(int.from_bytes(data[0x00:0x04], "big"),
+                    int.from_bytes(data[0x04:0x08], "big"),
+                    int.from_bytes(data[0x08:0x0A], "big", signed=True),
+                    int.from_bytes(data[0x0A:0x0C], "big", signed=True),
+                    int.from_bytes(data[0x0C:0x10], "big"),
+                    int.from_bytes(data[0x10:0x14], "big"),
+                    int.from_bytes(data[0x14:0x18], "big"),
+                    int.from_bytes(data[0x18:0x1C], "big"),
+                    int.from_bytes(data[0x1C:0x20], "big"))
 
 # Опциональные, но почти всегда присутствуют
 

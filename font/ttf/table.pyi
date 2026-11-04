@@ -229,3 +229,190 @@ class glyf: # контуры глифов
             рендер - читает контуры, строит полигоны, растеризует. 
             Это ядро отрисовки.
         """
+
+@dataclass
+class EncodingRecords:
+    """
+    Смещение    Размер	Тип	    Имя
+    0x00	    2	    uint16	platformID (запись №i)
+    0x02	    2	    uint16	encodingID
+    0x04	    4	    uint32	subtableOffset (от начала cmap, не от записи)
+    """
+    platformID: int
+    encodingID: int
+    subtableOffset: int
+
+@dataclass
+class Format4:
+    """
+    Подтаблица Format 4 - основной формат для BMP (0..0xFFFF).
+
+    Смещение            Размер      Тип       Имя
+    0x00                2           uint16    format (= 4)
+    0x02                2           uint16    length
+    0x04                2           uint16    language
+    0x06                2           uint16    segCountX2
+    0x08                2           uint16    searchRange
+    0x0A                2           uint16    entrySelector
+    0x0C                2           uint16    rangeShift
+    0x0E                2*segCount  uint16    endCode[]
+    0x0E + 2*segCount   2           uint16    reservedPad
+    0x10 + 2*segCount   2*segCount  uint16    startCode[]
+    0x10 + 4*segCount   2*segCount  int16     idDelta[]
+    0x10 + 6*segCount   2*segCount  uint16    idRangeOffset[]
+    0x10 + 8*segCount   перем.      uint16    glyphIdArray[]
+
+    segCount = segCountX2 / 2
+    """
+    offset: int              # позиция подтаблицы внутри cmap (для приоритета)
+    format: int
+    length: int
+    language: int
+    segCountX2: int
+    searchRange: int
+    entrySelector: int
+    rangeShift: int
+    endCode: list[int]            # длина = segCount
+    reservedPad: int
+    startCode: list[int]          # длина = segCount
+    idDelta: list[int]            # длина = segCount (signed)
+    idRangeOffset: list[int]      # длина = segCount
+    glyphIdArray: list[int]       # 
+
+    @property
+    def segCount(self) -> int: ...
+
+    def lookup(self, char_code: int) -> int:
+        """Вернуть glyph_id для символа. 0 - если не найден."""
+
+    @staticmethod
+    def _parse_format4(sub: bytes, cmap_offset: int) -> Format4:
+        """Разобрать одну подтаблицу Format 4. sub - начиная с её начала."""
+
+@dataclass
+class cmap:
+    """
+    Смещение            Размер  Тип     Имя
+    0x00                2       uint16  version
+    0x02                2       uint16  numTables
+    0x04 + 8*i + 0x00   2       uint16  platformID (запись №i)
+    0x04 + 8*i + 0x02   2       uint16  encodingID
+    0x04 + 8*i + 0x04   4       uint32  subtableOffset
+
+    Подтаблица Format 4 - от начала подтаблицы (см. Format4 выше).
+    """
+    version: int
+    numTables: int
+    encodingRecords: list[EncodingRecords]
+    format4: list[Format4]
+
+    def lookup(self, char_code: int) -> int:
+        """
+        Найти glyph_id для символа.
+        Приоритет: (3,1) Windows BMP → (0,3) Unicode BMP → первый Format 4.
+        """
+
+    @staticmethod
+    def _from(data: bytes) -> "cmap":
+        """
+        Зачем нужна: 
+            переводит код символа (Unicode) в номер глифа (glyph_id). 
+            Без неё ты не знаешь, какой глиф соответствует букве 'A'.
+
+        Что внутри: 
+            одна или несколько подтаблиц. 
+            Основная - Format 4 (Unicode BMP) с сегментами startCode…endCode и массивом glyphIdArray.
+
+        Кто использует: 
+            рендер текста - первый шаг. Символ => glyph_id => дальше ищем контуры.
+        """
+
+@dataclass
+class NameRecord:
+    """
+    Одна запись name-таблицы.
+
+    Смещение            Размер  Тип     Имя
+    0x00                2       uint16  platformID
+    0x02                2       uint16  encodingID
+    0x04                2       uint16  languageID
+    0x06                2       uint16  nameID
+    0x08                2       uint16  length
+    0x0A                2       uint16  offset
+    """
+    platform_id: int
+    encoding_id: int
+    language_id: int
+    name_id: int
+    length: int
+    offset: int
+    text: int          # уже декодированная строка
+
+@dataclass
+class name:
+    """
+    Смещение            Размер	Тип	    Имя
+    0x00	            2	    uint16	format
+    0x02	            2	    uint16	count
+    0x04	            2	    uint16	stringOffset
+    Сами строки лежат по адресу stringOffset + offset от начала name.
+    """
+    format: int
+    count: int
+    string_offset: int
+    records: list[NameRecord]
+    by_name_id: dict[int, str]  # {nameID: str}, только (3,1) и (0,*) - для удобства
+
+    @staticmethod
+    def _from(data: bytes) -> "name":
+        """
+        Зачем нужна: 
+            человекочитаемая информация о шрифте - что это за шрифт, кто автор, версия, лицензия.
+
+        Что внутри: 
+            набор записей nameID => строка. 
+            Полезные: семейство, подсемейство (Regular/Bold), полное имя, версия, PostScript-имя.
+
+        Кто использует: 
+            операционная система для отображения имени шрифта в списке. 
+            Для рендера не нужна, но полезна для отладки («что я вообще открыл»).
+        """
+
+@dataclass
+class post:
+    """
+    Смещение    Размер	Тип	    Имя
+    0x00	    4	    Fixed	version
+    0x04	    4	    Fixed	italicAngle
+    0x08	    2	    int16	underlinePosition
+    0x0A	    2	    int16	underlineThickness
+    0x0C	    4	    uint32	isFixedPitch
+    0x10	    4	    uint32	minMemType42
+    0x14	    4	    uint32	maxMemType42
+    0x18	    4	    uint32	minMemType1
+    0x1C	    4	    uint32	maxMemType1
+    Дальше - зависит от версии (в 2.0 идёт массив имён глифов, в 3.0 ничего).
+    """
+
+    version: int
+    italicAngle: int
+    underlinePosition: int
+    underlineThickness: int
+    isFixedPitch: int
+    minMemType42: int
+    maxMemType42: int
+    minMemType1: int
+    maxMemType1: int
+    tail: bytes
+
+    def _from(data: bytes) -> post:
+        """
+        Зачем нужна: 
+            метрики для совместимости с PostScript и признак моноширинности.
+        Что внутри:
+            isFixedPitch - 0 для пропорционального шрифта, ≠0 для моноширинного.
+            italicAngle, underlinePosition, underlineThickness.
+            В версии 2.0 - имена всех глифов.
+        Кто использует: 
+            в основном системы печати. Для рендера полезна только isFixedPitch - если шрифт моноширинный, можно упростить расстановку.
+        """

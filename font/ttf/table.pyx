@@ -263,11 +263,11 @@ cdef class Format4:
     cdef public list glyphIdArray       # list[int]
 
     @property
-    cpdef int segCount(self):
-        return <int>(self.segCountX2/2)
+    def segCount(self):
+        return self.segCountX2 // 2
 
     cpdef int lookup(self, int char_code):
-        cdef int seg_count = self.segCount
+        cdef int seg_count = <int>self.segCount
         cdef int i, gid, idx
 
         for i in range(seg_count):
@@ -386,59 +386,67 @@ cdef class cmap: # сопоставление символов и глифов
 
 @cython.dataclasses.dataclass
 cdef class hhea: # горизонтальный заголовок
-    """
-    Смещение    Размер	Тип	    Имя
-    0x00	    4	    Fixed	version
-    0x04	    2	    int16	ascender
-    0x06	    2	    int16	descender
-    0x08	    2	    int16	lineGap
-    0x0A	    2	    uint16	advanceWidthMax
-    0x0C	    2	    int16	minLeftSideBearing
-    0x0E	    2	    int16	minRightSideBearing
-    0x10	    2	    int16	xMaxExtent
-    0x12	    2	    int16	caretSlopeRise
-    0x14	    2	    int16	caretSlopeRun
-    0x16	    2	    int16	caretOffset
-    0x18	    8	    -	    reserved (4 * int16 = 0)
-    0x20	    2	    int16	metricDataFormat
-    0x22	    2	    uint16	numberOfHMetrics
-    """
+    cdef int version
+    cdef int ascender
+    cdef int descender
+    cdef int lineGap
+    cdef int advanceWidthMax
+    cdef int minLeftSideBearing
+    cdef int minRightSideBearing
+    cdef int xMaxExtent
+    cdef int caretSlopeRise
+    cdef int caretSlopeRun
+    cdef int caretOffset
+    cdef int reserved
+    cdef int metricDataFormat
+    cdef int numberOfHMetrics
+
     @staticmethod
     cdef hhea _from(data: bytes):
-        """
-        Зачем нужна: 
-            метрики строки и указание, сколько записей в hmtx.
-        Что внутри:
-            ascender / descender / lineGap - высота над baseline, глубина под baseline, межстрочный интервал.
-            advanceWidthMax - максимальная ширина глифа.
-            numberOfHMetrics - сколько глифов имеют собственную ширину в hmtx.
-        Кто использует: 
-            рендер текста - для вертикального позиционирования строки. 
-            Парсер hmtx - чтобы понять, сколько записей читать.
-        """
-        return hhea()
+        return hhea(int.from_bytes(data[0x00:0x04], "big"),
+                    int.from_bytes(data[0x04:0x06], "big", signed=True),
+                    int.from_bytes(data[0x06:0x08], "big", signed=True),
+                    int.from_bytes(data[0x08:0x0A], "big", signed=True),
+                    int.from_bytes(data[0x0A:0x0C], "big"),
+                    int.from_bytes(data[0x0C:0x0E], "big", signed=True),
+                    int.from_bytes(data[0x0E:0x10], "big", signed=True),
+                    int.from_bytes(data[0x10:0x12], "big", signed=True),
+                    int.from_bytes(data[0x12:0x14], "big", signed=True),
+                    int.from_bytes(data[0x14:0x16], "big", signed=True),
+                    int.from_bytes(data[0x16:0x18], "big", signed=True),
+                    int.from_bytes(data[0x18:0x20], "big", signed=True),
+                    int.from_bytes(data[0x20:0x22], "big", signed=True),
+                    int.from_bytes(data[0x22:0x24], "big"))
 
 @cython.dataclasses.dataclass
 cdef class hmtx: # горизонтальные метрики
-    """
-    Смещение 	    Размер	Тип	    Имя
-    0x00 + 4*i	    2	    uint16	advanceWidth[i] (для i < N)
-    0x02 + 4*i	    2	    int16	leftSideBearing[i] (для i < N)
-    4*N + 2*(i - N)	2	    int16	leftSideBearing[i] (для i >= N)
-    где N = numberOfHMetrics из hhea.
-    """
+    cdef public list advanceWidth        # list[int], длина = numGlyphs
+    cdef public list leftSideBearing    # list[int], длина = numGlyphs
+
     @staticmethod
-    cdef hmtx _from(bytes data):
-        """
-        Зачем нужна: 
-            говорит, на сколько сдвинуть курсор после каждого глифа и какой у него левый отступ.
-        Что внутри:
-            advanceWidth[glyph_id] - ширина ячейки глифа (на сколько пикселей сдвинуть перо).
-            leftSideBearing[glyph_id] - отступ от левого края ячейки до первой точки контура.
-        Кто использует: 
-            рендер строки - расстановка глифов. Без этой таблицы все буквы налезут друг на друга.
-        """
-        return hmtx()
+    cdef hmtx _from(bytes data, int number_of_h_metrics, int num_glyphs):
+        cdef int N = number_of_h_metrics
+        cdef list advances = []
+        cdef list lsbs = []
+        cdef int i, off
+        cdef int last_advance = 0
+        for i in range(N):
+            off = 4 * i
+            if off + 4 > len(data): break
+            advance = int.from_bytes(data[off    : off + 2], 'big')
+            lsb     = int.from_bytes(data[off + 2: off + 4], 'big', signed=True)
+            advances.append(advance)
+            lsbs.append(lsb)
+            last_advance = advance
+
+        cdef int extra_base = 4 * N
+        for i in range(N, num_glyphs):
+            off = extra_base + 2 * (i - N)
+            lsb = 0 if off + 2 > len(data) else  int.from_bytes(data[off: off + 2], 'big', signed=True)
+            advances.append(last_advance)
+            lsbs.append(lsb)
+
+        return hmtx(advances, lsbs)
 
 @cython.dataclasses.dataclass
 cdef class NameRecord:

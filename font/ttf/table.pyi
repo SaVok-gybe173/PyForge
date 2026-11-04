@@ -403,7 +403,7 @@ class post:
     maxMemType42: int
     minMemType1: int
     maxMemType1: int
-    tail: bytes
+    tail: bytes # остаток для версии 2.0 и больше
 
     def _from(data: bytes) -> post:
         """
@@ -415,4 +415,74 @@ class post:
             В версии 2.0 - имена всех глифов.
         Кто использует: 
             в основном системы печати. Для рендера полезна только isFixedPitch - если шрифт моноширинный, можно упростить расстановку.
+        """
+
+@dataclass
+class hmtx:
+    """
+    Смещение 	    Размер	Тип	    Имя
+    0x00 + 4*i	    2	    uint16	advanceWidth[i] (для i < N)
+    0x02 + 4*i	    2	    int16	leftSideBearing[i] (для i < N)
+    4*N + 2*(i - N)	2	    int16	leftSideBearing[i] (для i >= N)
+    где N = numberOfHMetrics из hhea.
+    """
+    advanceWidth: list[int]
+    leftSideBearing: list[int]
+
+    def _from(data: bytes, number_of_h_metrics: int, num_glyphs: int) -> hmtx:
+        """
+        Зачем нужна: 
+            говорит, на сколько сдвинуть курсор после каждого глифа и какой у него левый отступ.
+        Что внутри:
+            advanceWidth[glyph_id] - ширина ячейки глифа (на сколько пикселей сдвинуть перо).
+            leftSideBearing[glyph_id] - отступ от левого края ячейки до первой точки контура.
+        Кто использует: 
+            рендер строки - расстановка глифов. Без этой таблицы все буквы налезут друг на друга.
+        """
+
+@dataclass
+class hhea: # горизонтальный заголовок
+    """
+    Смещение    Размер	Тип	    Имя
+    0x00	    4	    Fixed	version
+    0x04	    2	    int16	ascender
+    0x06	    2	    int16	descender
+    0x08	    2	    int16	lineGap
+    0x0A	    2	    uint16	advanceWidthMax
+    0x0C	    2	    int16	minLeftSideBearing
+    0x0E	    2	    int16	minRightSideBearing
+    0x10	    2	    int16	xMaxExtent
+    0x12	    2	    int16	caretSlopeRise
+    0x14	    2	    int16	caretSlopeRun
+    0x16	    2	    int16	caretOffset
+    0x18	    8	    -	    reserved (4 * int16 = 0)
+    0x20	    2	    int16	metricDataFormat
+    0x22	    2	    uint16	numberOfHMetrics
+    """
+    version: int
+    ascender: int
+    descender: int
+    lineGap: int
+    advanceWidthMax: int
+    minLeftSideBearing: int
+    minRightSideBearing: int
+    xMaxExtent: int
+    caretSlopeRise: int
+    caretSlopeRun: int
+    caretOffset: int
+    reserved: int
+    metricDataFormat: int
+    numberOfHMetrics: int
+
+    def _from(data: bytes):
+        """
+        Зачем нужна: 
+            метрики строки и указание, сколько записей в hmtx.
+        Что внутри:
+            ascender / descender / lineGap - высота над baseline, глубина под baseline, межстрочный интервал.
+            advanceWidthMax - максимальная ширина глифа.
+            numberOfHMetrics - сколько глифов имеют собственную ширину в hmtx.
+        Кто использует: 
+            рендер текста - для вертикального позиционирования строки. 
+            Парсер hmtx - чтобы понять, сколько записей читать.
         """

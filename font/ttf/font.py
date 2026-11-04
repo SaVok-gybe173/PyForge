@@ -1,70 +1,17 @@
-"""
-TTF — это конкатенация таблиц в одном бинарном файле. 
-Файл начинается с Font Directory — «оглавления», 
-которое говорит: сколько таблиц, как они называются, где лежат и какого размера. 
-Дальше идут сами таблицы в произвольном порядке.
-
-Все многобайтовые числа — big-endian (старший байт первый). 
-Все смещения — от начала файла.
-
-Таблицы выравниваются на 4 байта: если длина таблицы не кратна 4, она дополняется нулями.
-
-┌─────────────────────────────────────────────┐  байт 0x0000
-│  Font Directory Header (12 байт)            │
-│    sfntVersion, numTables, ...              │
-├─────────────────────────────────────────────┤  байт 0x000C
-│  Table Record #0   (16 байт)                │
-│  Table Record #1   (16 байт)                │
-│  Table Record #2   (16 байт)                │
-│  Table Record #(numTables-1)  (16 байт)     │
-├─────────────────────────────────────────────┤  байт 0x000C + 16 * numTables
-│                                             │
-│  Тело таблицы №0 (например, 'DSIG')         │  <- здесь лежит таблица DSIG
-│  ...padding до кратности 4 байтам...        │
-│                                             │
-├─────────────────────────────────────────────┤
-│                                             │
-│  Тело таблицы №1 (например, 'GDEF')         │  <- здесь лежит таблица GDEF
-│                                             │
-├─────────────────────────────────────────────┤
-│                                             │
-│  Тело таблицы №2 (например, 'GPOS')         │  <- здесь лежит таблица GPOS
-│                                             │
-├─────────────────────────────────────────────┤
-│  ... остальные таблицы ...                  │  конец файла
-└─────────────────────────────────────────────┘  
-
-Первые 12 байт файла — это заголовок Font Directory
-Байт 0x00 : 0x04   ->  sfntVersion  (4 байта)
-Байт 0x04 : 0x06   ->  numTables    (2 байта)
-Байт 0x06 : 0x08   ->  searchRange  (2 байта)
-Байт 0x08 : 0x0A   ->  entrySelector(2 байта)
-Байт 0x0A : 0x0C   ->  rangeShift   (2 байта)
-
-Сразу после него (с байта 0x0C) начинается массив записей о таблицах. Каждая запись ровно 16 байт.
-Байт 0x0C : 0x1B   ->  запись таблицы №0   (16 байт)
-Байт 0x1C : 0x2B   ->  запись таблицы №1   (16 байт)
-Байт 0x2C : 0x3B   ->  запись таблицы №2   (16 байт)
-
-Байт 0x0C + 16*i ..  ->  запись таблицы №i
-
-"""
-
-
 from PyForge.easel import CoreObject
-from .table import FontDirectory, head, maxp
+from .table import FontDirectory, head, maxp, loca, glyf, cmap, hhea, hmtx
 from math import ceil
-
-
-def round_up(x, to = 4):
-    return ceil(x / to) * to
-
-
 
 class Font(CoreObject):
     # таблица
     _head: head | None = None
     _maxp: maxp | None = None
+    _loca: loca | None = None
+    _glyf: glyf | None = None
+    _cmap: cmap | None = None
+    _hhea: hhea | None = None
+    _hmtx: hmtx | None = None
+    _data: bytes | None = None   # кэш сырых байтов файла
 
     file: str | None = None
 
@@ -103,6 +50,38 @@ class Font(CoreObject):
         if "maxp" in self.tableRecord:
             maxps: FontDirectory = self.tableRecord["head"]
             self._maxp = head._from(data[maxps.offset : maxps.offset+maxps.length])
+
+        if "hhea" in self.tableRecord:
+            hheas: FontDirectory = self.tableRecord["hhea"]
+            self._hhea = hhea._from(data[hheas.offset : hheas.offset + hheas.length])
+
+        if "cmap" in self.tableRecord:
+            cmaps: FontDirectory = self.tableRecord["cmap"]
+            self._cmap = cmap._from(data[cmaps.offset : cmaps.offset + cmaps.length])
+
+        if "loca" in self.tableRecord:
+            locas: FontDirectory = self.tableRecord["loca"]
+            self._loca = loca._from(
+                data[locas.offset : locas.offset + locas.length],
+                self._maxp.numGlyphs,
+                self._head.indexToLocFormat,
+            )
+
+        if "hmtx" in self.tableRecord:
+            hmtxs: FontDirectory = self.tableRecord["hmtx"]
+            self._hmtx = hmtx._from(
+                data[hmtxs.offset : hmtxs.offset + hmtxs.length],
+                self._hhea.numberOfHMetrics,
+                self._maxp.numGlyphs,
+            )
+
+        if "glyf" in self.tableRecord:
+            glyfs: FontDirectory = self.tableRecord["glyf"]
+            self._glyf = glyf._from(
+                data[glyfs.offset : glyfs.offset + glyfs.length],
+                self._loca.offsets,
+                self._maxp.numGlyphs,
+            )
         
         self.file = file
 

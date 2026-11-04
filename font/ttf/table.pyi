@@ -1,7 +1,7 @@
 """
 Ниже dataclasses для всех таблиц, которые нужны для рендера. 
 Каждое поле снабжено комментарием: что это и зачем оно. 
-В конце — зачем вообще нужен сам файл шрифта.
+В конце - зачем вообще нужен сам файл шрифта.
 
 """
 
@@ -61,9 +61,9 @@ class head: # заголовок шрифта
             хранит глобальные параметры шрифта. Без неё не понять, в каких единицах заданы координаты и как читать другие таблицы.
 
         Что внутри:
-            unitsPerEm — система координат (1024 или 2048 обычно).
-            indexToLocFormat — короткий или длинный формат loca.
-            magicNumber — маркер, что это действительно head (0x5F0F3CF5).
+            unitsPerEm - система координат (1024 или 2048 обычно).
+            indexToLocFormat - короткий или длинный формат loca.
+            magicNumber - маркер, что это действительно head (0x5F0F3CF5).
             Даты создания/изменения.
             Bounding box всего шрифта.
             Флаги стиля (bold, italic).
@@ -115,12 +115,12 @@ class maxp: # максимумы
     def _from(datamaxp: bytes) -> maxp:
         """
         Зачем нужна: 
-            содержит numGlyphs — сколько всего глифов в шрифте. Без этого не понять, какой длины массивы в loca и hmtx.
+            содержит numGlyphs - сколько всего глифов в шрифте. Без этого не понять, какой длины массивы в loca и hmtx.
         Что внутри:
-            numGlyphs — ключевое поле.
-            Различные максимумы (maxPoints, maxContours, maxStackElements) — нужны для хинтинга.
+            numGlyphs - ключевое поле.
+            Различные максимумы (maxPoints, maxContours, maxStackElements) - нужны для хинтинга.
         Кто использует: 
-            парсер — чтобы знать размер loca (numGlyphs + 1 записей). Рендер — чтобы понимать границы допустимых glyph_id.
+            парсер - чтобы знать размер loca (numGlyphs + 1 записей). Рендер - чтобы понимать границы допустимых glyph_id.
         """
 
 @dataclass
@@ -129,7 +129,7 @@ class loca: # индекс местоположений глифов
     Смещение в loca	Размер	Тип	Имя
     2*i (короткий)	2	uint16	offset[i], реальное = значение * 2
     4*i (длинный)	4	uint32	offset[i], реальное = значение
-    Длина массива — numGlyphs + 1 элементов.
+    Длина массива - numGlyphs + 1 элементов.
     """
 
     offsets: list[int]
@@ -139,17 +139,18 @@ class loca: # индекс местоположений глифов
         """
         Зачем нужна: 
             говорит, где именно в таблице glyf лежит каждый глиф. 
-            Без неё glyf — просто куча байт, в которой не найти нужный глиф.
+            Без неё glyf - просто куча байт, в которой не найти нужный глиф.
 
         Что внутри: 
             массив из numGlyphs + 1 смещений. 
-            Границы глифа glyph_id — это loca[glyph_id] и loca[glyph_id + 1] (относительно начала glyf).
+            Границы глифа glyph_id - это loca[glyph_id] и loca[glyph_id + 1] (относительно начала glyf).
         
         Кто использует: 
-            рендер — чтобы вырезать байты конкретного глифа.
+            рендер - чтобы вырезать байты конкретного глифа.
         """
 
-class glyf: # контуры глифов
+class glyph:
+    
     """
     Границы глифа берутся из loca: глиф №i занимает байты [loca[i], loca[i+1]) от начала glyf.
 
@@ -161,13 +162,70 @@ class glyf: # контуры глифов
     0x04	    2	    int16	yMin
     0x06	    2	    int16	xMax
     0x08	    2	    int16	yMax
-    Дальше для простого глифа (numberOfContours => 0), смещения — от начала глифа:
+    Дальше для простого глифа (numberOfContours => 0), смещения - от начала глифа:
 
     Поле	            Тип	                        Описание
     endPtsOfContours	uint16[numContours]	        Индекс последней точки каждого контура
     instructionLength	uint16	                    Длина инструкций
-    instructions	    uint8[instructionLength]	Байт-код хинтинга
+    instructions	    uint8[instructionLength]	Байт-код хинтианг
     flags	            uint8[перем.]	            Флаги точек (с Repeat)
     xCoordinates	    uint8/int16[]	            X-координаты, дельта-кодированные
     yCoordinates	    uint8/int16[]	            Y-координаты, дельта-кодированные
     """
+
+    numberOfContours: int
+    xMin: int
+    yMin: int
+    xMax: int
+    yMax: int
+    endPtsOfContours: list[int]
+    flags: list[int]
+    xCoordinates: list[int]
+    yCoordinates: list[int]
+
+    @staticmethod
+    def _from(data: bytes) -> glyph:
+        """
+        data - байты ОДНОГО глифа: glyf.raw_bytes[loca[i] : loca[i+1]].
+        Возвращает Glyph или None, если глиф композитный (numberOfContours < 0).
+        """
+
+class glyf: # контуры глифов
+    """
+    Таблица glyf - все глифы шрифта, уже разобранные.
+
+    Зачем нужна:
+        Хранит список объектов Glyph, по одному на каждый глиф.
+        После Glyf._from парсинг закончен - можно сразу брать
+        glyf.glyphs[glyph_id] и рисовать.
+
+    Что внутри:
+        glyphs - список длиной numGlyphs, где:
+            glyphs[i]     - объект Glyph для глифа i
+            glyphs[i]     - None, если глиф пустой (пробел)
+            glyphs[i]     - None, если глиф композитный (пока не обрабатываем)
+
+    Откуда берутся байты:
+        Вся таблица glyf (data) вырезана из файла по offset и length
+        из Font Directory. Границы каждого глифа - из loca.offsets:
+            глиф №i = data[ loca.offsets[i] : loca.offsets[i+1] ]
+    """
+
+    glyphs: list[glyph | None]
+
+    @staticmethod
+    def _from(data: bytes) -> glyf:
+        """
+        Зачем нужна: 
+            сама форма буквы. Здесь лежат контуры всех глифов шрифта - точки, кривые Безье, флаги.
+
+        Что внутри: 
+            numberOfContours - сколько контуров.
+            endPtsOfContours - где кончается каждый контур.
+            flags - on-curve / off-curve для каждой точки.
+            xCoordinates / yCoordinates - дельта-кодированные координаты.
+
+        Кто использует: 
+            рендер - читает контуры, строит полигоны, растеризует. 
+            Это ядро отрисовки.
+        """

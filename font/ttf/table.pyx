@@ -1,7 +1,7 @@
 """
 Ниже dataclasses для всех таблиц, которые нужны для рендера. 
 Каждое поле снабжено комментарием: что это и зачем оно. 
-В конце — зачем вообще нужен сам файл шрифта.
+В конце - зачем вообще нужен сам файл шрифта.
 
 """
 
@@ -142,26 +142,102 @@ cdef class loca: # индекс местоположений глифов
             raise ValueError(f"loca: неизвестный index_to_loc_format = {index_to_loc_format}")
         return loca(offsets)
 
-@cython.dataclasses.dataclass
-cdef class glyf: # контуры глифов
+cdef class glyph:
+    cdef public int numberOfContours
+    cdef public int xMin
+    cdef public int yMin
+    cdef public int xMax
+    cdef public int yMax
+    cdef public list endPtsOfContours   # [int, ...] - конец каждого контура
+    cdef public list xCoordinates                    # [int, ...] - все X-координаты
+    cdef public list yCoordinates                    # [int, ...] - все Y-координаты
+    cdef public list flags                 # [int, ...] - биты on_curve и т.д.
 
     @staticmethod
-    cdef glyf _from(bytes data):
-        """
-        Зачем нужна: 
-            сама форма буквы. Здесь лежат контуры всех глифов шрифта — точки, кривые Безье, флаги.
+    def _from(bytes data):
+        cdef glyph g = glyph()
+        cdef int n_contours = int.from_bytes(data[0x00:0x02], 'big', signed=True)
+        cdef int pos
 
-        Что внутри: 
-            numberOfContours — сколько контуров.
-            endPtsOfContours — где кончается каждый контур.
-            flags — on-curve / off-curve для каждой точки.
-            xCoordinates / yCoordinates — дельта-кодированные координаты.
+        if n_contours < 0: return None
 
-        Кто использует: 
-            рендер — читает контуры, строит полигоны, растеризует. 
-            Это ядро отрисовки.
-        """
-        return glyf()
+        g.numberOfContours = n_contours
+        g.xMin = int.from_bytes(data[0x02:0x04], 'big', signed=True)
+        g.yMin = int.from_bytes(data[0x04:0x06], 'big', signed=True)
+        g.xMax = int.from_bytes(data[0x06:0x08], 'big', signed=True)
+        g.yMax = int.from_bytes(data[0x08:0x0A], 'big', signed=True)
+        g.endPtsOfContours = []
+        for ci in range(n_contours):
+            off = 0x0A + 2 * ci
+            g.endPtsOfContours.append(
+                int.from_bytes(data[off:off + 2], 'big')
+            )
+        cdef int num_points = g.endPtsOfContours[-1] + 1
+        pos = 0x0A + 2 * n_contours
+        cdef int instr_len = int.from_bytes(data[pos:pos + 2], 'big')
+        pos += 2 + instr_len
+        g.flags = []
+        cdef int flag, repeat
+        while len(g.flags) < num_points:
+            flag = data[pos]; pos += 1
+            g.flags.append(flag)
+            if flag & 0x08:                      # Repeat
+                repeat = data[pos]; pos += 1
+                g.flags.extend([flag] * repeat)
+        g.xCoordinates = []
+        cdef int x = 0, dx
+        for flag in g.flags:
+            if flag & 0x02:                      # x-Short: 1 байт
+                dx = data[pos]; pos += 1
+                if not (flag & 0x10):
+                    dx = -dx
+            else:
+                if flag & 0x10:                  # Same X
+                    dx = 0
+                else:
+                    dx = int.from_bytes(data[pos:pos + 2], 'big', signed=True)
+                    pos += 2
+            x += dx
+            g.xCoordinates.append(x)
+        g.yCoordinates = []
+        cdef int y = 0, dy
+        for flag in g.flags:
+            if flag & 0x04:                      # y-Short
+                dy = data[pos]; pos += 1
+                if not (flag & 0x20):
+                    dy = -dy
+            else:
+                if flag & 0x20:                  # Same Y
+                    dy = 0
+                else:
+                    dy = int.from_bytes(data[pos:pos + 2], 'big', signed=True)
+                    pos += 2
+            y += dy
+            g.yCoordinates.append(y)
+
+        return g
+
+@cython.dataclasses.dataclass
+cdef class glyf: # контуры глифов
+    cdef public list glyphs         # list[glyph | None]
+
+    @staticmethod
+    cdef glyf _from(bytes data, list loca_offsets, int num_glyphs):
+        cdef glyf result = glyf()
+        cdef list glyphs = []
+        cdef int i, start, end
+        cdef glyph g
+
+        for i in range(num_glyphs):
+            start = loca_offsets[i]
+            end   = loca_offsets[i + 1]
+            if start == end:
+                glyphs.append(None)
+                continue
+            g = glyph._from(data[start:end])
+            glyphs.append(g)
+        result.glyphs = glyphs
+        return result
 
 @cython.dataclasses.dataclass
 cdef class cmap: # сопоставление символов и глифов
@@ -173,7 +249,7 @@ cdef class cmap: # сопоставление символов и глифов
     0x04 + 8*i + 0x02	2	    uint16	encodingID
     0x04 + 8*i + 0x04	4	    uint32	subtableOffset
 
-    Подтаблица Format 4 — от начала подтаблицы:
+    Подтаблица Format 4 - от начала подтаблицы:
     Смещение            Размер	    Тип	    Имя
     0x00	            2	        uint16	format (= 4)
     0x02	            2	        uint16	length
@@ -199,10 +275,10 @@ cdef class cmap: # сопоставление символов и глифов
 
         Что внутри: 
             одна или несколько подтаблиц. 
-            Основная — Format 4 (Unicode BMP) с сегментами startCode…endCode и массивом glyphIdArray.
+            Основная - Format 4 (Unicode BMP) с сегментами startCode…endCode и массивом glyphIdArray.
 
         Кто использует: 
-            рендер текста — первый шаг. Символ => glyph_id => дальше ищем контуры.
+            рендер текста - первый шаг. Символ => glyph_id => дальше ищем контуры.
         """
         return cmap()
 
@@ -221,7 +297,7 @@ cdef class hhea: # горизонтальный заголовок
     0x12	    2	    int16	caretSlopeRise
     0x14	    2	    int16	caretSlopeRun
     0x16	    2	    int16	caretOffset
-    0x18	    8	    —	    reserved (4 * int16 = 0)
+    0x18	    8	    -	    reserved (4 * int16 = 0)
     0x20	    2	    int16	metricDataFormat
     0x22	    2	    uint16	numberOfHMetrics
     """
@@ -231,12 +307,12 @@ cdef class hhea: # горизонтальный заголовок
         Зачем нужна: 
             метрики строки и указание, сколько записей в hmtx.
         Что внутри:
-            ascender / descender / lineGap — высота над baseline, глубина под baseline, межстрочный интервал.
-            advanceWidthMax — максимальная ширина глифа.
-            numberOfHMetrics — сколько глифов имеют собственную ширину в hmtx.
+            ascender / descender / lineGap - высота над baseline, глубина под baseline, межстрочный интервал.
+            advanceWidthMax - максимальная ширина глифа.
+            numberOfHMetrics - сколько глифов имеют собственную ширину в hmtx.
         Кто использует: 
-            рендер текста — для вертикального позиционирования строки. 
-            Парсер hmtx — чтобы понять, сколько записей читать.
+            рендер текста - для вертикального позиционирования строки. 
+            Парсер hmtx - чтобы понять, сколько записей читать.
         """
         return hhea()
 
@@ -255,10 +331,10 @@ cdef class hmtx: # горизонтальные метрики
         Зачем нужна: 
             говорит, на сколько сдвинуть курсор после каждого глифа и какой у него левый отступ.
         Что внутри:
-            advanceWidth[glyph_id] — ширина ячейки глифа (на сколько пикселей сдвинуть перо).
-            leftSideBearing[glyph_id] — отступ от левого края ячейки до первой точки контура.
+            advanceWidth[glyph_id] - ширина ячейки глифа (на сколько пикселей сдвинуть перо).
+            leftSideBearing[glyph_id] - отступ от левого края ячейки до первой точки контура.
         Кто использует: 
-            рендер строки — расстановка глифов. Без этой таблицы все буквы налезут друг на друга.
+            рендер строки - расстановка глифов. Без этой таблицы все буквы налезут друг на друга.
         """
         return hmtx()
 
@@ -283,7 +359,7 @@ cdef class name: # имена
     def _from(data: bytes) -> "name":
         """
         Зачем нужна: 
-            человекочитаемая информация о шрифте — что это за шрифт, кто автор, версия, лицензия.
+            человекочитаемая информация о шрифте - что это за шрифт, кто автор, версия, лицензия.
 
         Что внутри: 
             набор записей nameID => строка. 
@@ -307,7 +383,7 @@ cdef class post: # PostScript-информация
     0x14	    4	    uint32	maxMemType42
     0x18	    4	    uint32	minMemType1
     0x1C	    4	    uint32	maxMemType1
-    Дальше — зависит от версии (в 2.0 идёт массив имён глифов, в 3.0 ничего).
+    Дальше - зависит от версии (в 2.0 идёт массив имён глифов, в 3.0 ничего).
     """
 
     @staticmethod
@@ -316,18 +392,18 @@ cdef class post: # PostScript-информация
         Зачем нужна: 
             метрики для совместимости с PostScript и признак моноширинности.
         Что внутри:
-            isFixedPitch — 0 для пропорционального шрифта, ≠0 для моноширинного.
+            isFixedPitch - 0 для пропорционального шрифта, ≠0 для моноширинного.
             italicAngle, underlinePosition, underlineThickness.
-            В версии 2.0 — имена всех глифов.
+            В версии 2.0 - имена всех глифов.
         Кто использует: 
-            в основном системы печати. Для рендера полезна только isFixedPitch — если шрифт моноширинный, можно упростить расстановку.
+            в основном системы печати. Для рендера полезна только isFixedPitch - если шрифт моноширинный, можно упростить расстановку.
         """
         return post()
 
 # Опциональные, но почти всегда присутствуют
 
 @cython.dataclasses.dataclass
-cdef class OSH2: # OS/2 (H = F+2) — метрики для Windows
+cdef class OSH2: # OS/2 (H = F+2) - метрики для Windows
     """
     Смещение    Размер	Тип	        Имя
     0x00	    2	    uint16	    version
@@ -351,7 +427,7 @@ cdef class OSH2: # OS/2 (H = F+2) — метрики для Windows
     0x2E	    4	    uint32	    ulUnicodeRange2
     0x32	    4	    uint32	    ulUnicodeRange3
     0x36	    4	    uint32	    ulUnicodeRange4
-    0x3A	    4	    —	        achVendID (4 символа)
+    0x3A	    4	    -	        achVendID (4 символа)
     0x3E	    2	    uint16	    fsSelection
     0x40	    2	    uint16	    usFirstCharIndex
     0x42	    2	    uint16	    usLastCharIndex
@@ -362,11 +438,11 @@ cdef class OSH2: # OS/2 (H = F+2) — метрики для Windows
     0x4C	    2	    uint16	    usWinDescent
 
     Дальше зависит от version:
-    v0 — конец (78 байт)
-    v1 — добавляются ulCodePageRange1 (0x4E), ulCodePageRange2 (0x52) → 86 байт
-    v2 — добавляются sxHeight (0x56), sCapHeight (0x58), usDefaultChar (0x5A), usBreakChar (0x5C), usMaxContext (0x5E) → 96 байт
-    v3 — как v2 (не несёт новых полей)
-    v4 — + usLowerOpticalPointSize (0x60), usUpperOpticalPointSize (0x62) → 100 байт
+    v0 - конец (78 байт)
+    v1 - добавляются ulCodePageRange1 (0x4E), ulCodePageRange2 (0x52) → 86 байт
+    v2 - добавляются sxHeight (0x56), sCapHeight (0x58), usDefaultChar (0x5A), usBreakChar (0x5C), usMaxContext (0x5E) → 96 байт
+    v3 - как v2 (не несёт новых полей)
+    v4 - + usLowerOpticalPointSize (0x60), usUpperOpticalPointSize (0x62) → 100 байт
     """
 
     @staticmethod
@@ -375,17 +451,17 @@ cdef class OSH2: # OS/2 (H = F+2) — метрики для Windows
         Зачем нужна: без неё Windows не признаёт шрифт «полноценным» и не использует в некоторых местах.
 
         Что внутри:
-            usWeightcdef class — 400 (normal), 700 (bold).
-            usWidthcdef class — 1..9, 5 = normal.
-            fsSelection — italic, bold, regular.
-            sTypoAscender / sTypoDescender / sTypoLineGap — альтернативные метрики строки.
-            usWinAscent / usWinDescent — метрики для Windows.
-            ulUnicodeRange1..4 — какие блоки Unicode поддерживаются.
-            panose — классификация стиля (для подбора похожих шрифтов).
+            usWeightcdef class - 400 (normal), 700 (bold).
+            usWidthcdef class - 1..9, 5 = normal.
+            fsSelection - italic, bold, regular.
+            sTypoAscender / sTypoDescender / sTypoLineGap - альтернативные метрики строки.
+            usWinAscent / usWinDescent - метрики для Windows.
+            ulUnicodeRange1..4 - какие блоки Unicode поддерживаются.
+            panose - классификация стиля (для подбора похожих шрифтов).
 
         Кто использует: 
             Windows для выбора шрифта, для позиционирования. 
-            Для своего рендера не обязательна — метрики можно взять из hhea.
+            Для своего рендера не обязательна - метрики можно взять из hhea.
         """
         return OSH2()
 
@@ -403,7 +479,7 @@ cdef class kern: # кернинг
             value прибавляется к advanceWidth левого глифа при рендере.
 
         Кто использует: 
-            рендер — для качественной типографики. 
+            рендер - для качественной типографики. 
             Без неё буквы стоят «по сетке», но всё равно читаемо. 
 
         """
@@ -435,7 +511,7 @@ cdef class GSUB: # OpenType-подстановки
             замены глифов. Лигатуры (fi → ﬁ), альтернативные формы, маленькие заглавные и т.д.
 
         Что внутри: 
-            похоже на GPOS — lookup-таблицы.
+            похоже на GPOS - lookup-таблицы.
 
         Кто использует: 
             продвинутая типографика.
@@ -459,7 +535,7 @@ cdef class GDEF: # классы глифов
 
 # Опциональные, для хинтинга
 #
-# Хинтинг — это подсказки рендереру, как правильно округлять глифы при мелких размерах. 
+# Хинтинг - это подсказки рендереру, как правильно округлять глифы при мелких размерах. 
 # Реализовать его очень сложно (это интерпретатор байт-кода). 
 
 @cython.dataclasses.dataclass
@@ -506,7 +582,7 @@ cdef class gasp:
     def _from(data: bytes) -> "gasp":
         """
         Зачем нужна: 
-            говорит рендереру, для каких размеров применять хинтинг, для каких — сглаживание.
+            говорит рендереру, для каких размеров применять хинтинг, для каких - сглаживание.
 
         Что внутри: 
             массив пар (размер, флаги). 
@@ -531,7 +607,7 @@ cdef class DSIG: # цифровая подпись
 
         Что внутри: 
             записи с форматом, длиной и смещением подписи. 
-            Сами подписи — отдельные блоки данных.
+            Сами подписи - отдельные блоки данных.
 
         Кто использует: 
             системы проверки легитимности шрифта.
@@ -547,7 +623,7 @@ cdef class hdmx:
             Ускоряет рендеринг на старых системах.
 
         Что внутри: 
-            для каждого размера — массив ширин.
+            для каждого размера - массив ширин.
 
         Кто использует: 
             старые Windows. 
@@ -586,13 +662,13 @@ cdef class VDMX: #  Vertical Device Metrics
         """
 
 @cython.dataclasses.dataclass
-cdef class ttcf: # TTC / ttcf — TrueType Collection
+cdef class ttcf: # TTC / ttcf - TrueType Collection
     @staticmethod
     def _from(data: bytes) -> "ttcf":
         """
         Зачем нужна: 
             позволяет в одном файле хранить несколько шрифтов, 
-            разделяющих общие таблицы (например, Regular, Bold, Italic — все используют один glyf, но разные hmtx и head).
+            разделяющих общие таблицы (например, Regular, Bold, Italic - все используют один glyf, но разные hmtx и head).
 
         Что внутри: 
             список offset до Font Directory каждого шрифта.
@@ -600,10 +676,10 @@ cdef class ttcf: # TTC / ttcf — TrueType Collection
         Кто использует: 
             системы для экономии места. 
         Для парсера: 
-            если видишь sfntVersion = 'ttcf', значит файл — коллекция, и работать надо чуть иначе.
+            если видишь sfntVersion = 'ttcf', значит файл - коллекция, и работать надо чуть иначе.
         """
 @cython.dataclasses.dataclass
-cdef class EBLC: # EBLC / EBDT — встроенные bitmap-глифы
+cdef class EBLC: # EBLC / EBDT - встроенные bitmap-глифы
     @staticmethod
     def _from(data: bytes) -> "EBLC":
         """
@@ -634,13 +710,13 @@ cdef class SVG: # SVG-глифы
             современные браузеры для цветных шрифтов.
         """
 @cython.dataclasses.dataclass
-cdef class COLR: # COLR / CPAL — цветные глифы
+cdef class COLR: # COLR / CPAL - цветные глифы
     @staticmethod
     def _from(data: bytes) -> "COLR":
         """
         Зачем нужна: 
             для эмодзи и иконок. 
-            COLR описывает, как собрать цветной глиф из слоёв, CPAL — палитру цветов.
+            COLR описывает, как собрать цветной глиф из слоёв, CPAL - палитру цветов.
 
         Что внутри: 
             слоистые описания + цвета.
@@ -666,7 +742,7 @@ cdef class COLR: # COLR / CPAL — цветные глифы
 #
 #   Игнорируй полностью:
 #   Таблица	                    Почему
-#   cvt, fpgm, prep, gasp, LTSH	хинтинг — очень сложно, не критично
+#   cvt, fpgm, prep, gasp, LTSH	хинтинг - очень сложно, не критично
 #   GPOS, GSUB, GDEF	        продвинутая типографика
 #   DSIG, hdmx, VDMX	        служебные
 #   name, post	                метаданные

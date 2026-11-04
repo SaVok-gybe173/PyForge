@@ -1,4 +1,4 @@
-from .table cimport FontDirectory, head, maxp, loca, glyf, cmap, hhea, hmtx
+from .table cimport FontDirectory, head, maxp, loca, glyf, cmap, hhea, hmtx, name
 
 cdef class Font:
     # таблица
@@ -9,6 +9,7 @@ cdef class Font:
     cdef public cmap _cmap
     cdef public hhea _hhea
     cdef public hmtx _hmtx
+    cdef public name _name
     cdef public bytes _data   # кэш сырых байтов файла
 
     cdef public str file
@@ -63,6 +64,7 @@ cdef class Font:
         cdef FontDirectory locas 
         cdef FontDirectory hmtxs 
         cdef FontDirectory glyfs 
+        cdef FontDirectory names
 
         if "head" in self.tableRecord:
             heads = self.tableRecord["head"]
@@ -102,6 +104,12 @@ cdef class Font:
                 data[glyfs.offset : glyfs.offset + glyfs.length],
                 self._loca.offsets,
                 self._maxp.numGlyphs,
+            )
+
+        if "name" in self.tableRecord:
+            names = self.tableRecord["name"]
+            self._name = name._from(
+                data[names.offset : names.offset + names.length]
             )
         
         self.file = file

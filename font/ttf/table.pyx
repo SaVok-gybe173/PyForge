@@ -172,7 +172,6 @@ cdef class glyph:
 cdef class glyf: # контуры глифов
     @staticmethod
     cdef glyf _from(bytes data, list loca_offsets, int num_glyphs):
-        cdef glyf result = glyf()
         cdef list glyphs = []
         cdef int i, start, end
         cdef glyph g
@@ -185,8 +184,7 @@ cdef class glyf: # контуры глифов
                 continue
             g = glyph._from(data[start:end])
             glyphs.append(g)
-        result.glyphs = glyphs
-        return result
+        return  glyf(glyphs)
 
 @cython.dataclasses.dataclass
 cdef class EncodingRecords:

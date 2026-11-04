@@ -113,20 +113,20 @@ cdef class cmap:
 
 @cython.dataclasses.dataclass
 cdef class hhea:
-    cdef long long version
-    cdef int ascender
-    cdef int descender
-    cdef int lineGap
-    cdef int advanceWidthMax
-    cdef int minLeftSideBearing
-    cdef int minRightSideBearing
-    cdef int xMaxExtent
-    cdef int caretSlopeRise
-    cdef int caretSlopeRun
-    cdef int caretOffset
-    cdef int reserved
-    cdef int metricDataFormat
-    cdef int numberOfHMetrics
+    cdef public long long version
+    cdef public int ascender
+    cdef public int descender
+    cdef public int lineGap
+    cdef public int advanceWidthMax
+    cdef public int minLeftSideBearing
+    cdef public int minRightSideBearing
+    cdef public int xMaxExtent
+    cdef public int caretSlopeRise
+    cdef public int caretSlopeRun
+    cdef public int caretOffset
+    cdef public int reserved
+    cdef public int metricDataFormat
+    cdef public int numberOfHMetrics
     @staticmethod
     cdef hhea _from(data: bytes)
 

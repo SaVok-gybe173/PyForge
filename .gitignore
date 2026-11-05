@@ -18,6 +18,7 @@ _core/creating/listing/_list_math.c
 _core/creating/input/core.c
 font/ttf/table.c
 font/ttf/font.c
+font/ttf/render.c
 
 *.html
 

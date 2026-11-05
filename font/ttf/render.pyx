@@ -4,8 +4,9 @@
 # cython: initializedcheck=False
 # cython: nonecheck=False
 
-from libc.math cimport ceil
+# This module was created using AI.
 
+from libc.math cimport ceil
 from .font cimport Font
 from .table cimport glyph, cmap
 from ...easel.surface cimport Surface
@@ -168,11 +169,24 @@ cdef tuple _render_glyph_uncached(Font font, int glyph_id, int size_px,
     if not polygons:
         return ()
 
-    cdef float scale = size_px / font._head.unitsPerEm
-    cdef int x_min = g.xMin
-    cdef int y_min = g.yMin
-    cdef int x_max = g.xMax
-    cdef int y_max = g.yMax
+    cdef float scale = <float>size_px / <float>font._head.unitsPerEm
+    cdef int x_min = 0, x_max = 0, y_min = 0, y_max = 0
+    cdef int j, xx, yy
+    cdef bint first_pt = True
+    for j in range(len(g.xCoordinates)):
+        xx = g.xCoordinates[j]
+        yy = g.yCoordinates[j]
+        if first_pt:
+            x_min = x_max = xx
+            y_min = y_max = yy
+            first_pt = False
+        else:
+            if xx < x_min: x_min = xx
+            if xx > x_max: x_max = xx
+            if yy < y_min: y_min = yy
+            if yy > y_max: y_max = yy
+    if first_pt:
+        return ()
 
     cdef int width  = <int>(ceil((x_max - x_min) * scale) + 2)
     cdef int height = <int>(ceil((y_max - y_min) * scale) + 2)

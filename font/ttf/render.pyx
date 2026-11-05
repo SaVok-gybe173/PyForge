@@ -7,7 +7,7 @@
 from libc.math cimport ceil
 
 from .font cimport Font
-from .table cimport glyph
+from .table cimport glyph, cmap
 from ...easel.surface cimport Surface
 from ...easel.surface import SRCALPHA
 
@@ -23,7 +23,7 @@ cdef list _quad_bezier(tuple p0, tuple p1, tuple p2, int steps=16):
     return result
 
 
-cdef list _contour_to_polygon(tuple points, int steps=16):
+cdef list _contour_to_polygon(list points, int steps=16):
     if not points: return []
 
     start_idx = next((i for i, (_, _, on) in enumerate(points) if on), None)
@@ -160,7 +160,7 @@ cdef tuple _render_glyph_uncached(Font font, int glyph_id, int size_px,
 
     cdef list polygons = []
     cdef list poly
-    cdef tuple c
+    cdef list c
     for c in contours:
         poly = _contour_to_polygon(c)
         if len(poly) >= 3:
@@ -245,10 +245,12 @@ cpdef tuple render_glyph(Font font, int glyph_id, int size_px,
 # Метрики и рендер строки
 
 cdef int _get_advance(Font font, int glyph_id, int size_px) except -1:
-    cdef glyph g = font._glyf.glyphs[glyph_id]
-    if g is None:
+    cdef object hmtx = font._hmtx
+    if hmtx is None:
         return 0
-    return <int>ceil(g.advanceWidth * size_px / font._head.unitsPerEm)
+    if glyph_id < 0 or glyph_id >= len(hmtx.advanceWidth):
+        return 0
+    return <int>ceil(hmtx.advanceWidth[glyph_id] * size_px / font._head.unitsPerEm)
 
 
 cpdef tuple render_text(Font font, str text, int size_px, tuple color,
@@ -261,13 +263,18 @@ cpdef tuple render_text(Font font, str text, int size_px, tuple color,
     cdef int x = 0
     cdef int min_x = 0, min_y = 0, max_x = 0, max_y = 0
     cdef int i, gid, adv, w, h, gx, gy
-    cdef tuple rendered, cmap
+    cdef tuple rendered
     cdef object surf
     cdef bint first = True
 
-    cmap = font._cmap
+    cdef cmap cmap = font._cmap
+
     for i in range(len(text)):
-        gid = cmap.get(ord(text[i]), 0)
+        code = <int>ord(text[i])
+        try:
+            gid = font._cmap.lookup(code)
+        except Exception:
+            gid = 0
         if gid == 0 and text[i] != ' ':
             continue
 

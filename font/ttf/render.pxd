@@ -4,7 +4,7 @@ from .font cimport Font
 from .table cimport glyph
 
 cdef list  _quad_bezier(tuple p0, tuple p1, tuple p2, int steps=*)
-cdef list  _contour_to_polygon(tuple points, int steps=*)
+cdef list  _contour_to_polygon(list points, int steps=*)
 cdef list  _split_contours(glyph g)
 cdef list  _to_pixels(list polygons, double scale,
                       double offset_x, double offset_y)

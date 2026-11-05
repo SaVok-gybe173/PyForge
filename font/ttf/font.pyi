@@ -49,3 +49,42 @@ TTF — это конкатенация таблиц в одном бинарн�
 Байт 0x0C + 16*i ..  ->  запись таблицы №i
 
 """
+
+from .table import FontDirectory, head, maxp, loca, glyf, cmap, hhea, hmtx, name
+
+
+class Font:
+    # таблицы
+    _head: head
+    _maxp: maxp
+    _loca: loca
+    _glyf: glyf
+    _cmap: cmap
+    _hhea: hhea
+    _hmtx: hmtx
+    _name:  name
+    _data: bytes   # кэш сырых байтов файла
+
+    file: str
+
+    sfntVersion: int                # 0x00010000 — TrueType, 'OTTO' — CFF/OpenType
+    numTables: int                  # Сколько таблиц в файле
+    searchRange: int                # 2^floor(log2(numTables)) × 16
+    entrySelector: int              # log2(searchRange / 16)
+    rangeShift: int                 # numTables × 16 − searchRange
+
+    tableRecord: dict               # dict[FontDirectory] 16*numTables
+
+    def __init__(self, file: str | None = None) -> None:
+        """
+        Собственый класс для рендера шрифтов.
+
+        Args:
+            file (str): путь к .ttf файлу
+        """
+
+
+    def load(self, file: str):
+        """
+        Зугрезка шрифта в текущий обьект.
+        """

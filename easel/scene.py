@@ -82,6 +82,7 @@ else:
 class Scene(CoreObject):
     name: str
     page: Window
+    objects: list[PfObject] = () # для совместимости 
     
     def __init__(self, page: Window):
         self.page = page

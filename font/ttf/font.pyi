@@ -1,11 +1,11 @@
 """
-TTF — это конкатенация таблиц в одном бинарном файле. 
-Файл начинается с Font Directory — «оглавления», 
+TTF - это конкатенация таблиц в одном бинарном файле. 
+Файл начинается с Font Directory - «оглавления», 
 которое говорит: сколько таблиц, как они называются, где лежат и какого размера. 
 Дальше идут сами таблицы в произвольном порядке.
 
-Все многобайтовые числа — big-endian (старший байт первый). 
-Все смещения — от начала файла.
+Все многобайтовые числа - big-endian (старший байт первый). 
+Все смещения - от начала файла.
 
 Таблицы выравниваются на 4 байта: если длина таблицы не кратна 4, она дополняется нулями.
 
@@ -34,7 +34,7 @@ TTF — это конкатенация таблиц в одном бинарн�
 │  ... остальные таблицы ...                  │  конец файла
 └─────────────────────────────────────────────┘  
 
-Первые 12 байт файла — это заголовок Font Directory
+Первые 12 байт файла - это заголовок Font Directory
 Байт 0x00 : 0x04   ->  sfntVersion  (4 байта)
 Байт 0x04 : 0x06   ->  numTables    (2 байта)
 Байт 0x06 : 0x08   ->  searchRange  (2 байта)
@@ -67,7 +67,7 @@ class Font:
 
     file: str
 
-    sfntVersion: int                # 0x00010000 — TrueType, 'OTTO' — CFF/OpenType
+    sfntVersion: int                # 0x00010000 - TrueType, 'OTTO' - CFF/OpenType
     numTables: int                  # Сколько таблиц в файле
     searchRange: int                # 2^floor(log2(numTables)) × 16
     entrySelector: int              # log2(searchRange / 16)
@@ -83,11 +83,12 @@ class Font:
             file (str): путь к .ttf файлу
         """
 
-    def char_widths(self, text: str, font_size: float) -> list[float]:
+    def layout(self, text: str, font_size: float, start_x: float) -> tuple[list[float], list[float], list[int]]:
         """
-        Возвращает список ширин каждого символа строки в пикселях
-        при заданном размере шрифта (font_size в тех же единицах, что и рендер —
-        обычно пиксели).
+        Возвращает (xs, widths, gids):
+          xs     - list[float], x начала каждого символа, len == len(text)
+          widths - list[float], advance ширина каждого символа, len == len(text)
+          gids   - list[int],   glyph id каждого символа
         """
 
     def load(self, file: str):

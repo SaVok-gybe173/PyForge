@@ -7,23 +7,38 @@ cdef class Font:
     def __init__(self, file: str | None = None):
         if isinstance(file, str): self.load(<str>file)
 
-    cpdef list char_widths(self, str text, double font_size):
+    cpdef tuple layout(self, str text, double font_size, double start_x):
+        """
+        Возвращает (xs, widths, gids):
+          xs     - list[float], x начала каждого символа, len == len(text)
+          widths - list[float], advance ширина каждого символа, len == len(text)
+          gids   - list[int],   glyph id каждого символа
+        """
         cdef double scale = font_size / self._head.unitsPerEm
-        cdef list result = []
         cdef list aw = self._hmtx.advanceWidth
         cdef Py_ssize_t n = len(aw)
         cdef Py_ssize_t i
-        cdef int code, gid
+        cdef int gid
+        cdef double x = start_x
+
+        cdef list xs = []
+        cdef list widths = []
+        cdef list gids = []
+        cdef double w
 
         for i in range(len(text)):
-            code = ord(text[i])
-            gid = self._cmap.lookup(code)
+            gid = self._cmap.lookup(ord(text[i]))
             if 0 <= gid < n:
-                result.append(aw[gid] * scale)
+                w = aw[gid] * scale
             else:
-                result.append(0.0)
+                gid = 0
+                w = 0.0
+            xs.append(x)
+            widths.append(w)
+            gids.append(gid)
+            x += w
 
-        return result
+        return xs, widths, gids
 
     cpdef void load(self, str file):
         cdef bytes data

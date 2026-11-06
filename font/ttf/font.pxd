@@ -21,7 +21,7 @@ cdef class Font:
     cdef public int rangeShift                  # numTables × 16 − searchRange
 
     cdef public dict tableRecord                # dict[FontDirectory] 16*numTables
-
-    cpdef list char_widths(self, str text, double font_size)
+    
+    cpdef tuple layout(self, str text, double font_size, double start_x)
 
     cpdef void load(self, str file)

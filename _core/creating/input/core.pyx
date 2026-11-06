@@ -1,11 +1,5 @@
 
 cdef class InputTextCore:
-    cdef public str _text
-    cdef public int _shift
-    cdef int selectionX
-    cdef int selectionY
-    cdef bint selection
-
     def __init__(self, str text = ""):
         self._text = text
         self._shift = 0
@@ -158,9 +152,9 @@ cdef class GraphicsInputTextCore(InputTextCore):
     # доп фунция
     cpdef int hit_test(self, double x_px, list xs, list widths):
         """
-        x_px  — x мыши в пикселях
-        xs    — список x-начал каждого символа (из layout_text)
-        widths — список advance ширин
+        x_px  - x мыши в пикселях
+        xs    - список x-начал каждого символа (из layout_text)
+        widths - список advance ширин
         Возвращает индекс символа (0..len) для установки курсора.
         """
         cdef Py_ssize_t n = len(xs)
@@ -170,14 +164,14 @@ cdef class GraphicsInputTextCore(InputTextCore):
             return 0
         for i in range(n - 1, -1, -1):
             if xs[i] <= x_px:
-                if x_px > xs[i] + widths[i] * 0.5: # если клик ближе к правому краю символа — ставим после него
+                if x_px > xs[i] + widths[i] * 0.5: # если клик ближе к правому краю символа - ставим после него
                     return i + 1
                 return i
         return n
 
     cpdef void set_selection(self, int anchor, int cursor):
         """Установить выделение из двух индексов (для мыши).
-        Если anchor == cursor — это каретка, выделение пустое."""
+        Если anchor == cursor - это каретка, выделение пустое."""
         cdef int n = len(self._text)
         if anchor < 0: anchor = 0
         elif anchor > n: anchor = n
@@ -187,4 +181,4 @@ cdef class GraphicsInputTextCore(InputTextCore):
         self.selectionY = min(anchor, cursor)
         self.selectionX = max(anchor, cursor)
         self.selection = True
-        self._shift = cursor     # курсор — где сейчас мышь
+        self._shift = cursor     # курсор - где сейчас мышь

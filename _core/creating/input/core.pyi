@@ -58,3 +58,19 @@ class InputTextCore:
         Удалить выделенный фрагмент
         курсор ставится на место выделения.
         """
+
+# позволяет работать попиксельно
+class GraphicsInputTextCore(InputTextCore):
+
+    # доп фунция
+    def hit_test(self, x_px: float, xs: list, widths: list) -> int:
+        """
+        x_px  - x мыши в пикселях
+        xs    - список x-начал каждого символа (из layout_text)
+        widths - список advance ширин
+        Возвращает индекс символа (0..len) для установки курсора.
+        """
+
+    def set_selection(self, anchor: int, cursor: int) -> None:
+        """Установить выделение из двух индексов (для мыши).
+        Если anchor == cursor - это каретка, выделение пустое."""

@@ -152,3 +152,39 @@ cdef class InputTextCore:
 
     def __str__(self) -> str:
         return self._text
+
+# позволяет работать попиксельно
+cdef class GraphicsInputTextCore(InputTextCore):
+    # доп фунция
+    cpdef int hit_test(self, double x_px, list xs, list widths):
+        """
+        x_px  — x мыши в пикселях
+        xs    — список x-начал каждого символа (из layout_text)
+        widths — список advance ширин
+        Возвращает индекс символа (0..len) для установки курсора.
+        """
+        cdef Py_ssize_t n = len(xs)
+        if n == 0:
+            return 0
+        if x_px <= xs[0]:
+            return 0
+        for i in range(n - 1, -1, -1):
+            if xs[i] <= x_px:
+                if x_px > xs[i] + widths[i] * 0.5: # если клик ближе к правому краю символа — ставим после него
+                    return i + 1
+                return i
+        return n
+
+    cpdef void set_selection(self, int anchor, int cursor):
+        """Установить выделение из двух индексов (для мыши).
+        Если anchor == cursor — это каретка, выделение пустое."""
+        cdef int n = len(self._text)
+        if anchor < 0: anchor = 0
+        elif anchor > n: anchor = n
+        if cursor < 0: cursor = 0
+        elif cursor > n: cursor = n
+
+        self.selectionY = min(anchor, cursor)
+        self.selectionX = max(anchor, cursor)
+        self.selection = True
+        self._shift = cursor     # курсор — где сейчас мышь

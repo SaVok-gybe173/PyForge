@@ -1,10 +1,19 @@
+# cython: language_level=3
+# cython: boundscheck=False
+# cython: cdivision=True
+# cython: initializedcheck=False
+# cython: nonecheck=False
 
 cdef class InputTextCore:
     def __init__(self, str text = ""):
-        self._text = text
-        self._shift = 0
-        self.clear_selection()
+        self._clear()
+        self._text = <str>text
     
+    cdef void _clear(self):
+        self._shift = 0
+        self._text = ""
+        self.clear_selection()
+
     @property
     def text(self):
         return self._text
@@ -13,6 +22,7 @@ cdef class InputTextCore:
         self._text = text
         if self._shift >= len(text):
             self._shift = len(text)
+        self.clear_selection()
     
     cpdef void addText(self, str text):
         """Вставка с заменой выделения (если оно есть)."""

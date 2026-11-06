@@ -1,9 +1,11 @@
 cdef class InputTextCore:
-    cdef public str _text
-    cdef public int _shift
+    cdef str _text
+    cdef int _shift
     cdef int selectionX
     cdef int selectionY
     cdef bint selection
+
+    cdef void _clear(self)
 
     cpdef void addText(self, str text)
     cpdef bint backText(self)
@@ -25,3 +27,4 @@ cdef class GraphicsInputTextCore(InputTextCore):
 
     cpdef int hit_test(self, double x_px, list xs, list widths)
     cpdef void set_selection(self, int anchor, int cursor)
+

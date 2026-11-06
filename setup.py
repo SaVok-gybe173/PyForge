@@ -27,6 +27,7 @@ def main():
             language_level=3,
             annotate=True,
             force=True,
+            include_path=["..", "."]
         ),
         python_requires=">=3.12",
         zip_safe=False,

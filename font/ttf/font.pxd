@@ -22,4 +22,6 @@ cdef class Font:
 
     cdef public dict tableRecord                # dict[FontDirectory] 16*numTables
 
+    cpdef list char_widths(self, str text, double font_size)
+
     cpdef void load(self, str file)

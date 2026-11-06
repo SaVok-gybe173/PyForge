@@ -7,6 +7,24 @@ cdef class Font:
     def __init__(self, file: str | None = None):
         if isinstance(file, str): self.load(<str>file)
 
+    cpdef list char_widths(self, str text, double font_size):
+        cdef double scale = font_size / self._head.unitsPerEm
+        cdef list result = []
+        cdef list aw = self._hmtx.advanceWidth
+        cdef Py_ssize_t n = len(aw)
+        cdef Py_ssize_t i
+        cdef int code, gid
+
+        for i in range(len(text)):
+            code = ord(text[i])
+            gid = self._cmap.lookup(code)
+            if 0 <= gid < n:
+                result.append(aw[gid] * scale)
+            else:
+                result.append(0.0)
+
+        return result
+
     cpdef void load(self, str file):
         cdef bytes data
         with open(file, 'r+b') as f:

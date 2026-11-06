@@ -83,6 +83,12 @@ class Font:
             file (str): путь к .ttf файлу
         """
 
+    def char_widths(self, text: str, font_size: float) -> list[float]:
+        """
+        Возвращает список ширин каждого символа строки в пикселях
+        при заданном размере шрифта (font_size в тех же единицах, что и рендер —
+        обычно пиксели).
+        """
 
     def load(self, file: str):
         """

@@ -5,6 +5,8 @@ from PyForge.easel.surface import Surface
 from PyForge.math.markup import Point, Size
 from PyForge.easel.event import CommonEvent, MouseButtonEvent, MouseMotionEvent
 from PyForge._core.creating.input.core import GraphicsInputTextCore
+from PyForge.easel.draw import rect
+from PyForge.math.rect import Rect
 
 FONT = "minecraft.ttf"
 
@@ -17,9 +19,11 @@ class TextLine(PfObjectIMG):
     _color: tuple
     anchor: int = 0 # начальный символ
     idx: int = 0 # конечный символ
-    dragging: bool # активно ли щас выделение
+    dragging: bool = False # активно ли щас выделение
+    selected_rect: Rect # область выделения
 
-    def __init__(self, page: Window, left_top: Point | tuple[int, int], font: str | Font, text: str, size_px: int, color: tuple[int, int, int] = (255, 255, 255)):
+    def __init__(self, page: Window, left_top: Point | tuple[int, int], 
+                font: str | Font, text: str, size_px: int, color: tuple[int, int, int] = (255, 255, 255)):
         if isinstance(font, str): self.font = Font(font)
         elif isinstance(font, Font): self.font = font
         else: return ValueError()
@@ -28,21 +32,36 @@ class TextLine(PfObjectIMG):
         self.core = GraphicsInputTextCore(text)
         sur, self._min_y = render_text(self.font, text, size_px, color)
         super().__init__(page, left_top, sur)
-        self.layout =   self.font.layout(text, size_px, self.top)
+        self.layout =   self.font.layout(text, size_px, self.left)
         print(self.layout)
+        self.selected_rect = Rect(0, 0, 0, 0)
 
     def draw(self, win: Surface): # убрать потом
+        rect(win, (0x32, 0x97, 0xfd, 0x44), self.selected_rect)
         win.blit(self.img, (self.left, self.top-self._min_y))
 
     # события
     def mousebuttondown(self, common: CommonEvent, button: MouseButtonEvent):
-        self.idx = self.ancho = self.core.hit_test(button.x, self.layout[0], self.layout[1])
+        self.idx = self.anchor = self.core.hit_test(button.x, self.layout[0], self.layout[1])
         self.dragging = True
         self.core.set_selection(self.anchor, self.idx) # каретка, без выделения
 
     def mousemotion(self, common: CommonEvent, motion: MouseMotionEvent):
-        self.idx = self.core.hit_test(motion.x, self.layout[0], self.layout[1])
-        self.core.set_selection(self.anchor, self.idx)
+
+        if self.dragging:
+            self.idx = self.core.hit_test(motion.x, self.layout[0], self.layout[1])
+            self.core.set_selection(self.anchor, self.idx)
+
+            start = min(self.anchor, self.idx)
+            end = max(self.anchor, self.idx)
+
+            x_start = self.layout[0][start] if start != len(self.core) else self.left+self.img.width
+            x_end = self.layout[0][end] if end !=  len(self.core) else self.left+self.img.width
+
+            self.selected_rect.left = x_start
+            self.selected_rect.top = self.top - self._min_y
+            self.selected_rect.width = x_end - x_start
+            self.selected_rect.height = self.img.height
 
     def mousebuttonup(self, common, button):
         self.dragging = False

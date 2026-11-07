@@ -1,9 +1,9 @@
 cdef class InputTextCore:
     cdef str _text
     cdef int _shift
-    cdef int selectionX
-    cdef int selectionY
-    cdef bint selection
+    cdef public int selectionX
+    cdef public int selectionY
+    cdef public bint selection
 
     cdef void _clear(self)
 

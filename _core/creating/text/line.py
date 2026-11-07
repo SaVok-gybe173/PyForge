@@ -56,7 +56,7 @@ class _TextLine(PfObjectIMG):
         x_end = self.layout[0][end] if end !=  len(self.core) else self.left+self.img.width
 
         self.selected_rect.left = x_start
-        self.selected_rect.top = self.top - self._min_y
+        self.selected_rect.top = self.top
         self.selected_rect.width = x_end - x_start
         self.selected_rect.height = self.img.height
     def mousemotion(self, common: CommonEvent, motion: MouseMotionEvent):
@@ -66,7 +66,7 @@ class _TextLine(PfObjectIMG):
     def mousebuttonup(self, common, button):
         self.dragging = False
 
-    def keyup(self, common: CommonEvent, key: KeyboardEvent):
+    def keydown(self, common: CommonEvent, key: KeyboardEvent):
         if key.keysym.sym == sdl2.SDLK_c and (key.keysym.mod & sdl2.KMOD_CTRL):
             try:
                 if self.core.selection:

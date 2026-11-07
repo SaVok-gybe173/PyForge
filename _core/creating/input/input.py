@@ -46,7 +46,7 @@ class InputLine(PfObject):
         return self._active
 
     # обработка клавиш
-    def keyup(self, common: CommonEvent, key: KeyboardEvent):
+    def keydown(self, common: CommonEvent, key: KeyboardEvent):
         if key.keysym.sym == sdl2.SDLK_SPACE: # пробел
             for f in self._log_txt_func:
                 f(self.text)
@@ -65,7 +65,7 @@ class InputLine(PfObject):
                 printError(f"[{self}] [BufferError] Не удалось положить текст в буфер.")
             except Exception as e:
                 printError(f"[{self}] [{type(e).__name__}] {e}")
-                raise e
+
         elif key.keysym.sym == sdl2.SDLK_BACKSPACE: # удаление символа
             if self.text.backText():
                 for f in self._log_removal_func:

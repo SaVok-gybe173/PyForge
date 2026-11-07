@@ -117,7 +117,7 @@ class Scene(CoreObject):
 
     def keydown(self, common, key):
         for object in self.objects:
-            object.keydown(key, common, key)
+            object.keydown(common, key)
     def keyup(self, common, key):
         for object in self.objects:
             object.keyup(common, key)

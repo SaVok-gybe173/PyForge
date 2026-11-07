@@ -4,5 +4,6 @@ from ...easel.surface import Surface
 
 class TextLine(_TextLine):
     def draw(self, win: Surface):
-        rect(win, self.highlighting, self.selected_rect)
-        win.blit(self.img, (self.left, self.top-self._min_y))
+        if self.core.selection:
+            rect(win, self.highlighting, self.selected_rect)
+        win.blit(self.img, (self.left, self.top))

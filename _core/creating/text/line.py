@@ -1,16 +1,17 @@
-from PyForge.font.ttf.font import Font
-from PyForge.font.ttf.render import render_text
-from PyForge.easel import Window, PfObjectIMG
-from PyForge.easel.surface import Surface
-from PyForge.math.markup import Point, Size
-from PyForge.easel.event import CommonEvent, MouseButtonEvent, MouseMotionEvent
-from PyForge._core.creating.input.core import GraphicsInputTextCore
-from PyForge.easel.draw import rect
-from PyForge.math.rect import Rect
+from ..input.core import GraphicsInputTextCore
+from ....font.ttf.font import Font
+from ....font.ttf.render import render_text
+from ....math.markup import Point, Size
+from ....math.rect import Rect
+from ....easel.event import CommonEvent, MouseButtonEvent, MouseMotionEvent, KeyboardEvent
+from ....easel.window import Window
+from ....easel.object import PfObjectIMG
+from ....base.scrap import get_text_buffer, set_text_buffer
+from ....base.logger import printError
 
-FONT = "minecraft.ttf"
+import sdl2
 
-class TextLine(PfObjectIMG):
+class _TextLine(PfObjectIMG):
     font: Font # шрифт
     core: GraphicsInputTextCore # ядро текста
     layout: tuple[list[float], list[float], list[int]] # тех инфа для выделения
@@ -23,7 +24,8 @@ class TextLine(PfObjectIMG):
     selected_rect: Rect # область выделения
 
     def __init__(self, page: Window, left_top: Point | tuple[int, int], 
-                font: str | Font, text: str, size_px: int, color: tuple[int, int, int] = (255, 255, 255)):
+                font: str | Font, text: str, size_px: int, color: tuple[int, int, int] = (255, 255, 255),
+                highlighting: tuple[int, int, int, int] = (0x32, 0x97, 0xfd, 0x44)):
         if isinstance(font, str): self.font = Font(font)
         elif isinstance(font, Font): self.font = font
         else: return ValueError()
@@ -35,10 +37,7 @@ class TextLine(PfObjectIMG):
         self.layout =   self.font.layout(text, size_px, self.left)
         print(self.layout)
         self.selected_rect = Rect(0, 0, 0, 0)
-
-    def draw(self, win: Surface): # убрать потом
-        rect(win, (0x32, 0x97, 0xfd, 0x44), self.selected_rect)
-        win.blit(self.img, (self.left, self.top-self._min_y))
+        self.highlighting = highlighting
 
     # события
     def mousebuttondown(self, common: CommonEvent, button: MouseButtonEvent):
@@ -46,25 +45,36 @@ class TextLine(PfObjectIMG):
         self.dragging = True
         self.core.set_selection(self.anchor, self.idx) # каретка, без выделения
 
+    def selection(self, anchor, idx):
+        self.idx, self.anchor = idx, anchor
+        self.core.set_selection(self.anchor, self.idx)
+        
+        start = min(self.anchor, self.idx)
+        end = max(self.anchor, self.idx)
+
+        x_start = self.layout[0][start] if start != len(self.core) else self.left+self.img.width
+        x_end = self.layout[0][end] if end !=  len(self.core) else self.left+self.img.width
+
+        self.selected_rect.left = x_start
+        self.selected_rect.top = self.top - self._min_y
+        self.selected_rect.width = x_end - x_start
+        self.selected_rect.height = self.img.height
     def mousemotion(self, common: CommonEvent, motion: MouseMotionEvent):
-
         if self.dragging:
-            self.idx = self.core.hit_test(motion.x, self.layout[0], self.layout[1])
-            self.core.set_selection(self.anchor, self.idx)
-
-            start = min(self.anchor, self.idx)
-            end = max(self.anchor, self.idx)
-
-            x_start = self.layout[0][start] if start != len(self.core) else self.left+self.img.width
-            x_end = self.layout[0][end] if end !=  len(self.core) else self.left+self.img.width
-
-            self.selected_rect.left = x_start
-            self.selected_rect.top = self.top - self._min_y
-            self.selected_rect.width = x_end - x_start
-            self.selected_rect.height = self.img.height
-
+            self.selection(self.anchor, self.core.hit_test(motion.x, self.layout[0], self.layout[1]))
+            
     def mousebuttonup(self, common, button):
         self.dragging = False
+
+    def keyup(self, common: CommonEvent, key: KeyboardEvent):
+        if key.keysym.sym == sdl2.SDLK_c and (key.keysym.mod & sdl2.KMOD_CTRL):
+            try:
+                if self.core.selection:
+                    set_text_buffer(self.core.get_selected_text())
+            except BufferError as e:
+                printError(f"[{self}] [BufferError] Не удалось положить текст в буфер.")
+            except Exception as e:
+                printError(f"[{self}] [{type(e).__name__}] {e}")
 
     # сеттеры и геттеры
     @property

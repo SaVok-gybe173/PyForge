@@ -381,7 +381,7 @@ class TextEditingExtEvent:      # SDL_TEXTEDITING_EXT
 class TextInputEvent:           # SDL_TEXTINPUT
     # Готовый текст после завершения IME/нажатия клавиши. Используйте для текстовых полей ввода.
     windowID: uint32
-    text: str
+    text: bytes
 
 class MouseMotionEvent:         # SDL_MOUSEMOTION
     # Движение мыши

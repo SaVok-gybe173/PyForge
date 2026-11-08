@@ -1,29 +1,28 @@
 import sdl2
 from typing import Callable
-from .core import InputTextCore
-from ....easel.object import PfObject
 from ....easel.window import Window
 from ....widget.button import Button
 from ....math.markup import Point, Size
 from ....easel.event import TextInputEvent, KeyboardEvent, CommonEvent
 from ....base.scrap import get_text_buffer, set_text_buffer
 from ....base.logger import printError
+from ..text.line import _TextLine
+from ....font.ttf.font import Font
 
-class InputLine(PfObject):
+class _InputLine(_TextLine):
     _log_txt_func: list[Callable]
     _log_removal_func: list[Callable]
     _log_key_func: list[Callable]
     _log_index_func: list[Callable]
 
     _active: bool = False   # активен ли ввод
-    text: InputTextCore     # оболочка для работы с текстом
 
     def __init__(self, 
                 page: Window,
                 left_top: Point | tuple[int, int],
-                width_height: Size | tuple[int, int],
-                text: str='',
-                color: tuple[int, int, int] = (255,255,255),
+                length: int,
+                font: str | Font, text: str, size_px: int, color: tuple[int, int, int] = (255, 255, 255),
+                highlighting: tuple[int, int, int, int] = (0x32, 0x97, 0xfd, 0x44)
                 ) -> None:
         """
         Ввод текста в окно разметом width_height
@@ -32,15 +31,15 @@ class InputLine(PfObject):
         Args:
             page (Window): ссылка на главное окно программы
             left_top (Point): расположение окна для ввода
-            width_height (Size): размеры окна для ввода
+            length (int): длина окна для ввода (высота зажаеться size_px через шрифт)
             text (str): изначальный текст
             color (tuple[int, int, int]): цвет текста
         """
-        
-        super().__init__(page, left_top, width_height)
-        self.text = InputTextCore(text)
-        self.text.shift = len(self.text)+1
+        self.length = length
+        super().__init__(page, left_top, font, text, size_px, color, highlighting)
+        self.core.shift = len(self.text)+1
         self.color = color
+        self.on()
 
     def __bool__(self):
         return self._active
@@ -49,36 +48,29 @@ class InputLine(PfObject):
     def keydown(self, common: CommonEvent, key: KeyboardEvent):
         if key.keysym.sym == sdl2.SDLK_SPACE: # пробел
             for f in self._log_txt_func:
-                f(self.text)
-        elif key.keysym.sym == sdl2.SDLK_v and (key.keysym.mod & sdl2.KMOD_CTRL): # ctrl + v
-            try:
-                self.text.addText(get_text_buffer())
-            except BufferError as e:
-                printError(f"[{self}] [BufferError] {e}")
-        elif key.keysym.sym == sdl2.SDLK_c and (key.keysym.mod & sdl2.KMOD_CTRL): # ctrl + c
-            try:
-                if self.text.selection:
-                    set_text_buffer(self.text.get_selected_text())
-                else:
-                    set_text_buffer(self.text)
-            except BufferError as e:
-                printError(f"[{self}] [BufferError] Не удалось положить текст в буфер.")
-            except Exception as e:
-                printError(f"[{self}] [{type(e).__name__}] {e}")
+                f(self.core.text)
+        elif key.keysym.mod & sdl2.KMOD_CTRL:
+            if key.keysym.sym == sdl2.SDLK_v: # ctrl + v
+                try:
+                    self.core.addText(get_text_buffer())
+                except BufferError as e:
+                    printError(f"[{self}] [BufferError] {e}")
+            else:
+                super().keydown(common, key)
 
         elif key.keysym.sym == sdl2.SDLK_BACKSPACE: # удаление символа
-            if self.text.backText():
+            if self.core.backText():
                 for f in self._log_removal_func:
-                    f(self.text)
+                    f(self.core.text)
             else:
                 printError(f"[{self}] [keyup] Ошибка при удаление символа")
         elif key.keysym.sym == sdl2.SDLK_LEFT: # влево
-            self.text.ShiftLeft()
+            self.core.ShiftLeft()
         elif key.keysym.sym == sdl2.SDLK_RIGHT:
-            self.text.ShiftRight()
+            self.core.ShiftRight()
 
     def textinput(self, common: CommonEvent, text: TextInputEvent):
-        self.text.addText(text.text)
+        self.addText(text.text.decode("utf-8"))
 
     # декораторы
     def log_enter(self, func: Callable):
@@ -104,11 +96,17 @@ class InputLine(PfObject):
         return self._active
     @active.setter
     def active(self, active: bool) -> None:
+        print(sdl2.SDL_IsTextInputActive())
         self._active = active
         if sdl2.SDL_IsTextInputActive():
             if not active:
                 sdl2.SDL_StopTextInput()   
         else:
             if active:
-                sdl2.SDL_StartTextInput()     
+                sdl2.SDL_StartTextInput()
+
+    def on(self):
+        self.active = True
+    def off(self):
+        self.active = False
 

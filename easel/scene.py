@@ -135,6 +135,10 @@ class Scene(CoreObject):
         for object in self.objects:
             object.mousewheel(common, wheel)
 
+    def textinput(self, common, text):
+        for object in self.objects:
+            object.textinput(common, text)
+
 # методы событий по их типу
 EVENTS_METHOD = {
     event_name(QUIT): (lambda obj, event: obj.quit(event.common, event.quit)),

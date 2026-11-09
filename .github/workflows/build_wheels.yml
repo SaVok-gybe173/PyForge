@@ -52,8 +52,6 @@ jobs:
 
       - name: Build wheels
         uses: pypa/cibuildwheel@v4.3.5
-        with:
-          extras: uv
         env:
           CIBW_PLATFORM: ${{ matrix.platform }}
           CIBW_ARCHS_LINUX: "auto aarch64 i686"

@@ -108,7 +108,6 @@ def main():
     ),
     python_requires=">=3.12",
     zip_safe=False,
-    script_args=["bdist_wheel", "--dist-dir", "dist"],
 )
     finally:
         _cleanup()

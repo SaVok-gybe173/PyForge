@@ -18,14 +18,12 @@ jobs:
             platform: linux
           - os: windows-latest
             platform: windows
-          - os: macos-13
-            platform: macos
-          - os: macos-14
+          - os: macos-26
             platform: macos
           - os: ubuntu-latest
             platform: android
-          #- os: macos-14
-          #  platform: ios
+          # - os: macos-26              
+          #   platform: ios
 
     steps:
       - uses: actions/checkout@v4
@@ -44,14 +42,14 @@ jobs:
         uses: android-actions/setup-android@v3
 
       - name: Build wheels
-        uses: pypa/cibuildwheel@v4          
+        uses: pypa/cibuildwheel@v4.3.5
         with:
-          package-dir: ./PyForge            
+          package-dir: ./PyForge
         env:
           CIBW_PLATFORM: ${{ matrix.platform }}
           CIBW_ARCHS_LINUX: "auto aarch64 i686"
+          CIBW_ARCHS_MACOS: "x86_64 arm64"
           CIBW_ARCHS_ANDROID: "arm64_v8a armeabi_v7a x86_64 x86"
-          CIBW_ARCHS_IOS: "arm64_iphoneos arm64_iphonesimulator x86_64_iphonesimulator"
 
       - uses: actions/upload-artifact@v4
         with:

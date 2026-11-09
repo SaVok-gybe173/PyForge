@@ -95,21 +95,21 @@ def main():
         packages = ["PyForge"] + ["PyForge." + p for p in subpackages]
 
         setup(
-            name="PyForge",
-            version="0.1.0",
-            packages=packages,
-            package_dir={"": "."},
-            include_package_data=False,
-            ext_modules=cythonize(
-                _build_extensions(),
-                language_level=3,
-                annotate=False,
-                force=True,
-                include_path=[_here, STAGE_DIR],
-            ),
-            python_requires=">=3.12",
-            zip_safe=False,
-        )
+    name="PyForge",
+    version="0.1.0",
+    packages=packages,
+    package_dir={"": "."},
+    include_package_data=False,
+    ext_modules=cythonize(
+        _build_extensions(),
+        language_level=3,
+        annotate=False,
+        include_path=[_here, STAGE_DIR],
+    ),
+    python_requires=">=3.12",
+    zip_safe=False,
+    script_args=["bdist_wheel", "--dist-dir", "dist"],
+)
     finally:
         _cleanup()
 

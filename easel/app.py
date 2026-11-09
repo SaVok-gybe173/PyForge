@@ -15,7 +15,7 @@ class App(Window):
     
     
     def __init__(self,
-                caption: str | bytes,
+                caption: str | bytes = b'My Engine',
                 point: tuple[int, int] | None = None,
                 size: tuple[int, int] = (400, 300), 
                 color: tuple[int, int, int] = (255, 255, 255), 
@@ -56,10 +56,10 @@ class App(Window):
         for i in self.mods_list:
             i.event(event)
         
-    def close(self):
-        super().close()
+    def close(self, common, quit):
+        super().close( common, quit)
         for i in self.mods_list:
-            i.close()
+            i.close(common, quit)
         
     def load_mods(self):
 
@@ -75,14 +75,3 @@ class App(Window):
                     except Exception as e:
                         for frame in extract_tb(e.__traceback__):
                             printError(f"[{mod.__name__}] [{frame.name}] {e}")
-
-if __name__ == '__main__':
-    import multiprocessing
-    import sys
-    
-    multiprocessing.freeze_support()
-    
-    if getattr(sys, 'frozen', False):
-        os.environ['PATH'] = sys._MEIPASS + os.pathsep + os.environ['PATH']
-    
-    App().start()

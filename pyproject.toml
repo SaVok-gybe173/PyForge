@@ -15,7 +15,8 @@ dependencies = [
 ]
 
 [tool.cibuildwheel]
-before-build = "pip install setuptools wheel"
+#before-build = "pip install setuptools wheel"
+build-verbosity = 1
 build = ["cp312-*", "cp313-*", "cp314-*"]
 skip = ["*-musllinux_*", "pp*", "graalpy*"]
 build-frontend = "build"

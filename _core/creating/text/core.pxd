@@ -23,8 +23,6 @@ cdef class InputTextCore:
     cpdef void select_all(self)
     cpdef void delete_selection(self)
 
-cdef class GraphicsInputTextCore(InputTextCore):
-
     cpdef int hit_test(self, double x_px, list xs, list widths)
     cpdef void set_selection(self, int anchor, int cursor)
 

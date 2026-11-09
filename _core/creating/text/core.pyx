@@ -157,8 +157,6 @@ cdef class InputTextCore:
     def __str__(self) -> str:
         return self._text
 
-# позволяет работать попиксельно
-cdef class GraphicsInputTextCore(InputTextCore):
     # доп фунция
     cpdef int hit_test(self, double x_px, list xs, list widths):
         """

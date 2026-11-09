@@ -1,4 +1,4 @@
-from .core import GraphicsInputTextCore
+from .core import InputTextCore
 from ....font.ttf.font import Font
 from ....font.ttf.render import render_text
 from ....math.markup import Point, Size
@@ -13,7 +13,7 @@ import sdl2
 
 class _TextLine(PfObjectIMG):
     font: Font # шрифт
-    core: GraphicsInputTextCore # ядро текста
+    core: InputTextCore # ядро текста
     layout: tuple[list[float], list[float], list[int]] # тех инфа для выделения
     _min_y: int
     _size_px: int
@@ -31,7 +31,7 @@ class _TextLine(PfObjectIMG):
         else: return ValueError()
         self._size_px = size_px
         self._color = color
-        self.core = GraphicsInputTextCore(text)
+        self.core = InputTextCore(text)
         sur, self._min_y = render_text(self.font, text, size_px, color)
         super().__init__(page, left_top, sur)
         self.layout =   self.font.layout(text, size_px, self.left)
@@ -41,20 +41,49 @@ class _TextLine(PfObjectIMG):
 
     
     def updateMeta(self):
+        """Обновления мета данных для выделения (если не обновлять то при выделении обьект может выдать ошибку)"""
         self.layout =   self.font.layout(self.text, self.size_px, self.left)
         self.img, self._min_y = render_text(self.font, self.core.text, self.size_px, self._color)
 
     # оболочка над GraphicsInputTextCore
-    def clear(self): # очистка выделения
-        self.core.clear_selection()
-        self.selected_rect.x = self.selected_rect.y = self.selected_rect.w = self.selected_rect.h = 0
 
     def addText(self, text):
+        """Вставка с заменой выделения (если оно есть)."""
         self.core.addText(text)
         self.updateMeta()
 
     def backText(self):
         self.core.backText()
+        self.updateMeta()
+
+    def delText(self):
+        """Удалит символ или удали выделенную часть"""
+        self.core.delText()
+        self.updateMeta()
+
+    # выделение текста
+    def clear(self): # очистка выделения
+        "clear_selection"
+        self.core.clear_selection()
+        self.selected_rect.x = self.selected_rect.y = self.selected_rect.w = self.selected_rect.h = 0
+
+    def select_all(self):
+        "Выделяет весь текст"
+        self.core.select_all()
+        self.updateMeta()
+
+    def get_selected_text(self):
+        "Возвращает выделенный текст"
+        return self.core.get_selected_text()
+
+    def delete_selection(self):
+        "Удалить выделенный фрагмент курсор ставится на место выделения."
+        self.core.delete_selection()
+        self.updateMeta()
+
+    def set_selection(self, anchor: int, cursor: int):
+        "Установить выделение из двух индексов (для мыши). Если anchor == cursor - это каретка, выделение пустое."
+        self.core.set_selection(anchor, cursor)
         self.updateMeta()
 
     # события

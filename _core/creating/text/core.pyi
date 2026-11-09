@@ -59,9 +59,6 @@ class InputTextCore:
         курсор ставится на место выделения.
         """
 
-# позволяет работать попиксельно
-class GraphicsInputTextCore(InputTextCore):
-
     # доп фунция
     def hit_test(self, x_px: float, xs: list, widths: list) -> int:
         """

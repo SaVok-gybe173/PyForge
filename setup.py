@@ -1,8 +1,10 @@
 import glob
 from setuptools import setup, Extension, find_namespace_packages
 from Cython.Build import cythonize
+import sys, os
 
-
+_here = os.path.dirname(os.path.abspath(__file__))
+sys.path = [p for p in sys.path if os.path.abspath(p or ".") != _here]
 
 def build_extensions():
     sources = glob.glob("**/*.pyx", recursive=True)

@@ -41,6 +41,11 @@ class _InputLine(_TextLine):
         self.color = color
         self.on()
 
+        self._log_txt_func = []
+        self._log_removal_func = []
+        self._log_key_func = []
+        self._log_index_func = []
+
     def __bool__(self):
         return self._active
 

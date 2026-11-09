@@ -1,10 +1,10 @@
-from pygame.mixer import *
 from typing import Optional, Callable, Union, Dict
 from .._core.resources import TypeFile as TypeSound, load_dir
-import pygame as pg
+from ..easel.surface import Surface
 import zipfile
 import tempfile
 import shutil
+import sdl2.audio
 
 PYFORGE_SOUNDS = {}
 
@@ -13,7 +13,7 @@ def load(file: str):
 
 class AppSound:
     temp = tempfile.mkdtemp()
-    texture: dict[str, dict | pg.Surface]
+    texture: dict[str, dict | Surface]
 
     _instance: "AppSound" = None
     __update_fun: list[Callable] = []

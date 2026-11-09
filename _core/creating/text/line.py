@@ -1,4 +1,4 @@
-from ..input.core import GraphicsInputTextCore
+from .core import GraphicsInputTextCore
 from ....font.ttf.font import Font
 from ....font.ttf.render import render_text
 from ....math.markup import Point, Size
@@ -39,9 +39,12 @@ class _TextLine(PfObjectIMG):
         self.selected_rect = Rect(0, 0, 0, 0)
         self.highlighting = highlighting
 
+    
     def updateMeta(self):
         self.layout =   self.font.layout(self.text, self.size_px, self.left)
+        self.img, self._min_y = render_text(self.font, self.core.text, self.size_px, self._color)
 
+    # оболочка над GraphicsInputTextCore
     def clear(self): # очистка выделения
         self.core.clear_selection()
         self.selected_rect.x = self.selected_rect.y = self.selected_rect.w = self.selected_rect.h = 0
@@ -49,7 +52,10 @@ class _TextLine(PfObjectIMG):
     def addText(self, text):
         self.core.addText(text)
         self.updateMeta()
-        self.img, self._min_y = render_text(self.font, self.core.text, self.size_px, self._color)
+
+    def backText(self):
+        self.core.backText()
+        self.updateMeta()
 
     # события
     def mousebuttondown(self, common: CommonEvent, button: MouseButtonEvent):
@@ -102,7 +108,6 @@ class _TextLine(PfObjectIMG):
     def text(self, text: str) -> None:
         self.core.text = text
         self.updateMeta()
-        self.img, self._min_y = render_text(self.font, text, self._size_px, self._color)
 
     @property
     def size_px(self) -> int:

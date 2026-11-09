@@ -1,5 +1,4 @@
 from typing import Callable, Any
-import pygame as pg
 import os
 
 class TypeFile:

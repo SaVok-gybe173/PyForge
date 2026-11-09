@@ -64,5 +64,5 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: cibw-wheels-${{ matrix.os }}-${{ matrix.platform }}-${{ strategy.job-index }}
-          path: ./PyForge/wheelhouse/*.whl
+          path: ./wheelhouse/*.whl
           if-no-files-found: warn

@@ -14,13 +14,11 @@ dependencies = [
     "pysdl2-dll",
 ]
 
-[tool.cibuildwheel]
-#before-build = "pip install setuptools wheel"
-build-verbosity = 1
 build = ["cp312-*", "cp313-*", "cp314-*"]
 skip = ["*-musllinux_*", "pp*", "graalpy*"]
 build-frontend = "build"
-# before-build = "uv pip install setuptools wheel"
+build-verbosity = 1
+environment = "PYTHONSAFEPATH=1"
 
 [tool.cibuildwheel.linux]
 archs = ["auto", "i686", "aarch64"]

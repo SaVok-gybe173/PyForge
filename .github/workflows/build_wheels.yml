@@ -57,7 +57,7 @@ jobs:
           CIBW_ARCHS_LINUX: "auto aarch64 i686"
           CIBW_ARCHS_MACOS: "x86_64 arm64"
           CIBW_ARCHS_ANDROID: "arm64_v8a armeabi_v7a x86_64 x86"
-          CIBW_BEFORE_BUILD: "pip install setuptools wheel"
+          CIBW_BEFORE_BUILD: "pip install setuptools wheel Cython numpy"
 
       - uses: actions/upload-artifact@v4
         with:

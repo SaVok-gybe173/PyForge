@@ -9,7 +9,7 @@ def build_extensions():
     extensions = []
     for src in sources:
         module_name = "PyForge." + src[:-4].replace("\\", "/").replace("/", ".")
-        extensions.append(Extension(module_name, [src], include_dirs=["."]))
+        extensions.append(Extension(module_name, [src], include_dirs=[numpy.get_include(), "."]))
     return extensions
 
 

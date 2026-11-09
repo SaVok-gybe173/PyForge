@@ -79,7 +79,8 @@ def main():
             zip_safe=False,
         )
     finally:
-        _cleanup()
+        print("SUBPACKAGES:", subpackages)
+        print("PACKAGES:", packages)
 
 
 if __name__ == "__main__":

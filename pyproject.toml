@@ -30,8 +30,3 @@ archs = ["AMD64", "x86"]
 
 [tool.cibuildwheel.macos]
 archs = ["x86_64", "arm64", "universal2"]
-
-[tool.setuptools.packages.find]
-where = ["."]
-include = ["*"]
-exclude = ["build*", "dist*", "wheelhouse*", "tests*", "examples*", "PyForge"]

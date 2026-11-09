@@ -1,6 +1,6 @@
 import os
 import sys
-# Убираем корень проекта из sys.path, чтобы папка math/ не затеняла стандартный модуль
+
 _here = os.path.dirname(os.path.abspath(__file__))
 sys.path = [p for p in sys.path if os.path.abspath(p or '.') != _here]
 
@@ -12,39 +12,32 @@ from Cython.Build import cythonize
 import numpy
 
 
-def _create_pyforge_link():
-    """Создаёт PyForge -> . чтобы Cython нашёл .pxd по пути PyForge/..."""
-    link = os.path.join(_here, "PyForge")
-    if os.path.exists(link):
-        return
-    try:
-        os.symlink(".", link)  # Linux / macOS
-    except (OSError, NotImplementedError):
-        # Windows: симлинки требуют прав — копируем .pxd файлы
-        os.makedirs(link, exist_ok=True)
-        for root, _, files in os.walk(_here):
-            if "PyForge" in root.split(os.sep):
-                continue
-            for f in files:
-                if f.endswith(".pxd"):
-                    src = os.path.join(root, f)
-                    rel = os.path.relpath(src, _here)
-                    dst = os.path.join(link, rel)
-                    os.makedirs(os.path.dirname(dst), exist_ok=True)
-                    shutil.copy2(src, dst)
+def _copy_pxd_to_pyforge():
+    """Копирует .pxd в PyForge/, чтобы Cython нашёл их по имени модуля PyForge.*"""
+    dst_root = os.path.join(_here, "PyForge")
+    if os.path.exists(dst_root):
+        shutil.rmtree(dst_root, ignore_errors=True)
+    for root, dirs, files in os.walk(_here):
+        # не заходим в служебные папки
+        dirs[:] = [d for d in dirs if d not in {".git", "build", "dist", "wheelhouse", "__pycache__", ".venv", "venv"}]
+        for f in files:
+            if f.endswith(".pxd"):
+                src = os.path.join(root, f)
+                rel = os.path.relpath(src, _here)
+                dst = os.path.join(dst_root, rel)
+                os.makedirs(os.path.dirname(dst), exist_ok=True)
+                shutil.copy2(src, dst)
 
 
-def _cleanup_pyforge_link():
-    """Удаляет временный симлинк/папку после сборки."""
-    link = os.path.join(_here, "PyForge")
-    if os.path.islink(link):
-        os.unlink(link)
-    elif os.path.isdir(link):
-        shutil.rmtree(link, ignore_errors=True)
+def _cleanup():
+    shutil.rmtree(os.path.join(_here, "PyForge"), ignore_errors=True)
 
 
 def build_extensions():
-    sources = glob.glob("**/*.pyx", recursive=True)
+    sources = [
+        s for s in glob.glob("**/*.pyx", recursive=True)
+        if not s.startswith("PyForge" + os.sep) and not s.startswith("PyForge/")
+    ]
     extensions = []
     for src in sources:
         module_name = "PyForge." + src[:-4].replace("\\", "/").replace("/", ".")
@@ -59,17 +52,12 @@ def build_extensions():
 
 
 def main():
-    _create_pyforge_link()
-
+    _copy_pxd_to_pyforge()
     try:
         subpackages = find_namespace_packages(
             where=".",
             include=["*"],
-            exclude=[
-                "PyForge", "PyForge.*",       # временный симлинк
-                "build*", "dist*", "wheelhouse*",
-                "tests*", "examples*", "docs*",
-            ],
+            exclude=["PyForge", "PyForge.*", "build*", "dist*", "wheelhouse*", "tests*", "examples*"],
         )
         packages = ["PyForge"] + ["PyForge." + p for p in subpackages]
 
@@ -91,7 +79,7 @@ def main():
             zip_safe=False,
         )
     finally:
-        _cleanup_pyforge_link()
+        _cleanup()
 
 
 if __name__ == "__main__":

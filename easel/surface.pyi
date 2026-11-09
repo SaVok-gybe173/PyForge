@@ -1,7 +1,7 @@
 from typing import Final, Tuple, Union, overload
 from sdl2.surface import SDL_Surface
 from sdl2.rect import SDL_Rect
-from ..math.rect import Rect
+from ..pfmath.rect import Rect
 
 # Флаги поверхности (аналог флагов в pygame при создании Surface)
 PREALLOC: Final[int]    # 0x00000001 Поверхность использует предварительно выделенную память.

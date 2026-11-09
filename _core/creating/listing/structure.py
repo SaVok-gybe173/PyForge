@@ -32,8 +32,8 @@ from ....easel.object import PfObject, PfObjectIMG
 from ....easel.surface import Surface
 from ....easel.window import Window
 from ....easel.event import Event, MOUSEBUTTONDOWN, MOUSEWHEEL, CommonEvent, MouseButtonEvent, MouseWheelEvent
-from ....math.markup import Size, Point
-from ....math.rect import Rect
+from ....pfmath.markup import Size, Point
+from ....pfmath.rect import Rect
 
 from ._list_math import (
     build_prefix, total_length, find_visible_range, find_index_at,

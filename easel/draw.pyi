@@ -1,7 +1,7 @@
 from typing import List, Sequence, Tuple, Union
 
 from .surface import Surface
-from ..math.rect import Rect
+from ..pfmath.rect import Rect
 
 type _Color = Union[
     Tuple[int, int, int],

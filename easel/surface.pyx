@@ -14,7 +14,7 @@ import sdl2.surface as sdl2_surface
 import sdl2.pixels  as sdl2_pixels
 import sdl2.rect    as sdl2_rect
 
-from ..math.rect cimport Rect
+from ..pfmath.rect cimport Rect
 from ..base.logger import printInfo, printError
 
 

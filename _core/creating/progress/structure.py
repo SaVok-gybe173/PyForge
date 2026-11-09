@@ -1,8 +1,8 @@
 from ....easel.object import PfObject
 from ....easel.window import Window
 from .calculation_progress import ProgressBarCalc
-from ....math.markup import Point, Size
-from ....math.rect import Rect
+from ....pfmath.markup import Point, Size
+from ....pfmath.rect import Rect
 
 class _ProgressBar(ProgressBarCalc, PfObject):
     def __init__(self, page: Window, left_top: tuple[int, int] | Point, width_height: tuple[int, int] | Size, color: tuple[int, int, int]):

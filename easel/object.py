@@ -1,8 +1,8 @@
 from copy import deepcopy
 from .surface import Surface
 from ..base.logger import ObjectMeta
-from ..math.rect import Rect
-from ..math.markup import Size, Point, isListType
+from ..pfmath.rect import Rect
+from ..pfmath.markup import Size, Point, isListType
 from .event import (Event,
         CommonEvent,
         DisplayEvent,

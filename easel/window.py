@@ -7,7 +7,7 @@ from traceback import extract_tb
 from .scene import Scene, EVENTS_METHOD
 from ..gpu.locals import IS_IMPORT_GL, InitGl
 from ..base.logger import printError, printInfo
-from ..math.time import Clock
+from ..pfmath.time import Clock
 from .event import EVENT_NAMES, CommonEvent, QuitEvent, get as getevent, Event
 from .surface import Surface
 from sdl2.video import (

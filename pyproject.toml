@@ -14,14 +14,15 @@ dependencies = [
     "pysdl2-dll",
 ]
 
+[tool.cibuildwheel]
 build = ["cp312-*", "cp313-*", "cp314-*"]
 skip = ["*-musllinux_*", "pp*", "graalpy*"]
 build-frontend = "build"
 build-verbosity = 1
-environment = "PYTHONSAFEPATH=1"
 
 [tool.cibuildwheel.linux]
 archs = ["auto", "i686", "aarch64"]
+environment = "PYTHONSAFEPATH=1"
 
 [tool.cibuildwheel.windows]
 archs = ["AMD64", "x86"]

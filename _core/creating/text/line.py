@@ -1,8 +1,8 @@
 from .core import InputTextCore
 from ....font.ttf.font import Font
 from ....font.ttf.render import render_text
-from ....math.markup import Point, Size
-from ....math.rect import Rect
+from ....pfmath.markup import Point, Size
+from ....pfmath.rect import Rect
 from ....easel.event import CommonEvent, MouseButtonEvent, MouseMotionEvent, KeyboardEvent
 from ....easel.window import Window
 from ....easel.object import PfObjectIMG

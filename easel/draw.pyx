@@ -10,7 +10,7 @@ from libc.math cimport sqrt, sin, cos, floor, fabs, M_PI
 from libc.stdlib cimport malloc, free, realloc
 
 from .surface cimport Surface
-from ..math.rect cimport Rect
+from ..pfmath.rect cimport Rect
 
 
 #  Inline-примитивы (работают напрямую с памятью)

@@ -2,7 +2,7 @@ import sdl2
 from typing import Callable
 from ....easel.window import Window
 from ....widget.button import Button
-from ....math.markup import Point, Size
+from ....pfmath.markup import Point, Size
 from ....easel.event import TextInputEvent, KeyboardEvent, CommonEvent
 from ....base.scrap import get_text_buffer, set_text_buffer
 from ....base.logger import printError

@@ -1,6 +1,6 @@
 " Горизонтальный список"
 from .structure import CoreListOfItemsBase
-from ....math.rect import Rect
+from ....pfmath.rect import Rect
 from ....easel.draw import rect
 from ....easel.surface import Surface
 

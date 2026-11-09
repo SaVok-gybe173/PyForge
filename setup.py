@@ -2,8 +2,22 @@ import os
 import sys
 
 _here = os.path.dirname(os.path.abspath(__file__))
-sys.path = [p for p in sys.path if os.path.abspath(p or '.') != _here]
+_here_real = os.path.normcase(os.path.realpath(_here))
 
+def _is_project_path(p):
+    """True, если p указывает на корень проекта или его подкаталог."""
+    if not p:
+        # '' в sys.path = текущий cwd; при сборке это корень проекта
+        return True
+    try:
+        p_real = os.path.normcase(os.path.realpath(p))
+    except OSError:
+        return False
+    return p_real == _here_real or p_real.startswith(_here_real + os.sep)
+
+# Убираем корень проекта и всё под ним — чтобы math/, time.pyx, font/ и т.п.
+# не перекрывали stdlib и site-packages при импорте build/setuptools/wheel.
+sys.path = [p for p in sys.path if not _is_project_path(p)]
 import glob
 import shutil
 

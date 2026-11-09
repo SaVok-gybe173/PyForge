@@ -30,6 +30,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+
       - name: Set up QEMU (for Linux ARM/i686)
         if: runner.os == 'Linux' && matrix.platform == 'linux'
         uses: docker/setup-qemu-action@v3
@@ -41,13 +44,14 @@ jobs:
         uses: android-actions/setup-android@v3
 
       - name: Build wheels
-        uses: pypa/cibuildwheel@v3.2.0
+        uses: pypa/cibuildwheel@v4          
+        with:
+          package-dir: ./PyForge            
         env:
           CIBW_PLATFORM: ${{ matrix.platform }}
           CIBW_ARCHS_LINUX: "auto aarch64 i686"
           CIBW_ARCHS_ANDROID: "arm64_v8a armeabi_v7a x86_64 x86"
           CIBW_ARCHS_IOS: "arm64_iphoneos arm64_iphonesimulator x86_64_iphonesimulator"
-          working-directory: ./PyForge
 
       - uses: actions/upload-artifact@v4
         with:

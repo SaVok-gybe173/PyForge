@@ -22,7 +22,7 @@ jobs:
             platform: macos
           - os: ubuntu-latest
             platform: android
-          # - os: macos-26              
+          # - os: macos-26
           #   platform: ios
 
     steps:
@@ -30,6 +30,11 @@ jobs:
 
       - name: Install uv
         uses: astral-sh/setup-uv@v7
+        with:
+          version: "latest"
+
+      - name: Upgrade uv (for Android cross-compilation)
+        run: uv self update
 
       - name: Set up QEMU (for Linux ARM/i686)
         if: runner.os == 'Linux' && matrix.platform == 'linux'
@@ -40,6 +45,13 @@ jobs:
       - name: Set up Android SDK (for Android build)
         if: matrix.platform == 'android'
         uses: android-actions/setup-android@v3
+
+      - name: Verify Android SDK
+        if: matrix.platform == 'android'
+        run: |
+          echo "ANDROID_HOME=$ANDROID_HOME"
+          echo "ANDROID_NDK_HOME=$ANDROID_NDK_HOME"
+          ls "$ANDROID_HOME" || echo "SDK directory not found"
 
       - name: Build wheels
         uses: pypa/cibuildwheel@v4.3.5
@@ -53,3 +65,4 @@ jobs:
         with:
           name: cibw-wheels-${{ matrix.os }}-${{ matrix.platform }}-${{ strategy.job-index }}
           path: ./PyForge/wheelhouse/*.whl
+          if-no-files-found: warn

@@ -25,7 +25,7 @@ def main():
         ext_modules=cythonize(
             build_extensions(),
             language_level=3,
-            annotate=True,
+            annotate=False,
             force=True,
             include_path=["..", "."]
         ),

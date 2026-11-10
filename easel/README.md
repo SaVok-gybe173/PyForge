@@ -37,11 +37,10 @@ from PyForge.easel import Window, Scene, App
 ### Минимальное приложение
 
 ```python
-from PyForge.easel import Window, Scene
-import pygame as pg
+from PyForge.easel import Window, Scene, Surface
 
 class MainScene(Scene):
-    def draw(self, win: pg.Surface):
+    def draw(self, win: Surface):
         win.fill((100, 150, 200))  # заливка фона
 
     def close(self):
@@ -67,7 +66,7 @@ class MenuScene(Scene):
             self.page.condition = 1  # переключение на игровую сцену
 
 class GameScene(Scene):
-    def draw(self, win: pg.Surface):
+    def draw(self, win: Surface):
         win.fill((30, 80, 30))  # отрисовка игры
 
     def keydown(self, key: int, mod: int, unicode: str, scancode: int):

@@ -38,12 +38,14 @@ from PyForge.easel import Window, Scene, App
 
 ```python
 from PyForge.easel import Window, Scene, Surface
+from PyForge.easel.event import KeyboardEvent, QuitEvent
 
 class MainScene(Scene):
     def draw(self, win: Surface):
         win.fill((100, 150, 200))  # заливка фона
 
-    def close(self):
+    def quit(self, common: KeyboardEvent, quit: QuitEvent):
+        super().quit(common, quit)
         print("Окно закрыто")
 
 # Создаём окно размером 800x600 со сценой MainScene
@@ -55,57 +57,27 @@ app.start()
 
 ```python
 from PyForge.easel import Window, Scene
-import pygame as pg
+from PyForge.easel.event import KeyboardEvent, CommonEvent
+import sdl2
 
 class MenuScene(Scene):
     def draw(self, win: pg.Surface):
         ...  # отрисовка меню
 
-    def keydown(self, key: int, mod: int, unicode: str, scancode: int):
-        if key == pg.K_SPACE:
+    def keydown(self, common: CommonEvent, key: KeyboardEvent):
+        if key == sdl2.SDLK_SPACE:
             self.page.condition = 1  # переключение на игровую сцену
 
 class GameScene(Scene):
     def draw(self, win: Surface):
         win.fill((30, 80, 30))  # отрисовка игры
 
-    def keydown(self, key: int, mod: int, unicode: str, scancode: int):
-        if key == pg.K_ESCAPE:
+    def keydown(self, common: CommonEvent, key: KeyboardEvent):
+        if key == sdl2.SDLK_SPACE:
             self.page.condition = 0  # возврат в меню
 
 app = Window(size=(800, 600), scene=[MenuScene, GameScene])
 app.start()
-```
-
-### Приложение с модами
-
-```python
-from PyForge.easel import App
-
-# App наследуется от Window и автоматически загружает моды из папки mods
-app = App(size=(1024, 768), mods_dir="./my_mods")
-app.start()
-```
-
-Структура мода (`mods/my_mod.py`):
-
-```python
-from PyForge.mods.mod import FrameMod
-
-class Main(FrameMod):
-    def start(self):
-        print("Мод загружен!")
-
-    def draw(self, win):
-        # отрисовка поверх основного окна
-        pass
-
-    def event(self, event):
-        # обработка событий
-        pass
-
-    def close(self):
-        print("Мод выгружается")
 ```
 
 ### Создание второго окна (отдельный процесс)

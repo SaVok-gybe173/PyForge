@@ -9,8 +9,8 @@ _core/creating/progress/calculation_progress.c
 _core/game3D/math3d.c
 _core/game3D/rect.c
 cpu/game3D/camera.c
-math/rect.c
-math/time.c
+pfmath/rect.c
+pfmath/time.c
 easel/surface.c
 _core/creating/progress/__init__.c
 easel/draw.c

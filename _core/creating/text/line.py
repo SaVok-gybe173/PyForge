@@ -52,11 +52,11 @@ class _TextLine(PfObjectIMG):
         self.core.addText(text)
         self.updateMeta()
 
-    def backText(self):
+    def backText(self): # Backspace
         self.core.backText()
         self.updateMeta()
 
-    def delText(self):
+    def delText(self): # удаление справа от курсора
         """Удалит символ или удали выделенную часть"""
         self.core.delText()
         self.updateMeta()

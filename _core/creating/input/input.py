@@ -51,7 +51,7 @@ class _InputLine(_TextLine):
 
     # обработка клавиш
     def keydown(self, common: CommonEvent, key: KeyboardEvent):
-        if key.keysym.sym == sdl2.SDLK_SPACE: # пробел
+        if key.keysym.sym == sdl2.SDLK_RETURN: #
             for f in self._log_txt_func:
                 f(self.core.text)
         elif key.keysym.mod & sdl2.KMOD_CTRL:

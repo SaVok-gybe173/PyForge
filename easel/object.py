@@ -75,11 +75,6 @@ class CoreObject(metaclass=ObjectMeta):
             dt (float): Время в секундах
         '''
 
-    def close(self, common: CommonEvent, quit: QuitEvent):
-        """
-        Срабатывает для всех сцен
-        """
-
     def event(self, event: Event) -> None:
         '''
         Срабатывает при вызове события

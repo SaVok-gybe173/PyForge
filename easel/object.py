@@ -303,6 +303,7 @@ class CoreObject(metaclass=ObjectMeta):
         SDL_JOYDEVICEREMOVED
         Джойстик отключён
         """
+        
     def joybatteryupdated(self, common: CommonEvent, jbattery: JoyBatteryEvent) -> None:
         """
         SDL_JOYBATTERYUPDATED

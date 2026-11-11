@@ -29,11 +29,44 @@
 from array import array
 
 from ....easel.object import PfObject, PfObjectIMG
+from ....easel.scene import EVENTS_METHOD
 from ....easel.surface import Surface
 from ....easel.window import Window
-from ....easel.event import Event, MOUSEBUTTONDOWN, MOUSEWHEEL, CommonEvent, MouseButtonEvent, MouseWheelEvent
 from ....pfmath.markup import Size, Point
 from ....pfmath.rect import Rect
+
+from ....easel.event import (Event,
+        CommonEvent,
+        DisplayEvent,
+        WindowEvent,
+        KeyboardEvent,
+        TextEditingEvent,
+        TextEditingExtEvent,
+        TextInputEvent,
+        MouseMotionEvent,
+        MouseButtonEvent,
+        MouseWheelEvent,
+        JoyAxisEvent,
+        JoyBallEvent,
+        JoyHatEvent,
+        JoyButtonEvent,
+        JoyDeviceEvent,
+        JoyBatteryEvent,
+        ControllerAxisEvent,
+        ControllerButtonEvent,
+        ControllerDeviceEvent,
+        ControllerTouchpadEvent,
+        ControllerSensorEvent,
+        SensorEvent,
+        QuitEvent,
+        UserEvent,
+        SysWMEvent,
+        TouchFingerEvent,
+        MultiGestureEvent,
+        DollarGestureEvent,
+        DropEvent,
+        AudioDeviceEvent
+    )
 
 from ._list_math import (
     build_prefix, total_length, find_visible_range, find_index_at,
@@ -68,9 +101,7 @@ class CoreListOfItemsBase(PfObject):
             color_streak: цвет полосы/ползунка.
             speed: пикселей за один тик колеса.
         """
-        self._page = page
-        self.left_top = left_top 
-        self.width_height = width_height 
+        super().__init__(page, left_top, width_height)
         self.distance = distance
         self.size_streak = size_streak
         self.min_thumb = min_thumb
@@ -154,6 +185,12 @@ class CoreListOfItemsBase(PfObject):
 
     def mousewheel(self, common: CommonEvent, wheel: MouseWheelEvent):
         """Обрабатывает колесо. Возвращает True, если прокрутил."""
+        if self.rect.collidepoint(*self.page.mouse_pos):
+            index = self.index()
+            if not index is None:
+                if self.items[index].mousewheel(common, wheel):
+                    return True
+
         if not self.retention(self.page.mouse_pos): return False
         self._scroll_by(-wheel.y * self.speed)
         return True
@@ -184,4 +221,281 @@ class CoreListOfItemsBase(PfObject):
     def _h(self) -> int: # обратная совместимость
         return self._total_length
 
-    
+    ### обратная совместимость
+
+    # Системные события (для всех)
+    def quit(self, common: CommonEvent, quit: QuitEvent) -> None:
+        """
+        SDL_QUIT
+        Пользователь запросил закрытие приложения (нажал на крестик окна, Alt+F4 или эквивалент в оконной системе).
+        """
+        for object in self.items:
+            object.quit(common, quit)
+
+    def app_terminating(self, common: CommonEvent) -> None:
+        """
+        SDL_APP_TERMINATING
+        Приложение завершается ОС (iOS/Android)
+        """
+        for object in self.items:
+            object.app_terminating(common)
+
+    def app_lowmemory(self, common: CommonEvent) -> None:
+        """
+        SDL_APP_LOWMEMORY
+        Приложению не хватает памяти
+        """
+        for object in self.items:
+            object.app_lowmemory(common)
+
+    def app_willenterbackground(self, common: CommonEvent) -> None:
+        """
+        SDL_APP_WILLENTERBACKGROUND
+        Приложение собирается уйти в фон
+        """
+        for object in self.items:
+            object.app_willenterbackground(common)
+
+    def app_didenterbackground(self, common: CommonEvent) -> None:
+        """
+        SDL_APP_DIDENTERBACKGROUND
+        Приложение ушло в фон
+        """
+        for object in self.items:
+            object.app_didenterbackground(common)
+
+    def app_willenterforeground(self, common: CommonEvent) -> None:
+        """
+        SDL_APP_WILLENTERFOREGROUND
+        Приложение собирается вернуться на передний план
+        """
+        for object in self.items:
+            object.app_willenterforeground(common)
+
+    def app_didenterforeground(self, common: CommonEvent) -> None:
+        """
+        SDL_APP_DIDENTERFOREGROUND
+        Приложение снова активно
+        """
+        for object in self.items:
+            object.app_didenterforeground(common)
+
+    def localechanged(self, common: CommonEvent) -> None:
+        """
+        SDL_LOCALECHANGED
+        Изменились локальные настройки пользователя
+        """
+        for object in self.items:
+            object.localechanged(common)
+
+    def displayevent(self, common: CommonEvent, display: DisplayEvent) -> None:
+        """
+        SDL_DISPLAYEVENT
+        Изменение состояния дисплея
+        """
+        for object in self.items:
+            object.displayevent(common, display)
+
+    def windowevent(self, common: CommonEvent, window: WindowEvent) -> None:
+        """
+        SDL_WINDOWEVENT
+        Изменение состояния окна (фокус, размер, перемещение и т.п.)
+        """
+        for object in self.items:
+            object.windowevent(common, window)
+
+    def syswmevent(self, common: CommonEvent, syswm: SysWMEvent) -> None:
+        """
+        SDL_SYSWMEVENT
+        Системное событие оконного менеджера
+        """
+        for object in self.items:
+            object.syswmevent(common, syswm)
+
+    def clipboardupdate(self, common: CommonEvent) -> None:
+        """
+        SDL_CLIPBOARDUPDATE
+        Изменилось содержимое буфера обмена
+        """
+        for object in self.items:
+            object.clipboardupdate(common)
+
+    def render_targets_reset(self, common: CommonEvent) -> None:
+        """
+        SDL_RENDER_TARGETS_RESET
+        Цели рендеринга сброшены (нужно обновить содержимое)
+        """
+        for object in self.items:
+            object.render_targets_reset(common)
+
+    def render_device_reset(self, common: CommonEvent) -> None:
+        """
+        SDL_RENDER_DEVICE_RESET
+        Устройство рендеринга сброшено (нужно пересоздать текстуры)
+        """
+        for object in self.items:
+            object.render_device_reset(common)
+
+    def sensorupdate(self, common: CommonEvent, sensor: SensorEvent) -> None:
+        """
+        SDL_SENSORUPDATE
+        Обновились данные сенсора
+        """
+        for object in self.items:
+            object.sensorupdate(common, sensor)
+
+    # События клавиатуры
+    def keydown(self, common: CommonEvent, key: KeyboardEvent) -> None:
+        """
+        SDL_KEYDOWN
+        Клавиша нажата
+        """
+        if self.rect.collidepoint(*self.page.mouse_pos):
+            index = self.index()
+            if not index is None:
+                self.items[index].keydown(common, key)
+        
+    def keyup(self, common: CommonEvent, key: KeyboardEvent) -> None:
+        """
+        SDL_KEYUP
+        Клавиша отпущена
+        """
+        if self.rect.collidepoint(*self.page.mouse_pos):
+            index = self.index()
+            if not index is None:
+                self.items[index].keyup(common, key)
+
+    def textediting(self, common: CommonEvent, edit: TextEditingEvent) -> None:
+        """
+        SDL_TEXTEDITING
+        Редактирование текста (IME, композиция)
+        """
+        if self.rect.collidepoint(*self.page.mouse_pos):
+            index = self.index()
+            if not index is None:
+                self.items[index].textediting(common, edit)
+
+    def textinput(self, common: CommonEvent, text: TextInputEvent) -> None:
+        """
+        SDL_TEXTINPUT
+        Ввод текста (после завершения IME)
+        """
+        if self.rect.collidepoint(*self.page.mouse_pos):
+            index = self.index()
+            if not index is None:
+                self.items[index].textinput(common, text)
+
+    def keymapchanged(self, common: CommonEvent) -> None:
+        """
+        SDL_KEYMAPCHANGED
+        Раскладка клавиатуры изменилась системой
+        """
+        if self.rect.collidepoint(*self.page.mouse_pos):
+            index = self.index()
+            if not index is None:
+                self.items[index].keymapchanged(common)
+
+    def textediting_ext(self, common: CommonEvent, editExt: TextEditingExtEvent) -> None:
+        """
+        SDL_TEXTEDITING_EXT
+        Расширенное редактирование текста (IME)
+        """
+        if self.rect.collidepoint(*self.page.mouse_pos):
+            index = self.index()
+            if not index is None:
+                self.items[index].textediting_ext(common, editExt)
+
+    # События мыши
+
+    def mousemotion(self, common: CommonEvent, motion: MouseMotionEvent) -> None:
+        """
+        SDL_MOUSEMOTION
+        Перемещение мыши
+        """
+        if self.rect.collidepoint(motion.x, motion.y):
+            index = self.index()
+            if not index is None:
+                self.items[index].mousemotion(common, motion)
+
+    def mousebuttondown(self, common: CommonEvent, button: MouseButtonEvent) -> None:
+        """
+        SDL_MOUSEBUTTONDOWN
+        Кнопка мыши нажата
+        """
+        if self.rect.collidepoint(button.x, button.y):
+            index = self.index()
+            if not index is None:
+                self.items[index].mousebuttondown(common, button)
+
+    def mousebuttonup(self, common: CommonEvent, button: MouseButtonEvent) -> None:
+        """
+        SDL_MOUSEBUTTONUP
+        Кнопка мыши отпущена
+        """
+        if self.rect.collidepoint(button.x, button.y):
+            index = self.index()
+            if not index is None:
+                self.items[index].mousebuttonup(common, button)
+
+# пропустили контроллеры
+# пропустили сенсорный ввод и жесты
+
+    # Аудиоустройства
+
+    def audiodeviceadded(self, common: CommonEvent, adevice: AudioDeviceEvent) -> None:
+        """
+        SDL_AUDIODEVICEADDED
+        Аудиоустройство подключено
+        """
+        for object in self.items:
+            object.render_device_reset(common, adevice)
+
+    def audiodeviceremoved(self, common: CommonEvent, adevice: AudioDeviceEvent) -> None:
+        """
+        SDL_AUDIODEVICEREMOVED
+        Аудиоустройство отключено
+        """
+        for object in self.items:
+            object.audiodeviceremoved(common, adevice)
+
+        # Drag and Drop (перетаскивание файлов/текста)
+
+    def dropbegin(self, common: CommonEvent, drop: DropEvent) -> None:
+        """
+        SDL_DROPBEGIN
+        Начало перетаскивания
+        """
+        if self.rect.collidepoint(*self.page.mouse_pos):
+            index = self.index()
+            if not index is None:
+                self.items[index].dropbegin(common, drop)
+
+    def dropfile(self, common: CommonEvent, drop: DropEvent) -> None:
+        """
+        SDL_DROPFILE
+        Файл перетащен в окно
+        """
+        if self.rect.collidepoint(*self.page.mouse_pos):
+            index = self.index()
+            if not index is None:
+                self.items[index].dropfile(common, drop)
+
+    def droptext(self, common: CommonEvent, drop: DropEvent) -> None:
+        """
+        SDL_DROPTEXT
+        Текст перетащен в окно
+        """
+        if self.rect.collidepoint(*self.page.mouse_pos):
+            index = self.index()
+            if not index is None:
+                self.items[index].droptext(common, drop)
+
+    def dropcomplete(self, common: CommonEvent, drop: DropEvent) -> None:
+        """
+        SDL_DROPCOMPLETE
+        Перетаскивание завершено
+        """
+        if self.rect.collidepoint(*self.page.mouse_pos):
+            index = self.index()
+            if not index is None:
+                self.items[index].dropcomplete(common, drop)

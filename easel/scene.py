@@ -327,6 +327,7 @@ class Scene(CoreObject):
         """
         for object in self.objects:
             object.mousebuttondown(common, button)
+            
     def mousebuttonup(self, common: CommonEvent, button: MouseButtonEvent) -> None:
         """
         SDL_MOUSEBUTTONUP
@@ -334,6 +335,7 @@ class Scene(CoreObject):
         """
         for object in self.objects:
             object.mousebuttonup(common, button)
+
     def mousewheel(self, common: CommonEvent, wheel: MouseWheelEvent) -> None:
         """
         SDL_MOUSEWHEEL

@@ -137,9 +137,9 @@ class CoreListOfItemsBase(PfObject):
         if is_update:
             self._rebuild_cache()
 
-    def update(self):
+    def update(self, dt=None):
         for itm in self.items:
-            itm.update()
+            itm.update(dt)
 
     def retention(self, pos) -> bool:
         return self._view_rect().collidepoint(*pos)

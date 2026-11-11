@@ -39,7 +39,6 @@ class _InputLine(_TextLine):
         super().__init__(page, left_top, font, text, size_px, color, highlighting)
         self.core.shift = len(self.text)+1
         self.color = color
-        self.on()
 
         self._log_txt_func = []
         self._log_removal_func = []
@@ -51,24 +50,32 @@ class _InputLine(_TextLine):
 
     # обработка клавиш
     def keydown(self, common: CommonEvent, key: KeyboardEvent):
-        if key.keysym.sym == sdl2.SDLK_SPACE: # пробел
+        if key.keysym.sym == (sdl2.SDLK_RETURN, sdl2.SDLK_KP_ENTER): # энтр
             for f in self._log_txt_func:
-                f(self.core.text)
+                f(self.text)
         elif key.keysym.mod & sdl2.KMOD_CTRL:
             if key.keysym.sym == sdl2.SDLK_v: # ctrl + v
                 try:
-                    self.core.addText(get_text_buffer())
+                    self.addText(get_text_buffer())
                 except BufferError as e:
                     printError(f"[{self}] [BufferError] {e}")
             else:
                 super().keydown(common, key)
 
         elif key.keysym.sym == sdl2.SDLK_BACKSPACE: # удаление символа
-            if self.core.backText():
+            if self.backText():
                 for f in self._log_removal_func:
                     f(self.core.text)
             else:
                 printError(f"[{self}] [keyup] Ошибка при удаление символа")
+
+        elif key.keysym.sym == sdl2.SDLK_DELETE:
+            if self.delText():
+                for f in self._log_removal_func:
+                    f(self.core.text)
+            else:
+                printError(f"[{self}] [keyup] Ошибка при удаление символа")
+
         elif key.keysym.sym == sdl2.SDLK_LEFT: # влево
             self.core.ShiftLeft()
         elif key.keysym.sym == sdl2.SDLK_RIGHT:
@@ -101,7 +108,6 @@ class _InputLine(_TextLine):
         return self._active
     @active.setter
     def active(self, active: bool) -> None:
-        print(sdl2.SDL_IsTextInputActive())
         self._active = active
         if sdl2.SDL_IsTextInputActive():
             if not active:

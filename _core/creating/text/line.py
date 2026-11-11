@@ -28,14 +28,14 @@ class _TextLine(PfObjectIMG):
                 highlighting: tuple[int, int, int, int] = (0x32, 0x97, 0xfd, 0x44)) -> None:
         if isinstance(font, str): self.font = Font(font)
         elif isinstance(font, Font): self.font = font
-        else: return ValueError()
+        else: raise ValueError()
         self._size_px = size_px
         self._color = color
         self.core = InputTextCore(text)
         sur, self._min_y = render_text(self.font, text, size_px, color)
         super().__init__(page, left_top, sur)
         self.layout =   self.font.layout(text, size_px, self.left)
-        print(self.layout)
+
         self.selected_rect = Rect(0, 0, 0, 0)
         self.highlighting = highlighting
 
@@ -52,11 +52,11 @@ class _TextLine(PfObjectIMG):
         self.core.addText(text)
         self.updateMeta()
 
-    def backText(self):
+    def backText(self): # Backspace
         self.core.backText()
         self.updateMeta()
 
-    def delText(self):
+    def delText(self): # удаление справа от курсора
         """Удалит символ или удали выделенную часть"""
         self.core.delText()
         self.updateMeta()
@@ -88,12 +88,13 @@ class _TextLine(PfObjectIMG):
 
     # события
     def mousebuttondown(self, common: CommonEvent, button: MouseButtonEvent):
-        if self.rect.collidepoint(button.x, button.y):
-            self.idx = self.anchor = self.core.hit_test(button.x, self.layout[0], self.layout[1])
-            self.dragging = True
-            self.core.set_selection(self.anchor, self.idx) # каретка, без выделения
-        else:
-            self.clear()
+        if button.button == sdl2.SDL_BUTTON_LEFT:
+            if self.rect.collidepoint(button.x, button.y):
+                self.idx = self.anchor = self.core.hit_test(button.x, self.layout[0], self.layout[1])
+                self.dragging = True
+                self.core.set_selection(self.anchor, self.idx) # каретка, без выделения
+            else:
+                self.clear()
 
     def selection(self, anchor, idx):
         self.idx, self.anchor = idx, anchor
@@ -112,10 +113,13 @@ class _TextLine(PfObjectIMG):
 
     def mousemotion(self, common: CommonEvent, motion: MouseMotionEvent):
         if self.dragging:
-            self.selection(self.anchor, self.core.hit_test(motion.x, self.layout[0], self.layout[1]))
+            if self.rect.collidepoint(motion.x, motion.y):
+                self.selection(self.anchor, self.core.hit_test(motion.x, self.layout[0], self.layout[1]))
             
-    def mousebuttonup(self, common, button):
-        self.dragging = False
+    def mousebuttonup(self, common: CommonEvent, button: MouseButtonEvent):
+        if (button.button == sdl2.SDL_BUTTON_LEFT or button.button == sdl2.SDL_BUTTON_RIGHT) and self.dragging:
+            if not self.rect.collidepoint(button.x, button.y):
+                self.dragging = False
 
     def keydown(self, common: CommonEvent, key: KeyboardEvent):
         if key.keysym.sym == sdl2.SDLK_c and (key.keysym.mod & sdl2.KMOD_CTRL):
@@ -144,5 +148,4 @@ class _TextLine(PfObjectIMG):
     @size_px.setter
     def size_px(self, size_px: int) -> None:
         self._size_px = size_px
-        self.layout = self.font.layout(self.text, size_px, self.top)
-        self.img, self._min_y = render_text(self.font, self.core.text, size_px, self._color)
+        self.updateMeta()

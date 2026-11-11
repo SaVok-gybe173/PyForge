@@ -1,4 +1,4 @@
-from ..platform import is_window
+from ..easel.platform import is_window
 from ..base.logger import printLog
 
 import os

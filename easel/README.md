@@ -1,44 +1,32 @@
 # Easel — модуль для создания оконных приложений на PyForge
 
-**Easel** — это часть фреймворка PyForge, предоставляющая удобную объектно-ориентированную надстройку над `pysdl2` для создания оконных приложений с поддержкой сцен, событий и модульной архитектуры.
+**Easel** — это часть фреймворка PyForge, предоставляющая удобную объектно-ориентированную надстройку над `pysdl2` для создания оконных приложений с поддержкой сцен, событий и модульной архитектуры.
 
 ## Возможности
 
-- **Управление окнами** — создание и настройка главного окна приложения
-    
-- **Система сцен** — гибкая архитектура для организации разных экранов приложения
-    
-- **Полная обработка событий** — клавиатура, мышь, изменение размера окна и системные события
-    
-- **Поддержка модов** — динамическая загрузка плагинов из папки `mods`
-    
-- **Многопроцессность** — создание дополнительных окон в отдельных процессах (кроме Android/iOS)
-    
-- **Прозрачность окна** — только для Windows (через `pywin32`)
-    
-- **Кроссплатформенность** — определение Android, Linux, Windows, macOS, iOS
-    
-- **OpenGL** — встроенная поддержка инициализации OpenGL
-    
-- **Логирование** — встроенная система логирования для каждого класса (добавлено в коммите [`ea3373b`](https://github.com/SaVok-gybe173/PyForge/commit/ea3373b17d871719253d8770f572d76a63531c2b))
-    
+- **Управление окнами** — создание и настройка главного окна приложения
+- **Система сцен** — гибкая архитектура для организации разных экранов приложения
+- **Полная обработка событий** — клавиатура, мышь, изменение размера окна и системные события
+- **Поддержка модов** — динамическая загрузка плагинов из папки `mods`
+- **Многопроцессность** — создание дополнительных окон в отдельных процессах (кроме Android/iOS)
+- **Кроссплатформенность** — определение Android, Linux, Windows, macOS, iOS
+- **OpenGL** — встроенная поддержка инициализации OpenGL
+- **Логирование** — встроенная система логирования для каждого класса
+- **Рисование** — набор примитивов (`line`, `rect`, `circle` и др.) через Cython-модуль `draw`
+- **Низкоуровневая работа с поверхностями** — класс `Surface` с прямым доступом к пикселям
 
 ---
 
 ## Установка
 
 ```bash
-
 pip install pysdl2
 pip install pysdl2-dll
-# Для прозрачности окон на Windows:
-pip install pywin32
 ```
 
 Модуль является частью PyForge, поэтому импорт выглядит так:
 
 ```python
-
 from PyForge.easel import Window, Scene, App
 ```
 
@@ -49,337 +37,238 @@ from PyForge.easel import Window, Scene, App
 ### Минимальное приложение
 
 ```python
+from PyForge.easel import Window, Scene, Surface
+from PyForge.easel.event import KeyboardEvent, QuitEvent
 
-from PyForge.easel import Window, Scene
-import pygame as pg
 class MainScene(Scene):
-    def draw(self, win: pg.Surface):
+    def draw(self, win: Surface):
         win.fill((100, 150, 200))  # заливка фона
-    def close(self):
+
+    def quit(self, common: KeyboardEvent, quit: QuitEvent):
+        super().quit(common, quit)
         print("Окно закрыто")
+
 # Создаём окно размером 800x600 со сценой MainScene
 app = Window(size=(800, 600), scene=[MainScene])
 app.start()
 ```
 
-
 ### Приложение со множеством сцен
 
 ```python
-
 from PyForge.easel import Window, Scene
-import pygame as pg
+from PyForge.easel.event import KeyboardEvent, CommonEvent
+import sdl2
+
 class MenuScene(Scene):
     def draw(self, win: pg.Surface):
-        ...
-        # отрисовка меню...
-    def keydown(self, key: int, mod: int, unicode: str, scancode: int):
-        if key == pg.K_SPACE:
-            # переключение на игровую сцену
-            self.page.condition = 1  # индекс GameScene
+        ...  # отрисовка меню
+
+    def keydown(self, common: CommonEvent, key: KeyboardEvent):
+        if key == sdl2.SDLK_SPACE:
+            self.page.condition = 1  # переключение на игровую сцену
+
 class GameScene(Scene):
-    def draw(self, win: pg.Surface):
-        win.fill((30, 80, 30))
-        # отрисовка игры...
-    def keydown(self, key: int, mod: int, unicode: str, scancode: int):
-        if key == pg.K_ESCAPE:
+    def draw(self, win: Surface):
+        win.fill((30, 80, 30))  # отрисовка игры
+
+    def keydown(self, common: CommonEvent, key: KeyboardEvent):
+        if key == sdl2.SDLK_SPACE:
             self.page.condition = 0  # возврат в меню
+
 app = Window(size=(800, 600), scene=[MenuScene, GameScene])
 app.start()
-```
-
-### Приложение с модами
-
-```python
-
-from PyForge.easel import App
-# App наследуется от Window и автоматически загружает моды из папки mods
-app = App(size=(1024, 768), mods_dir="./my_mods")
-app.start()
-```
-
-Структура мода (`mods/my_mod.py`):
-
-```python
-
-from PyForge.mods.mod import FrameMod
-class Main(FrameMod):
-    def start(self):
-        print("Мод загружен!")
-    def draw(self, win):
-        # отрисовка поверх основного окна
-        pass
-    def event(self, event):
-        # обработка событий
-        pass
-    def close(self):
-        print("Мод выгружается")
 ```
 
 ### Создание второго окна (отдельный процесс)
 
 ```python
-
 from PyForge.easel.window_processing import Window as ProcessWindow
 from PyForge.easel import Scene
+
 class SecondScene(Scene):
     ...
+
 # Создаём окно в отдельном процессе
 win2 = ProcessWindow(size=(400, 300), scene=[SecondScene])
-win2.start()  # запуск в новом процессе
-win2.join()   # ожидание завершения
-```
-
-### Прозрачность окна (только Windows)
-
-```python
-
-# Устанавливаем прозрачность 50% (alpha 0-255)
-set_window_transparency(alpha_value=128)
+win2.start()   # запуск в новом процессе
+win2.join()    # ожидание завершения
 ```
 
 ---
 
 ## Справочник API
 
-### Модуль `__init__.py`
+### Модуль `__init__.py`
 
 Экспортирует основные классы и функции:
 
-|Имя|Описание|
+| Имя | Описание |
 |---|---|
-|`Scene`|Базовый класс для всех сцен|
-|`Window`|Главный класс управления окном|
-|`App`|Класс приложения с поддержкой модов (наследует `Window`)|
-|`WindowProcession`|Класс для создания окон в отдельных процессах|
-|`EVENTS_METOD`|Словарь соответствия типов событий и методов сцены (добавлен в коммите [`14b22f3`](https://github.com/SaVok-gybe173/PyForge/commit/14b22f3d3bc65da8a9c5130146e404f40a916f0b))|
-|`is_android()`|Проверка: запущено ли на Android|
-|`is_linux()`|Проверка: запущено ли на Linux|
-|`is_macos()`|Проверка: запущено ли на macOS|
-|`is_ios()`|Проверка: запущено ли на iOS|
-|`is_window()`|Проверка: запущено ли на Windows|
-|`set_window_transparency()`|Установка прозрачности окна (только Windows)|
-
+| `Scene` | Базовый класс для всех сцен |
+| `Window` | Главный класс управления окном |
+| `App` | Класс приложения с поддержкой модов (наследует `Window`) |
+| `WindowProcession` | Класс для создания окон в отдельных процессах |
+| `is_android()`, `is_linux()`, `is_macos()`, `is_ios()`, `is_window()` | Проверка платформы |
+| `Surface` | Обёртка над `SDL_Surface` |
+| `CoreObject`, `PfObject`, `PfObjectIMG` | Базовые объекты сцены |
+| `event_name`, `event_add`, `event_type`, `EVENT_NAMES` | Утилиты для работы с событиями |
 
 ---
 
-### Класс `Scene` (`scene.py`)
+### Класс `Scene` (`scene.py`)
 
 Базовый класс для всех сцен приложения.
 
 **Атрибуты:**
 
-- `name: str` — имя сцены (по умолчанию — имя класса)
-    
-- `page: Window` — ссылка на родительское окно
-    
+- `name: str` — имя сцены (по умолчанию — имя класса)
+- `page: Window` — ссылка на родительское окно
+- `objects: list[PfObject]` — список объектов на сцене
 
 **Методы:**
 
-|Метод|Описание|
+| Метод | Описание |
 |---|---|
-|`draw(win: pg.Surface)`|Отрисовка объектов. Вызывается каждый кадр|
-|`update(dt: float)`|Обновление логики. `dt` — время в секундах с прошлого кадра|
-|`event(event: pg.event.Event)`|Обработка событий Pygame|
-|`size_update(old, new, ratio)`|Изменение размера окна|
-|`muve_window(old, new)`|Перемещение окна|
-|`close()`|Закрытие окна (событие `QUIT`)|
-|`activeevent(gain, state)`|Изменение фокуса окна|
-|`videoresize(size, w, h)`|Изменение размера (событие `VIDEORESIZE`)|
-|`videoexpose()`|Окно было перекрыто и снова показано|
-|`keydown(key, mod, unicode, scancode)`|Нажатие клавиши|
-|`keyup(key, mod, scancode)`|Отпускание клавиши|
-|`textediting(text, start, length)`|Редактирование текста (IME)|
-|`textinput(text)`|Ввод текста|
-|`mousemotion(pos, rel, buttons, touch)`|Движение мыши|
-|`mousedown(pos, button, touch)`|Нажатие кнопки мыши|
-|`mouseup(pos, button, touch)`|Отпускание кнопки мыши|
-|`mousewheel(x, y, flipped, which, precise_x, precise_y)`|Прокрутка колеса|
-
+| `append(object)` | Добавляет объект в конец списка |
+| `draw(win)` | Отрисовка всех объектов |
+| `update(dt)` | Обновление логики |
+| `event(event)` | Обработка событий |
+| `keydown`, `keyup`, `mousemotion`, `mousebuttondown`, `mousebuttonup`, `mousewheel`, `textinput` | Проброс событий к объектам |
 
 ---
 
-### Класс `Window` (`window.py`)
+### Класс `Window` (`window.py`)
 
 Главный класс управления окном.
 
 **Конструктор:**
 
 ```python
-
-Window(size=(400, 300), color=(255, 255, 255), scene: list[Scene] | None = None,
-       *, fps: int | float = 60, kwargs_set_mode: KwargsSetMode | None = None)
+Window(
+    caption: str | bytes = b'My Engine',
+    point: tuple[int, int] | None = None,
+    size: tuple[int, int] = (400, 300),
+    color: tuple[int, int, int] = (255, 255, 255),
+    scene: list[Scene] | None = None,
+    *,
+    fps: int | float = 60,
+    flags: int = 0,
+)
 ```
-
-|Параметр|Описание|
-|---|---|
-|`size`|Размеры окна `(width, height)`|
-|`color`|Цвет фона `(R, G, B)`|
-|`scene`|Список классов сцен (наследников `Scene`)|
-|`fps`|Кадров в секунду|
-|`kwargs_set_mode`|Дополнительные параметры для `pg.display.set_mode()`: `flags`, `depth`, `display`, `vsync`|
 
 **Методы:**
 
-|Метод|Описание|
+| Метод | Описание |
 |---|---|
-|`addScene(*scene: T)`|Добавляет сцены в список|
-|`setIcon(icon, permission=(32,32))`|Устанавливает иконку окна|
-|`setCaption(caption)`|Устанавливает заголовок окна|
-|`init(win: pg.Surface)`|Инициализация (вызывается при старте)|
-|`initOpenGL()`|Инициализация OpenGL|
-|`run_window()`|Главный цикл приложения|
-|`start_scenes()`|Инициализация всех сцен|
-|`eventManager(event)`|Управление событиями сцен|
-|`size_update(old, new, ratio)`|Обновление размера для всех сцен|
-|`start()`|Запуск окна|
-|`update_window()`|Обновление параметров окна|
+| `start()` | Запускает главный цикл окна |
+| `addScene(*scene)` | Добавляет и инициализирует сцены |
+| `initOpenGL()` | Инициализирует OpenGL |
+
+**Флаги окна** (импортируются из `window.pyi`): `WINDOW_FULLSCREEN`, `WINDOW_FULLSCREEN_DESKTOP`, `WINDOW_OPENGL`, `WINDOW_HIDDEN`, `WINDOW_RESIZABLE`, `WINDOW_MAXIMIZED`, `WINDOW_SHOWN` и позиционные константы `WINDOWPOS_CENTERED`, `WINDOWPOS_CENTERED_DISPLAY`, `WINDOWPOS_ISCENTERED`.
 
 ---
 
-### Класс `App` (`object.py`)
+### Класс `App` (`app.py`)
 
-Наследует `Window` и добавляет поддержку модов.
+Наследует `Window`, добавляет автоматическую загрузку модов из папки `mods_dir`.
 
-**Конструктор:**
+**Дополнительные атрибуты:**
 
-```python
+- `mods_dir` — путь к папке с модами
+- `mods_list: list[FrameMod]` — загруженные моды
 
-App(size=(400, 300), color=(255, 255, 255), scene: list[T] | None = None, *,
-    fps: int = 60, mods_dir: str | None = None, kwargs_set_mode: KwargsSetMode | None = None)
-```
-
-|Параметр|Описание|
-|---|---|
-|`mods_dir`|Путь к папке с модами (по умолчанию `./mods`)|
-
-**Дополнительные методы:**
-
-- `load_mods()` — загружает все модули из папки `mods_dir`
-    
-- Автоматически вызывает методы `start()`, `draw()`, `event()`, `close()` у загруженных модов
-    
-
-**Структура мода:** мод — это Python-файл в папке `mods`, содержащий класс `Main`, наследующий `FrameMod` из `PyForge.mods.mod`.
-
+**Методы `load_mods()`** — сканирует папку и загружает модули с расширениями `.py`, `.pyc`, `.pyd`.
 
 ---
 
-### Класс `WindowProcession` (`window_processing.py`)
+### Класс `WindowProcession` (`window_processing.py`)
 
-Класс для создания окон в отдельных процессах. **Недоступен на Android и iOS.**
-
-**Особенности:**
-
-- Создаёт новый процесс с изолированной памятью
-    
-- Для обмена данными используйте `multiprocessing.Queue`
-    
-- Не передавайте кастомные классы между процессами — используйте JSON или простые структуры
-    
+Позволяет создавать дополнительные окна в отдельных процессах (недоступно на Android/iOS).
 
 **Методы:**
 
-|Метод|Описание|
+| Метод | Описание |
 |---|---|
-|`start()`|Запускает окно в новом процессе|
-|`is_alive()`|Проверяет, активен ли процесс|
-|`join(timeout=None)`|Ожидает завершения процесса|
-|`kill()`|Принудительно завершает процесс|
-
-**Пример с очередью:**
-
-```python
-
-from multiprocessing import Process, Queue
-def worker(q):
-    q.put("Сообщение из процесса")
-q = Queue()
-p = Process(target=worker, args=(q,))
-p.start()
-print(q.get())
-p.join()
-```
-
+| `start()` | Запускает окно в новом процессе |
+| `is_alive()` | Проверяет, активен ли процесс |
+| `join(timeout=None)` | Ожидает завершения процесса |
+| `kill()` | Принудительно завершает процесс |
 
 ---
 
-### Модуль `platform.py`
+### Модуль `platform.py`
 
 Функции для определения платформы:
 
-|Функция|Описание|
+| Функция | Описание |
 |---|---|
-|`is_android()`|Android (Kivy/Buildozer, Termux, python-for-android)|
-|`is_linux()`|Linux (кроме Android)|
-|`is_window()`|Windows|
-|`is_macos()`|macOS|
-|`is_ios()`|iOS|
+| `is_android()` | Android (Kivy/Buildozer, Termux, python-for-android) |
+| `is_linux()` | Linux (кроме Android) |
+| `is_window()` | Windows |
+| `is_macos()` | macOS |
+| `is_ios()` | iOS |
 
 ---
 
-### Модуль `window_transparency.py`
+### Модуль `draw.pyx` / `draw.pyi`
 
-**Доступно только на Windows.**
+Cython-модуль с низкоуровневыми примитивами рисования. Все функции принимают `Surface` и возвращают `Rect` (bounding box).
 
-```python
-
-def set_window_transparency(hwnd=None, alpha_value=255) -> bool:
-    ...
-```
-
-|Параметр|Описание|
+| Функция | Описание |
 |---|---|
-|`hwnd`|Дескриптор окна (если `None` — берётся текущее окно Pygame)|
-|`alpha_value`|Прозрачность от 0 (полностью прозрачный) до 255 (непрозрачный)|
-
-**Требования:** установленный пакет `pywin32`.
+| `line(surface, color, start_pos, end_pos, width=1)` | Прямая линия (Bresenham) |
+| `lines(surface, color, closed, points, width=1)` | Ломаная линия |
+| `aaline(surface, color, start_pos, end_pos, width=1)` | Сглаженная линия (Xiaolin Wu) |
+| `aalines(surface, color, closed, points)` | Сглаженная ломаная |
+| `rect(surface, color, rect, width=0, border_radius=-1, ...)` | Прямоугольник (опционально со скруглёнными углами) |
+| `circle(surface, color, center, radius, width=0, ...)` | Окружность (midpoint algorithm) |
 
 ---
 
-## Константы событий Pygame-ce
+### Класс `Surface` (`surface.pyx` / `surface.pyi` / `surface.pxd`)
 
-Easel поддерживает все стандартные события Pygame:
+Обёртка над `SDL_Surface` с прямым доступом к пиксельным данным.
 
-### Системные события
+**Основные методы:**
 
-|Константа|Описание|
+| Метод | Описание |
 |---|---|
-|`QUIT`|Запрос на закрытие окна|
-|`ACTIVEEVENT`|Окно получило/потеряло фокус|
-|`VIDEORESIZE`|Изменение размера окна|
-|`VIDEOEXPOSE`|Окно было перекрыто и снова показано|
+| `fill(color)` | Заливает всю поверхность цветом |
+| `blit(source_surface, dest_pos)` | Копирует другую поверхность |
+| `blit_scaled(src, dst_rect)` | Копирование с масштабированием |
+| `set_colorkey(color)` | Устанавливает цветовой ключ |
+| `clear_colorkey()` | Снимает цветовой ключ |
+| `set_alpha(alpha)` | Устанавливает общую прозрачность (0–255) |
+| `set_blendmode(mode)` | Устанавливает режим смешивания |
+| `get_blendmode()` | Возвращает текущий режим смешивания |
+| `get_at(pos)` | Возвращает цвет пикселя |
+| `set_at(pos, color)` | Устанавливает цвет пикселя |
+| `set_clip(clip)` | Устанавливает область отсечения |
+| `get_clip()` | Возвращает область отсечения |
 
+**Константы режимов смешивания:** `BLEND_NONE`, `BLEND_ALPHA`, `BLEND_ADD`, `BLEND_MOD`, `BLEND_DEFAULT`, `BLEND_MULT`.  
+**Флаги поверхности:** `PREALLOC`, `RLEACCEL`, `SRCALPHA`.
 
-### Клавиатура
+---
 
-|Константа|Описание|Атрибуты|
-|---|---|---|
-|`KEYDOWN`|Клавиша нажата|`key`, `mod`, `unicode`, `scancode`|
-|`KEYUP`|Клавиша отпущена|`key`, `mod`, `scancode`|
-|`TEXTEDITING`|Редактирование текста (IME)|`text`, `start`, `length`|
-|`TEXTINPUT`|Ввод текста|`text`|
+### Модуль `event.py` / `event.pyi`
 
-### Мышь
+Обёртка над событиями SDL2, имитирующая `pygame.event`. Содержит константы событий и вспомогательные функции `event_name`, `event_add`, `event_type`, а также словарь `EVENT_NAMES`.
 
-|Константа|Описание|Атрибуты|
-|---|---|---|
-|`MOUSEMOTION`|Перемещение мыши|`pos`, `rel`, `buttons`, `touch`|
-|`MOUSEBUTTONDOWN`|Кнопка мыши нажата|`pos`, `button`, `touch`|
-|`MOUSEBUTTONUP`|Кнопка мыши отпущена|`pos`, `button`, `touch`|
-|`MOUSEWHEEL`|Прокрутка колеса|`x`, `y`, `flipped`, `which`, `precise_x`, `precise_y`|
+Поддерживаются все стандартные события SDL2: системные, клавиатура, мышь, джойстик, контроллер, сенсор, жесты, аудиоустройства и пользовательские события.
 
-### Джойстик
+---
 
-|Константа|Описание|
-|---|---|
-|`JOYAXISMOTION`|Движение оси джойстика|
-|`JOYBALLMOTION`|Движение трекбола|
-|`JOYHATMOTION`|Движение хата|
-|`JOYBUTTONDOWN`|Нажатие кнопки джойстика|
-|`JOYBUTTONUP`|Отпускание кнопки джойстика|
-|`JOYDEVICEADDED`|Подключение джойстика|
-|`JOYDEVICEREMOVED`|Отключение джойстика|
+### Базовые объекты (`object.py`)
+
+Иерархия объектов сцены:
+
+- `CoreObject` — абстрактный базовый класс с методами `draw`, `update`, `event`, `close`, `size_update`, `move_window` и обработчиками системных событий.
+- `PfObject` — расширяемый объект (наследует `CoreObject`).
+- `PfObjectIMG` — объект-изображение.
+
+Все объекты можно добавлять в сцену через `Scene.append()`.
 
 ---
 

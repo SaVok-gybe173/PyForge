@@ -1,6 +1,6 @@
-from ..._core.creating.text.line import _TextLine
-from ...easel.draw import rect
-from ...easel.surface import Surface
+from ...._core.creating.text.line import _TextLine
+from ....easel.draw import rect
+from ....easel.surface import Surface
 
 class TextLine(_TextLine):
     def draw(self, win: Surface):

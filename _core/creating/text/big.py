@@ -39,6 +39,10 @@ class _BigText(CoreListOfItemsDown):
             items.append(_TextLine(self.page, (0, 0), self._font, raw, self._size_px, self._color))
         return items
 
+    # _TextLine хранит высоту в .img, а не в .height
+    def _item_size(self, item: _TextLine) -> int:
+        return item.img.height
+
     # публичный API
     def set_text(self, text: str) -> None:
         self.clear(is_update=False)

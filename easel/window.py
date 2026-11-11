@@ -209,7 +209,7 @@ class Window:
     def close(self, common: CommonEvent, quit: QuitEvent) -> None:
         self.running = False
         for scene in self._scene:
-            scene.close(common, quit)
+            scene.quit(common, quit)
 
     def update(self, dt: float) -> None:
         self._scene[self.condition].update(dt)

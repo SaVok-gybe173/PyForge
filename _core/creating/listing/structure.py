@@ -152,12 +152,6 @@ class CoreListOfItemsBase(PfObject):
         idx = find_index_at(self._prefix, self._sizes, content_pos)
         return idx if idx >= 0 else None
 
-    def mousebuttondown(self, common: CommonEvent, button: MouseButtonEvent):
-        """Обрабатывает колесо. Возвращает True, если прокрутил."""
-        if not self.retention((button.x, button.y)): return False
-        self._scroll_by(self.speed if button.button == 5 else -self.speed)
-        return True
-
     def mousewheel(self, common: CommonEvent, wheel: MouseWheelEvent):
         """Обрабатывает колесо. Возвращает True, если прокрутил."""
         if not self.retention(self.page.mouse_pos): return False

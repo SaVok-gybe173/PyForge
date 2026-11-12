@@ -10,7 +10,8 @@ cdef class Surface:
     cdef int           _w, _h
     cdef uint32_t      _Rmask, _Gmask, _Bmask, _Amask
     cdef uint8_t       _Rshift, _Gshift, _Bshift, _Ashift
-
+    
+    cpdef Surface copy(self)
     cdef void _check(self) except *
     cpdef void fill(self, color)
     cpdef void blit(self, Surface source, tuple dest_pos)

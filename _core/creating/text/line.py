@@ -6,6 +6,8 @@ from ....pfmath.rect import Rect
 from ....easel.event import CommonEvent, MouseButtonEvent, MouseMotionEvent, KeyboardEvent
 from ....easel.window import Window
 from ....easel.object import PfObjectIMG
+from ....easel.surface import Surface
+from ....easel.draw import rect as draw_rect
 from ....base.scrap import get_text_buffer, set_text_buffer
 from ....base.logger import printError
 
@@ -22,6 +24,7 @@ class _TextLine(PfObjectIMG):
     idx: int = 0 # конечный символ
     dragging: bool = False # активно ли щас выделение
     selected_rect: Rect # область выделения
+    _text_surf: Surface
 
     def __init__(self, page: Window, left_top: Point | tuple[int, int], 
                 font: str | Font, text: str, size_px: int, color: tuple[int, int, int] = (255, 255, 255),
@@ -34,6 +37,7 @@ class _TextLine(PfObjectIMG):
         self.core = InputTextCore(text)
         sur, self._min_y = render_text(self.font, text, size_px, color)
         super().__init__(page, left_top, sur)
+        self._text_surf = self.img
         self.layout =   self.font.layout(text, size_px, 0)
 
         self.selected_rect = Rect(0, 0, 0, 0)
@@ -42,8 +46,12 @@ class _TextLine(PfObjectIMG):
     
     def updateMeta(self):
         """Обновления мета данных для выделения (если не обновлять то при выделении обьект может выдать ошибку)"""
-        self.layout =   self.font.layout(self.text, self.size_px, 0)
+        self.dragging = False
+        self.layout = self.font.layout(self.text, self.size_px, 0)
         self.img, self._min_y = render_text(self.font, self.core.text, self.size_px, self._color)
+        if not self._text_surf is None:
+            del self._text_surf
+        self._text_surf = self.img
 
     # оболочка над GraphicsInputTextCore
 
@@ -90,6 +98,7 @@ class _TextLine(PfObjectIMG):
     def mousebuttondown(self, common: CommonEvent, button: MouseButtonEvent):
         if button.button == sdl2.SDL_BUTTON_LEFT:
             if self.rect.collidepoint(button.x, button.y):
+                self.img = self._text_surf.copy()
                 self.idx = self.anchor = self.core.hit_test(button.x-self.left, self.layout[0], self.layout[1])
                 self.dragging = True
                 self.core.set_selection(self.anchor, self.idx) # каретка, без выделения
@@ -103,13 +112,16 @@ class _TextLine(PfObjectIMG):
         start = min(self.anchor, self.idx)
         end = max(self.anchor, self.idx)
 
-        x_start = self.layout[0][start]+self.left if start != len(self.core) else self.left+self.img.width
-        x_end = self.layout[0][end]+self.left if end !=  len(self.core) else self.left+self.img.width
+        x_start = self.layout[0][start] if start != len(self.core) else self.left+self.img.width
+        x_end = self.layout[0][end] if end !=  len(self.core) else self.left+self.img.width
 
         self.selected_rect.left = x_start
-        self.selected_rect.top = self.top
+        self.selected_rect.top = 0
         self.selected_rect.width = x_end - x_start
         self.selected_rect.height = self.img.height
+
+        self.img = self._text_surf.copy()
+        draw_rect(self.img, self.highlighting, self.selected_rect)
 
     def mousemotion(self, common: CommonEvent, motion: MouseMotionEvent):
         if self.dragging:
@@ -118,6 +130,8 @@ class _TextLine(PfObjectIMG):
             
     def mousebuttonup(self, common: CommonEvent, button: MouseButtonEvent):
         if (button.button == sdl2.SDL_BUTTON_LEFT or button.button == sdl2.SDL_BUTTON_RIGHT) and self.dragging:
+            del self.img
+            self.img = self._text_surf
             self.dragging = False
 
     def keydown(self, common: CommonEvent, key: KeyboardEvent):

@@ -152,7 +152,7 @@ class CoreListOfItemsBase(PfObject):
             return
         for i in range(self.visible_start, self.visible_end + 1):
             gx, gy = self._item_global_pos(i)
-            self.items[i].left_top = (gx, gy)
+            self.items[i].left, self.items[i].top = gx, gy
 
     def _update_visible(self):
         self.visible_start, self.visible_end = find_visible_range(
@@ -203,6 +203,7 @@ class CoreListOfItemsBase(PfObject):
 
         if not self.retention(self.page.mouse_pos): return False
         self._scroll_by(-wheel.y * self.speed)
+        
         return True
 
     def _scroll_by(self, delta: int):

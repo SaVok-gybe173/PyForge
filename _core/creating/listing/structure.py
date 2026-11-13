@@ -126,13 +126,14 @@ class CoreListOfItemsBase(PfObject):
         self._rebuild_cache()
 
     # абстрактные методы (реализуются в наследниках)
-    def _item_size(self, item) -> int:                  raise NotImplementedError
-    def _view_length(self) -> int:                      raise NotImplementedError
-    def _view_rect(self) -> Rect:                       raise NotImplementedError
-    def _axis_offset(self) -> int:                      raise NotImplementedError
-    def _mouse_axis(self) -> int:                       raise NotImplementedError
-    def _blit_item(self, screen, item, screen_pos):     raise NotImplementedError
-    def _draw_thumb(self, screen, thumb_pos):           raise NotImplementedError
+    def _item_size(self, item) -> int:                          raise NotImplementedError
+    def _view_length(self) -> int:                              raise NotImplementedError
+    def _view_rect(self) -> Rect:                               raise NotImplementedError
+    def _axis_offset(self) -> int:                              raise NotImplementedError
+    def _mouse_axis(self) -> int:                               raise NotImplementedError
+    def _blit_item(self, screen, item, screen_pos):             raise NotImplementedError
+    def _draw_thumb(self, screen, thumb_pos):                   raise NotImplementedError
+    def _item_global_pos(self, idx: int) -> tuple[int, int]:    raise NotImplementedError
 
     # кэш и видимый диапазон
     def _rebuild_cache(self):
@@ -143,6 +144,15 @@ class CoreListOfItemsBase(PfObject):
         self._max_scroll, self._thumb_size, self._thumb_travel = scroll_metrics(self._total_length, self._view_length(), self.min_thumb)
         self.scroll_offset = clamp(self.scroll_offset, 0, self._max_scroll)
         self._update_visible()
+        self._sync_positions()
+
+    def _sync_positions(self) -> None:
+        """Записать глобальные координаты в left_top видимых элементов."""
+        if self.visible_start > self.visible_end:
+            return
+        for i in range(self.visible_start, self.visible_end + 1):
+            gx, gy = self._item_global_pos(i)
+            self.items[i].left, self.items[i].top = gx, gy
 
     def _update_visible(self):
         self.visible_start, self.visible_end = find_visible_range(
@@ -193,6 +203,7 @@ class CoreListOfItemsBase(PfObject):
 
         if not self.retention(self.page.mouse_pos): return False
         self._scroll_by(-wheel.y * self.speed)
+        
         return True
 
     def _scroll_by(self, delta: int):
@@ -200,6 +211,7 @@ class CoreListOfItemsBase(PfObject):
         if new != self.scroll_offset:
             self.scroll_offset = new
             self._update_visible()
+            self._sync_positions()
 
     @property
     def visible(self) -> list:

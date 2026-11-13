@@ -31,3 +31,6 @@ class CoreListOfItemsDown(CoreListOfItemsBase):
         x, y = self.left_top.pixel
         w, h = self.width_height.pixel
         rect(screen, self.color_streak, (x + w - self.size_streak, y + thumb_pos, self.size_streak, self._thumb_size))
+
+    def _item_global_pos(self, idx):
+        return (self.left_top.pixel[0], self._axis_offset() - self.scroll_offset + self._prefix[idx] )

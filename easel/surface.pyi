@@ -39,6 +39,9 @@ class Surface:
     def get_size(self) -> tuple[int, int]:
         """Возвращает (width, height)."""
 
+    def copy(self) -> "Surface":
+        """Независимая копия поверхности: тот же формат, пиксель-в-пиксель."""
+
     # заливка/рисование
     def fill(self, color: tuple[int, int, int] | tuple[int, int, int, int]) -> None:
         """
@@ -137,3 +140,5 @@ class Surface:
     def __enter__(self) -> "Surface": ...
 
     def __exit__(self, exc_type, exc_val, exc_tb) -> None: ...
+
+    def __copy__(self) -> "Surface": ...

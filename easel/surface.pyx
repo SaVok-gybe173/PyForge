@@ -97,6 +97,16 @@ cdef class Surface:
     def get_size(self):
         return (self.width, self.height)
 
+    cpdef Surface copy(self):
+        self._check()
+        cdef object dup = sdl2_surface.SDL_ConvertSurface(
+            self._surface, self._fmt_ctype, 0)
+        if dup is None:
+            raise RuntimeError(
+                f"Не удалось скопировать поверхность: "
+                f"{sdl2.SDL_GetError().decode()}")
+        return Surface(dup, owned=True)
+
     @property
     def has_alpha(self):
         if self._freed:
@@ -278,3 +288,6 @@ cdef class Surface:
 
     def __enter__(self):  return self
     def __exit__(self, *a): self.free()
+
+    def __copy__(self):
+        return self.copy()

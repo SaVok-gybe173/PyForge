@@ -4,6 +4,5 @@ from ...easel.surface import Surface
 
 class InputLine(_InputLine):
     def draw(self, win: Surface):
-        if self.core.selection:
-            rect(win, self.highlighting, self.selected_rect)
-        win.blit(self.img, (self.left, self.top))
+        if not self.img is None:
+            win.blit(self.img, (self.left, self.top))

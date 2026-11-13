@@ -39,6 +39,34 @@ cdef inline void _put_px(Surface s, int x, int y, uint32_t color) noexcept:
 cdef inline uint32_t _get_px(Surface s, int x, int y) noexcept:
     return s._px[y * s._pitch_u32 + x]
 
+cdef inline void _blend_px_over(Surface s, int x, int y,
+                                uint32_t color, uint8_t a) noexcept:
+    if a == 0 or not (0 <= x < s._w and 0 <= y < s._h):
+        return
+    cdef uint32_t* p = s._px + y * s._pitch_u32 + x
+    cdef uint32_t dst = p[0]
+    cdef uint32_t sr = (color & s._Rmask) >> s._Rshift
+    cdef uint32_t sg = (color & s._Gmask) >> s._Gshift
+    cdef uint32_t sb = (color & s._Bmask) >> s._Bshift
+    cdef uint32_t dr = (dst & s._Rmask) >> s._Rshift
+    cdef uint32_t dg = (dst & s._Gmask) >> s._Gshift
+    cdef uint32_t db = (dst & s._Bmask) >> s._Bshift
+    cdef uint32_t da = 255
+    if s._Amask:
+        da = (dst & s._Amask) >> s._Ashift
+    cdef uint32_t ia = 255 - a
+    cdef uint32_t out_a_num = a * 255 + da * ia
+    if out_a_num == 0:
+        p[0] = 0
+        return
+    cdef uint32_t out_a = out_a_num // 255
+    cdef uint32_t out_r = (sr * a * 255 + dr * da * ia) // out_a_num
+    cdef uint32_t out_g = (sg * a * 255 + dg * da * ia) // out_a_num
+    cdef uint32_t out_b = (sb * a * 255 + db * da * ia) // out_a_num
+    p[0] = ((out_r << s._Rshift) & s._Rmask) | \
+           ((out_g << s._Gshift) & s._Gmask) | \
+           ((out_b << s._Bshift) & s._Bmask) | \
+           ((out_a << s._Ashift) & s._Amask)
 
 cdef inline void _blend_px(Surface s, int x, int y,
                            uint32_t color, uint8_t a) noexcept:
@@ -156,6 +184,26 @@ cdef void _wu_line(Surface s, uint32_t color,
         intery += gradient
         x += 1
 
+cdef inline void _fill_rect_blend(Surface s, int x, int y, int w, int h,
+                                   uint32_t color, uint8_t alpha,
+                                   _BB* bb) noexcept:
+    if w <= 0 or h <= 0 or alpha == 0:
+        return
+    cdef int x0 = x if x > 0 else 0
+    cdef int y0 = y if y > 0 else 0
+    cdef int x1 = x + w
+    cdef int y1 = y + h
+    if x1 > s._w: x1 = s._w
+    if y1 > s._h: y1 = s._h
+    if x0 >= x1 or y0 >= y1:
+        return
+    cdef int i, j
+    for j in range(y0, y1):
+        for i in range(x0, x1):
+            _blend_px_over(s, i, j, color, alpha)
+    _bb_upd(bb, x0, y0)
+    _bb_upd(bb, x1 - 1, y1 - 1)
+
 
 cdef inline void _fill_rect(Surface s, int x, int y, int w, int h,
                             uint32_t color, _BB* bb) noexcept:
@@ -182,7 +230,8 @@ cdef inline void _fill_rect(Surface s, int x, int y, int w, int h,
 # дуга окружности (нужна в rect)
 cdef void _draw_circle_arc(Surface s, int cx, int cy, int r,
                            double a0, double a1, int width,
-                           uint32_t color, _BB* bb) noexcept:
+                           uint32_t color, uint8_t alpha, bint use_blend,
+                           _BB* bb) noexcept:
     if r <= 0:
         return
     cdef double step = 1.0 / r
@@ -195,7 +244,10 @@ cdef void _draw_circle_arc(Surface s, int cx, int cy, int r,
         py = <int>(cy + r * sin(a))
         for i in range(width):
             for j in range(width):
-                _put_px(s, px - i, py - j, color)
+                if use_blend:
+                    _blend_px_over(s, px - i, py - j, color, alpha)
+                else:
+                    _put_px(s, px - i, py - j, color)
                 _bb_upd(bb, px - i, py - j)
         a += step
 
@@ -312,16 +364,22 @@ def rect(Surface surface, color, rect, width=0,
          border_top_right_radius=-1,
          border_bottom_left_radius=-1,
          border_bottom_right_radius=-1):
-    """rect(surface, color, rect, width=0, border_radius=-1,
-            border_top_left_radius=-1, border_top_right_radius=-1,
-            border_bottom_left_radius=-1, border_bottom_right_radius=-1) -> Rect"""
+    """rect(surface, color, rect, width=0, border_radius=-1, ...) -> Rect"""
     cdef int rx, ry, rw, rh
     if isinstance(rect, (tuple, list)):
         rx = <int>rect[0]; ry = <int>rect[1]
         rw = <int>rect[2]; rh = <int>rect[3]
     else:
         rx = rect.x; ry = rect.y; rw = rect.w; rh = rect.h
+
     cdef uint32_t c = _map_color(surface, color)
+    cdef uint8_t alpha = 255
+    cdef bint use_blend = False
+    if isinstance(color, (tuple, list)) and len(color) >= 4 and surface._Amask:
+        alpha = <uint8_t>int(color[3])
+        if alpha < 255:
+            use_blend = True
+
     cdef _BB bb
     _bb_init(&bb)
     cdef int w = <int>width
@@ -337,20 +395,32 @@ def rect(Surface surface, color, rect, width=0,
     if tr < 0: tr = br
     if bl < 0: bl = br
     if brr < 0: brr = br
-    # без скруглений (быстрый путь)
+
     cdef int tw, th, maxr, cx, cy, r, dx, dy
+
+    # без скруглений
     if br < 1 and tl < 1 and tr < 1 and bl < 1 and brr < 1:
         if w == 0:
-            _fill_rect(surface, rx, ry, rw, rh, c, &bb)
+            if use_blend:
+                _fill_rect_blend(surface, rx, ry, rw, rh, c, alpha, &bb)
+            else:
+                _fill_rect(surface, rx, ry, rw, rh, c, &bb)
         else:
             tw = w if w < rw else rw
             th = w if w < rh else rh
-            _fill_rect(surface, rx, ry, rw, th, c, &bb)
-            _fill_rect(surface, rx, ry + rh - th, rw, th, c, &bb)
-            _fill_rect(surface, rx, ry + th, tw, rh - 2*th, c, &bb)
-            _fill_rect(surface, rx + rw - tw, ry + th, tw, rh - 2*th, c, &bb)
+            if use_blend:
+                _fill_rect_blend(surface, rx, ry, rw, th, c, alpha, &bb)
+                _fill_rect_blend(surface, rx, ry + rh - th, rw, th, c, alpha, &bb)
+                _fill_rect_blend(surface, rx, ry + th, tw, rh - 2*th, c, alpha, &bb)
+                _fill_rect_blend(surface, rx + rw - tw, ry + th, tw, rh - 2*th, c, alpha, &bb)
+            else:
+                _fill_rect(surface, rx, ry, rw, th, c, &bb)
+                _fill_rect(surface, rx, ry + rh - th, rw, th, c, &bb)
+                _fill_rect(surface, rx, ry + th, tw, rh - 2*th, c, &bb)
+                _fill_rect(surface, rx + rw - tw, ry + th, tw, rh - 2*th, c, &bb)
         return _bb_to_rect(&bb, rx, ry)
-    # скруглённый прямоугольник
+
+    # скруглённый
     maxr = rw // 2
     if rh // 2 < maxr: maxr = rh // 2
     if tl  > maxr: tl  = maxr
@@ -359,38 +429,76 @@ def rect(Surface surface, color, rect, width=0,
     if brr > maxr: brr = maxr
 
     if w == 0:
-        _fill_rect(surface, rx + tl, ry, rw - tl - tr, rh, c, &bb) # центральная полоса
-        _fill_rect(surface, rx, ry + tl, tl, rh - tl - bl, c, &bb)          # боковые полосы
-        _fill_rect(surface, rx + rw - tr, ry + tr, tr, rh - tr - brr, c, &bb)
+        if use_blend:
+            _fill_rect_blend(surface, rx + tl, ry, rw - tl - tr, rh, c, alpha, &bb)
+            _fill_rect_blend(surface, rx, ry + tl, tl, rh - tl - bl, c, alpha, &bb)
+            _fill_rect_blend(surface, rx + rw - tr, ry + tr, tr, rh - tr - brr, c, alpha, &bb)
+        else:
+            _fill_rect(surface, rx + tl, ry, rw - tl - tr, rh, c, &bb)
+            _fill_rect(surface, rx, ry + tl, tl, rh - tl - bl, c, &bb)
+            _fill_rect(surface, rx + rw - tr, ry + tr, tr, rh - tr - brr, c, &bb)
+
         r = tl; cx = rx + tl; cy = ry + tl
         for dy in range(-r, 0):
             for dx in range(-r, 0):
                 if dx*dx + dy*dy <= r*r:
-                    _put_px(surface, cx+dx, cy+dy, c)
+                    if use_blend:
+                        _blend_px_over(surface, cx+dx, cy+dy, c, alpha)
+                        _bb_upd(&bb, cx+dx, cy+dy)
+                    else:
+                        _put_px(surface, cx+dx, cy+dy, c)
+                        _bb_upd(&bb, cx+dx, cy+dy)
+
         r = tr; cx = rx + rw - tr; cy = ry + tr
         for dy in range(-r, 0):
             for dx in range(0, r):
                 if dx*dx + dy*dy <= r*r:
-                    _put_px(surface, cx+dx, cy+dy, c)
+                    if use_blend:
+                        _blend_px_over(surface, cx+dx, cy+dy, c, alpha)
+                        _bb_upd(&bb, cx+dx, cy+dy)
+                    else:
+                        _put_px(surface, cx+dx, cy+dy, c)
+                        _bb_upd(&bb, cx+dx, cy+dy)
+
         r = bl; cx = rx + bl; cy = ry + rh - bl
         for dy in range(0, r):
             for dx in range(-r, 0):
                 if dx*dx + dy*dy <= r*r:
-                    _put_px(surface, cx+dx, cy+dy, c)
+                    if use_blend:
+                        _blend_px_over(surface, cx+dx, cy+dy, c, alpha)
+                        _bb_upd(&bb, cx+dx, cy+dy)
+                    else:
+                        _put_px(surface, cx+dx, cy+dy, c)
+                        _bb_upd(&bb, cx+dx, cy+dy)
+
         r = brr; cx = rx + rw - brr; cy = ry + rh - brr
         for dy in range(0, r):
             for dx in range(0, r):
                 if dx*dx + dy*dy <= r*r:
-                    _put_px(surface, cx+dx, cy+dy, c)
+                    if use_blend:
+                        _blend_px_over(surface, cx+dx, cy+dy, c, alpha)
+                        _bb_upd(&bb, cx+dx, cy+dy)
+                    else:
+                        _put_px(surface, cx+dx, cy+dy, c)
+                        _bb_upd(&bb, cx+dx, cy+dy)
+
     else:
-        _fill_rect(surface, rx + tl, ry, rw - tl - tr, w, c, &bb)
-        _fill_rect(surface, rx + bl, ry + rh - w, rw - bl - brr, w, c, &bb)
-        _fill_rect(surface, rx, ry + tl, w, rh - tl - bl, c, &bb)
-        _fill_rect(surface, rx + rw - w, ry + tr, w, rh - tr - brr, c, &bb)
-        _draw_circle_arc(surface, rx + tl, ry + tl, tl, 90, 180, w, c, &bb)
-        _draw_circle_arc(surface, rx + rw - tr, ry + tr, tr, 0, 90, w, c, &bb)
-        _draw_circle_arc(surface, rx + bl, ry + rh - bl, bl, 180, 270, w, c, &bb)
-        _draw_circle_arc(surface, rx + rw - brr, ry + rh - brr, brr, 270, 360, w, c, &bb)
+        if use_blend:
+            _fill_rect_blend(surface, rx + tl, ry, rw - tl - tr, w, c, alpha, &bb)
+            _fill_rect_blend(surface, rx + bl, ry + rh - w, rw - bl - brr, w, c, alpha, &bb)
+            _fill_rect_blend(surface, rx, ry + tl, w, rh - tl - bl, c, alpha, &bb)
+            _fill_rect_blend(surface, rx + rw - w, ry + tr, w, rh - tr - brr, c, alpha, &bb)
+        else:
+            _fill_rect(surface, rx + tl, ry, rw - tl - tr, w, c, &bb)
+            _fill_rect(surface, rx + bl, ry + rh - w, rw - bl - brr, w, c, &bb)
+            _fill_rect(surface, rx, ry + tl, w, rh - tl - bl, c, &bb)
+            _fill_rect(surface, rx + rw - w, ry + tr, w, rh - tr - brr, c, &bb)
+
+        _draw_circle_arc(surface, rx + tl,        ry + tl,        tl,  90,  180, w, c, alpha, use_blend, &bb)
+        _draw_circle_arc(surface, rx + rw - tr,   ry + tr,        tr,   0,   90, w, c, alpha, use_blend, &bb)
+        _draw_circle_arc(surface, rx + bl,        ry + rh - bl,   bl, 180,  270, w, c, alpha, use_blend, &bb)
+        _draw_circle_arc(surface, rx + rw - brr,  ry + rh - brr,  brr, 270, 360, w, c, alpha, use_blend, &bb)
+
     return _bb_to_rect(&bb, rx, ry)
 
 

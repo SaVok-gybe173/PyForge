@@ -53,7 +53,7 @@ class InputTextCore:
     def select_all(self) -> None:
         "Выделяет весь текст"
 
-    def delete_selection(self):
+    def delete_selection(self) -> None:
         """
         Удалить выделенный фрагмент
         курсор ставится на место выделения.

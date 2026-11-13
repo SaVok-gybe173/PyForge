@@ -82,7 +82,7 @@ class _TextLine(PfObjectIMG):
         if self.img is None:
             self.width, self.height = 0, 0
         else:
-            self.width, self.height = self.img.width, self.height
+            self.width, self.height = self.img.width, self.img.height
         self._text_surf = self.img
 
     # оболочка над GraphicsInputTextCore
@@ -94,13 +94,15 @@ class _TextLine(PfObjectIMG):
 
     def backText(self) -> bool: # Backspace
         _is = self.core.backText()
-        self.updateMeta()
+        if _is:
+            self.updateMeta()
         return _is
 
     def delText(self) -> bool: # удаление справа от курсора
         """Удалит символ или удали выделенную часть"""
         _is = self.core.delText()
-        self.updateMeta()
+        if _is:
+            self.updateMeta()
         return _is
 
     # выделение текста

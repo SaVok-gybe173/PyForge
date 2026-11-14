@@ -139,8 +139,7 @@ class CoreListOfItemsBase(PfObject):
         if self.visible_start > self.visible_end:
             return
         for i in range(self.visible_start, self.visible_end + 1):
-            gx, gy = self._item_global_pos(i)
-            self.items[i].left, self.items[i].top = gx, gy
+            self.items[i].left, self.items[i].top = self._item_global_pos(i)
 
     def _update_visible(self):
         self.visible_start, self.visible_end = find_visible_range(
@@ -150,7 +149,6 @@ class CoreListOfItemsBase(PfObject):
     def resize(self, width_height):
         self.width_height = width_height if isinstance(width_height, Size) else Size(*width_height)
         self._rebuild_cache()
-
     # публичный API
     def add(self, *args):
         "добавляет несколько объектов"

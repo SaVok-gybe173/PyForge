@@ -147,6 +147,7 @@ class _TextLine(PfObjectIMG):
         self.selected_rect.width = x_end - x_start
         self.selected_rect.height = self.img.height
 
+        del self.img
         self.img = self._text_surf.copy()
         draw_rect(self.img, self.highlighting, self.selected_rect)
 

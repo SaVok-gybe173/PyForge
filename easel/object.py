@@ -485,7 +485,7 @@ class PfObject(CoreObject):
 
     @top.setter
     def top(self, num: int) -> None:
-        self.__rect.left = num
+        self.__rect.top = num
 
     @property
     def left_top(self) -> tuple[int, int]:

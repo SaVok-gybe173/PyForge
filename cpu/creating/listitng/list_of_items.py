@@ -1,6 +1,5 @@
 from ....easel import Surface
 from dataclasses import dataclass
-from typing import Tuple, Any
 from ...._core.creating.listing import CoreListOfItemsDown, CoreListOfItemsRightwards, CoreListOfItemsBase
 from ...._core.creating.listing._list_math import thumb_from_scroll
 
@@ -9,7 +8,7 @@ class ListOfItemsBase(CoreListOfItemsBase):
         """Рендерит только видимые элементы. Никаких промежуточных поверхностей."""
         if self.visible_start <= self.visible_end:
             old_clip = screen.get_clip()
-            screen.set_clip(self._view_rect())
+            screen.set_clip(self.rect)
             try:
                 offset = self._axis_offset() - self.scroll_offset
                 prefix = self._prefix

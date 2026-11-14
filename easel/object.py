@@ -67,6 +67,7 @@ class CoreObject(metaclass=ObjectMeta):
         Args:
             win (pg.Surface): Холст главного окна
         '''
+
     def update(self, dt: float):
         '''
         сработает при обновление
@@ -94,6 +95,7 @@ class CoreObject(metaclass=ObjectMeta):
             new (tuple[int, int]): Новый размер
             ratio (tuple[int, int]): Коэффициент между новым и старым размером (new/old)
         '''
+    
     def move_window(self, old: tuple[int, int], new: tuple[int, int], scale: tuple[int, int]) -> None:
         '''
         Перемещение окна

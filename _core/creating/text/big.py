@@ -9,12 +9,15 @@ from ....font.ttf import Font, render_text
 
 from dataclasses import dataclass
 
-
+import sdl2
 
 class _BigText(CoreListOfItemsDown):
-    _sel_anchor = None    # (line_idx, char_idx)
-    _sel_cursor = None
+    _sel_anchor = None | tuple[int, int]    # (line_idx, char_idx)
+    _sel_cursor = None | tuple[int, int]    # (line_idx, char_idx)
     dragging = False
+
+    items: list[_TextLine]
+
     """
     Многострочный read-only текст.
 
@@ -35,7 +38,7 @@ class _BigText(CoreListOfItemsDown):
         self._rebuild_cache()
         
     # выделение текста
-    def _normalized_selection(self):
+    def _normalized_selection(self) -> None | tuple[int, int]: # нармальзация
         if self._sel_anchor is None or self._sel_cursor is None:
             return None
         a, c = self._sel_anchor, self._sel_cursor
@@ -65,3 +68,23 @@ class _BigText(CoreListOfItemsDown):
     @property
     def text(self) -> str:
         return self.get_content()
+
+    # события
+
+    def mousebuttondown(self, common, button):
+        if button.button == sdl2.SDL_BUTTON_LEFT:
+            index = self.index()
+            if not index is None:
+                self._sel_anchor = (index, self.items[index].core.selectionX)
+                super().mousebuttondown(common, button)
+                self.dragging = True
+
+    def mousemotion(self, common, motion):
+        if self.dragging:
+            super().mousemotion(common, motion)
+    
+    def mousebuttonup(self, common, button):
+        super().mousebuttonup(common, button)
+
+    def keydown(self, common, key):
+        super().keydown(common, key)

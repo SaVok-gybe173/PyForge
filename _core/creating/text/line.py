@@ -132,21 +132,6 @@ class _TextLine(PfObjectIMG):
         self.core.set_selection(anchor, cursor)
         self.updateMeta()
 
-    # события
-    def mousebuttondown(self, common: CommonEvent, button: MouseButtonEvent):
-        if button.button == sdl2.SDL_BUTTON_LEFT:
-            if self.rect.collidepoint(button.x, button.y):
-                self.img = self._text_surf.copy()
-                self.idx = self.anchor = self.core.hit_test(button.x-self.left, self.layout[0], self.layout[1])
-                self.dragging = True
-                self.core.set_selection(self.anchor, self.idx) # каретка, без выделения
-            else: 
-                self.clear()
-            
-        elif button.button == sdl2.SDL_BUTTON_RIGHT:
-            self.clear()
-
-
     def selection(self, anchor: int, idx: int) -> None: # отрисовка выделения
         self.idx, self.anchor = idx, anchor
         self.core.set_selection(self.anchor, self.idx)
@@ -164,6 +149,20 @@ class _TextLine(PfObjectIMG):
 
         self.img = self._text_surf.copy()
         draw_rect(self.img, self.highlighting, self.selected_rect)
+
+    # события
+    def mousebuttondown(self, common: CommonEvent, button: MouseButtonEvent):
+        if button.button == sdl2.SDL_BUTTON_LEFT:
+            if self.rect.collidepoint(button.x, button.y):
+                self.img = self._text_surf.copy()
+                self.idx = self.anchor = self.core.hit_test(button.x-self.left, self.layout[0], self.layout[1])
+                self.dragging = True
+                self.core.set_selection(self.anchor, self.idx) # каретка, без выделения
+            else: 
+                self.clear()
+            
+        elif button.button == sdl2.SDL_BUTTON_RIGHT:
+            self.clear()
 
     def mousemotion(self, common: CommonEvent, motion: MouseMotionEvent):
         if self.dragging:

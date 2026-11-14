@@ -451,7 +451,7 @@ class CoreObject(metaclass=ObjectMeta):
         """
 
 class PfObject(CoreObject):
-    rect: Rect | None = None
+    __rect: Rect | None = None
     _page: Window | None = None
 
     def __init__(self, page: Window | None, left_top: Point | tuple[int, int], width_height: Size | tuple[int, int], *args: CoreObject, **kvargs):
@@ -462,7 +462,7 @@ class PfObject(CoreObject):
         page - ссылка на главное окно
         """
         self._page = page
-        self.rect = Rect(0, 0, 0, 0)
+        self.__rect = Rect(0, 0, 0, 0)
         self.left_top = left_top
         self.width_height = width_height
         
@@ -471,79 +471,58 @@ class PfObject(CoreObject):
     # Point
     @property
     def left(self) -> int:
-        return self._left_top.pixel[0]
+        return self.__rect.left
 
     @property
     def top(self) -> int:
-        return self._left_top.pixel[1]
+        return self.__rect.top
     
     @left.setter
     def left(self, num: int) -> None:
-        self._left_top.pixel = (num, self._left_top.pixel[1])
-        if not self.rect is None:
-            self.rect.left = num
+        self.__rect.left = num
 
     @top.setter
     def top(self, num: int) -> None:
-        self._left_top.pixel = (self._left_top.pixel[0], num)
-        if not self.rect is None:
-            self.rect.top = num
+        self.__rect.left = num
 
     @property
-    def left_top(self) -> Point:
-        return self._left_top
+    def left_top(self) -> tuple[int, int]:
+        return (self.__rect.left, self.__rect.top)
 
     @left_top.setter
     def left_top(self, left_top: Point | tuple[int, int]) -> None:
         if isinstance(left_top, Point):
-            self._left_top = left_top
-        elif isinstance(left_top, tuple) and isListType(left_top):
-            self._left_top = Point(left_top[0], left_top[1])
+            self.__rect.left, self.__rect.top = left_top.pixel
         else:
-            raise ValueError(f"Не верный аргумент {self._left_top}")
-        self._left_top.page = self.page
+            self.__rect.left, self.__rect.top = left_top
 
-        if not self.rect is None:
-            self.rect.left, self.rect.top = self._left_top.pixel
-
-        
     # Size
     @property
     def width(self) -> int:
-        return self._width_height.pixel[0]
+        return self.__rect.width
 
     @property
     def height(self) -> int:
-        return self._width_height.pixel[1]
+        return self.__rect.height
 
     @width.setter
     def width(self, num: int) -> None:
-        self._width_height.pixel = (num, self._width_height.pixel[1])
-        if not self.rect is None:
-            self.rect.width = num
+        self.__rect.width = num
 
     @height.setter
     def height(self, num: int) -> None:
-        self._width_height.pixel = (self._width_height.pixel[0], num)
-        if not self.rect is None:
-            self.rect.height = num
+        self.__rect.height = num
 
     @property
-    def width_height(self) -> Size:
-        return self._width_height
+    def width_height(self) -> tuple[int, int]:
+        return (self.__rect.width, self.__rect.height)
 
     @width_height.setter
     def width_height(self, width_height: Size | tuple[int, int]) -> None:
         if isinstance(width_height, Point):
-            self._width_height = width_height
-        elif isinstance(width_height, tuple) and isListType(width_height):
-            self._width_height = Point(width_height[0], width_height[1])
+            self.__rect.width, self.__rect.height = width_height.pixel
         else:
-            raise ValueError(f"Не верный аргумент {self._width_height}")
-        self._width_height.page = self.page
-
-        if not self.rect is None:
-            self.rect.width, self.rect.height = self._width_height.pixel
+            self.__rect.width, self.__rect.height = width_height
 
     @property
     def page(self) -> Window | None:
@@ -552,10 +531,6 @@ class PfObject(CoreObject):
     @page.setter
     def page(self, page: Window | None) -> None:
         self._page = page
-        self._width_height.page = page
-        self._left_top.page = page
-        self._width_height.update()
-        self._left_top.update()
 
 class PfObjectIMG(PfObject):
     img: Surface # изображение

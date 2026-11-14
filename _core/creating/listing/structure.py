@@ -117,7 +117,6 @@ class CoreListOfItemsBase(PfObject):
     # абстрактные методы (реализуются в наследниках)
     def _item_size(self, item) -> int:                          raise NotImplementedError
     def _view_length(self) -> int:                              raise NotImplementedError
-    def _view_rect(self) -> Rect:                               raise NotImplementedError
     def _axis_offset(self) -> int:                              raise NotImplementedError
     def _mouse_axis(self) -> int:                               raise NotImplementedError
     def _blit_item(self, screen, item, screen_pos):             raise NotImplementedError
@@ -172,7 +171,7 @@ class CoreListOfItemsBase(PfObject):
             itm.update(dt)
 
     def retention(self, pos) -> bool:
-        return self._view_rect().collidepoint(*pos)
+        return self.rect.collidepoint(*pos)
 
     def index(self) -> int | None:
         """Индекс элемента под курсором или None. O(log n)."""

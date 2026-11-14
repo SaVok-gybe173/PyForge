@@ -12,6 +12,9 @@ from dataclasses import dataclass
 
 
 class _BigText(CoreListOfItemsDown):
+    _sel_anchor = None    # (line_idx, char_idx)
+    _sel_cursor = None
+    dragging = False
     """
     Многострочный read-only текст.
 
@@ -30,6 +33,13 @@ class _BigText(CoreListOfItemsDown):
                          items=None, distance=distance, **kw)
         self.items.extend(self._make_lines(text))
         self._rebuild_cache()
+        
+    # выделение текста
+    def _normalized_selection(self):
+        if self._sel_anchor is None or self._sel_cursor is None:
+            return None
+        a, c = self._sel_anchor, self._sel_cursor
+        return (a, c) if a <= c else (c, a)
 
     def _make_lines(self, text):
         items = []

@@ -525,6 +525,15 @@ class PfObject(CoreObject):
             self.__rect.width, self.__rect.height = width_height
 
     @property
+    def rect(self) -> Rect:
+        return self.__rect
+
+    @rect.setter
+    def rect(self, rect: Rect):
+        self.__rect.left, self.__rect.top = rect.left, self.top
+        self.__rect.width, self.__rect.height = rect.width, self.height
+
+    @property
     def page(self) -> Window | None:
         return self._page
 

@@ -162,3 +162,45 @@ class _BigText(CoreListOfItemsDown):
 
     def keydown(self, common, key):
         super().keydown(common, key)
+
+    # API
+
+    def clear_selection(self):
+        """Снять выделение со всех строк."""
+        self._sel_anchor = None
+        self._sel_cursor = None
+        self._dragging = False
+        for line in self.items:
+            line.set_external_selection(None, None)
+
+
+    def has_selection(self) -> bool:
+        """Есть ли непустое выделение."""
+        if self._sel_anchor is None or self._sel_cursor is None: return False
+        return self._sel_anchor != self._sel_cursor
+
+
+    def get_selection(self) -> tuple[int, int] | None:
+        """Вернуть ((start_line, start_char), (end_line, end_char)) в нормализованном порядке.
+        None если выделения нет."""
+        if self._sel_anchor is None or self._sel_cursor is None: return None
+        a, c = self._sel_anchor, self._sel_cursor
+        return (a, c) if a <= c else (c, a)
+
+
+    def select(self, start_line, start_char, end_line, end_char):
+        """Программно задать выделение. Порядок не важен — нормализуется внутри."""
+        if not self.items: return
+        sl = max(0, min(start_line, len(self.items) - 1))
+        el = max(0, min(end_line, len(self.items) - 1))
+        self._sel_anchor = (sl, max(0, min(start_char, len(self.items[sl].text))))
+        self._sel_cursor = (el, max(0, min(end_char, len(self.items[el].text))))
+        self._apply_selection()
+
+
+    def select_all(self):
+        """Выделить весь текст."""
+        if not self.items: return
+        self._sel_anchor = (0, 0)
+        self._sel_cursor = (len(self.items) - 1, len(self.items[-1].text))
+        self._apply_selection()

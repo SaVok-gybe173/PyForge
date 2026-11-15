@@ -7,6 +7,8 @@ from ....easel import Window, Surface, PfObjectIMG
 from ....pfmath.markup import Point, Size
 from ....font.ttf import Font, render_text
 from ..listing._list_math import find_index_at
+from ....base.scrap import set_text_buffer
+from ....base.logger import printError
 
 from dataclasses import dataclass
 
@@ -40,11 +42,6 @@ class _BigText(CoreListOfItemsDown):
         self._rebuild_cache()
         
     # выделение текста
-    def _normalized_selection(self) -> None | tuple[int, int]: # нармальзация
-        if self._sel_anchor is None or self._sel_cursor is None:
-            return None
-        a, c = self._sel_anchor, self._sel_cursor
-        return (a, c) if a <= c else (c, a)
 
     def _hit_global(self, x, y):
         """Глобальные координаты (индекс строки, индекс символа).
@@ -161,7 +158,17 @@ class _BigText(CoreListOfItemsDown):
         return False
 
     def keydown(self, common, key):
-        super().keydown(common, key)
+        if key.keysym.sym == sdl2.SDLK_c and (key.keysym.mod & sdl2.KMOD_CTRL):
+            try:
+                text = self.get_selected_text()
+                if text:
+                    set_text_buffer(text)
+            except BufferError as e:
+                printError(f"[{self}] [BufferError] Не удалось положить текст в буфер.")
+            except Exception as e:
+                printError(f"[{self}] [{type(e).__name__}] {e}")
+        if key.keysym.sym == sdl2.SDLK_a and (key.keysym.mod & sdl2.KMOD_CTRL):
+            self.select_all()
 
     # API
 
@@ -187,6 +194,17 @@ class _BigText(CoreListOfItemsDown):
         a, c = self._sel_anchor, self._sel_cursor
         return (a, c) if a <= c else (c, a)
 
+    def get_selected_text(self) -> str:
+        select = self.get_selection()
+        if select is None:
+            return ''
+
+        res = ''
+        (sl, sc), (el, ec) = select
+        for i in range(sl, el):
+            res += self.items[i].core.get_selected_text() + '\n'
+        res += self.items[el].core.get_selected_text()
+        return res
 
     def select(self, start_line, start_char, end_line, end_char):
         """Программно задать выделение. Порядок не важен — нормализуется внутри."""

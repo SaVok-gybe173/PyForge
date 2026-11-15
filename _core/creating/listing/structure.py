@@ -46,17 +46,6 @@ from ....easel.event import (Event,
         MouseMotionEvent,
         MouseButtonEvent,
         MouseWheelEvent,
-        JoyAxisEvent,
-        JoyBallEvent,
-        JoyHatEvent,
-        JoyButtonEvent,
-        JoyDeviceEvent,
-        JoyBatteryEvent,
-        ControllerAxisEvent,
-        ControllerButtonEvent,
-        ControllerDeviceEvent,
-        ControllerTouchpadEvent,
-        ControllerSensorEvent,
         SensorEvent,
         QuitEvent,
         UserEvent,
@@ -128,7 +117,6 @@ class CoreListOfItemsBase(PfObject):
     # абстрактные методы (реализуются в наследниках)
     def _item_size(self, item) -> int:                          raise NotImplementedError
     def _view_length(self) -> int:                              raise NotImplementedError
-    def _view_rect(self) -> Rect:                               raise NotImplementedError
     def _axis_offset(self) -> int:                              raise NotImplementedError
     def _mouse_axis(self) -> int:                               raise NotImplementedError
     def _blit_item(self, screen, item, screen_pos):             raise NotImplementedError
@@ -151,8 +139,7 @@ class CoreListOfItemsBase(PfObject):
         if self.visible_start > self.visible_end:
             return
         for i in range(self.visible_start, self.visible_end + 1):
-            gx, gy = self._item_global_pos(i)
-            self.items[i].left, self.items[i].top = gx, gy
+            self.items[i].left, self.items[i].top = self._item_global_pos(i)
 
     def _update_visible(self):
         self.visible_start, self.visible_end = find_visible_range(
@@ -162,7 +149,6 @@ class CoreListOfItemsBase(PfObject):
     def resize(self, width_height):
         self.width_height = width_height if isinstance(width_height, Size) else Size(*width_height)
         self._rebuild_cache()
-
     # публичный API
     def add(self, *args):
         "добавляет несколько объектов"
@@ -183,7 +169,7 @@ class CoreListOfItemsBase(PfObject):
             itm.update(dt)
 
     def retention(self, pos) -> bool:
-        return self._view_rect().collidepoint(*pos)
+        return self.rect.collidepoint(*pos)
 
     def index(self) -> int | None:
         """Индекс элемента под курсором или None. O(log n)."""

@@ -39,29 +39,22 @@ class Container(LayoutNode):
         super().arrange(x, y, w, h)
         nw, nh = self.widget.width_height
 
-        # размеры ребёнка
         if self.resize in ("fill", "fill_w", "stretch"):
             cw = max(0, w - 2 * self.padding)
-        elif isinstance(self.resize, tuple):
-            cw = max(0, self.resolve(self.resize, w - 2 * self.padding))
-        else:
-            cw = nw
-
-        if   self.resize in ("fill", "fill_h", "stretch"):
             ch = max(0, h - 2 * self.padding)
         elif isinstance(self.resize, tuple):
-            cw = max(0, self.resolve(self.resize[0], w - 2*self.padding))
+            rw, rh = self.resize
+            cw = max(0, self.resolve(rw, w - 2 * self.padding))
+            ch = max(0, self.resolve(rh, h - 2 * self.padding))
         else:
-            ch = nh
+            cw, ch = nw, nh
 
-        # позиция через align
         cx, cy = self.place(
             x + self.padding, y + self.padding,
             w - 2 * self.padding, h - 2 * self.padding,
             cw, ch,
         )
-        self.widget.left, self.widget.top = cx, cy
-        self.widget.width, self.widget.height = cw, ch
+        super().arrange(cx, cy, cw, ch)
 
     def draw(self, surf: Surface):
         if self.bgcolor is not None:

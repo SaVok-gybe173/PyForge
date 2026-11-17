@@ -71,13 +71,10 @@ jobs:
       - name: Build Android wheels
         if: matrix.platform == 'android'
         run: |
-          # Создаем директорию для wheelhouse
           mkdir -p wheelhouse
-          
-          # Устанавливаем зависимости для сборки
+         
           pip install setuptools wheel Cython numpy
           
-          # Получаем пути к заголовкам Python
           PYTHON_INCLUDE=$(python3 -c "from sysconfig import get_paths; print(get_paths()['include'])")
           PYTHON_VERSION=$(python3 -c "import sys; print(f'{sys.version_info.major}.{sys.version_info.minor}')")
           
@@ -93,7 +90,6 @@ jobs:
             echo "=========================================="
             
             TOOLCHAIN=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64
-            
             
             case $ARCH in
               arm64-v8a)
@@ -120,25 +116,23 @@ jobs:
             export RANLIB="$TOOLCHAIN/bin/llvm-ranlib"
             export STRIP="$TOOLCHAIN/bin/llvm-strip"
             
+            #указываем sysroot для Android
             export SYSROOT="$TOOLCHAIN/sysroot"
             
-            # Создаем временный pyconfig.h для Android
-            # Копируем оригинальный pyconfig.h и модифицируем его
-            cp $PYTHON_INCLUDE/pyconfig.h /tmp/pyconfig_android.h
+            export CFLAGS="-I$PYTHON_INCLUDE --sysroot=$SYSROOT -D__ANDROID_API__=$API_LEVEL -fPIC"
+            export CXXFLAGS="$CFLAGS"
+            export LDFLAGS="--sysroot=$SYSROOT -L$SYSROOT/usr/lib/$HOST/$API_LEVEL"
             
-            sed -i 's|#  include <.*linux-gnu/python.*pyconfig.h>|/* & */|' /tmp/pyconfig_android.h
+            cp $PYTHON_INCLUDE/pyconfig.h /tmp/pyconfig_android_${ARCH}.h
+            sed -i 's|#  include <.*linux-gnu/python.*pyconfig.h>|/* & */|' /tmp/pyconfig_android_${ARCH}.h
             
             python setup.py bdist_wheel \
               --plat-name android_${ARCH} \
               build_ext \
-              --include-dirs="$PYTHON_INCLUDE" \
-              --define="_PYCONFIG_H_" \
-              CFLAGS="-I$PYTHON_INCLUDE -isysroot $SYSROOT -D__ANDROID_API__=$API_LEVEL" \
-              LDFLAGS="-L$SYSROOT/usr/lib/$HOST"
-            
+              --include-dirs="$PYTHON_INCLUDE"
+
             if ls dist/*.whl 1> /dev/null 2>&1; then
               for whl in dist/*.whl; do
-                # Переименовываем wheel чтобы отразить архитектуру Android
                 basename=$(basename "$whl" .whl)
                 new_name="${basename/linux_x86_64/android_${ARCH}}.whl"
                 mv "$whl" "wheelhouse/$new_name"

@@ -71,51 +71,86 @@ jobs:
       - name: Build Android wheels
         if: matrix.platform == 'android'
         run: |
+          # Создаем директорию для wheelhouse
           mkdir -p wheelhouse
           
+          # Устанавливаем зависимости для сборки
           pip install setuptools wheel Cython numpy
           
+          # Получаем пути к заголовкам Python
+          PYTHON_INCLUDE=$(python3 -c "from sysconfig import get_paths; print(get_paths()['include'])")
+          PYTHON_VERSION=$(python3 -c "import sys; print(f'{sys.version_info.major}.{sys.version_info.minor}')")
+          
+          echo "Python include: $PYTHON_INCLUDE"
+          echo "Python version: $PYTHON_VERSION"
+          
           ARCHS=("arm64-v8a" "armeabi-v7a" "x86_64" "x86")
+          API_LEVEL=29
           
           for ARCH in "${ARCHS[@]}"; do
+            echo "=========================================="
             echo "Building for $ARCH..."
+            echo "=========================================="
             
-            export ANDROID_ABI=$ARCH
+            TOOLCHAIN=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64
             
-            # Для arm64-v8a
-            if [ "$ARCH" == "arm64-v8a" ]; then
-              export CC=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android29-clang
-              export CXX=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android29-clang++
-              export AR=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-ar
-              export RANLIB=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-ranlib
-            elif [ "$ARCH" == "armeabi-v7a" ]; then
-              export CC=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi29-clang
-              export CXX=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi29-clang++
-              export AR=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-ar
-              export RANLIB=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-ranlib
-            elif [ "$ARCH" == "x86_64" ]; then
-              export CC=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/x86_64-linux-android29-clang
-              export CXX=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/x86_64-linux-android29-clang++
-              export AR=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-ar
-              export RANLIB=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-ranlib
-            elif [ "$ARCH" == "x86" ]; then
-              export CC=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/i686-linux-android29-clang
-              export CXX=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/i686-linux-android29-clang++
-              export AR=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-ar
-              export RANLIB=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-ranlib
+            
+            case $ARCH in
+              arm64-v8a)
+                TRIPLET=aarch64-linux-android
+                HOST=aarch64-linux-android
+                ;;
+              armeabi-v7a)
+                TRIPLET=armv7a-linux-androideabi
+                HOST=arm-linux-androideabi
+                ;;
+              x86_64)
+                TRIPLET=x86_64-linux-android
+                HOST=x86_64-linux-android
+                ;;
+              x86)
+                TRIPLET=i686-linux-android
+                HOST=i686-linux-android
+                ;;
+            esac
+            
+            export CC="$TOOLCHAIN/bin/${TRIPLET}${API_LEVEL}-clang"
+            export CXX="$TOOLCHAIN/bin/${TRIPLET}${API_LEVEL}-clang++"
+            export AR="$TOOLCHAIN/bin/llvm-ar"
+            export RANLIB="$TOOLCHAIN/bin/llvm-ranlib"
+            export STRIP="$TOOLCHAIN/bin/llvm-strip"
+            
+            export SYSROOT="$TOOLCHAIN/sysroot"
+            
+            # Создаем временный pyconfig.h для Android
+            # Копируем оригинальный pyconfig.h и модифицируем его
+            cp $PYTHON_INCLUDE/pyconfig.h /tmp/pyconfig_android.h
+            
+            sed -i 's|#  include <.*linux-gnu/python.*pyconfig.h>|/* & */|' /tmp/pyconfig_android.h
+            
+            python setup.py bdist_wheel \
+              --plat-name android_${ARCH} \
+              build_ext \
+              --include-dirs="$PYTHON_INCLUDE" \
+              --define="_PYCONFIG_H_" \
+              CFLAGS="-I$PYTHON_INCLUDE -isysroot $SYSROOT -D__ANDROID_API__=$API_LEVEL" \
+              LDFLAGS="-L$SYSROOT/usr/lib/$HOST"
+            
+            if ls dist/*.whl 1> /dev/null 2>&1; then
+              for whl in dist/*.whl; do
+                # Переименовываем wheel чтобы отразить архитектуру Android
+                basename=$(basename "$whl" .whl)
+                new_name="${basename/linux_x86_64/android_${ARCH}}.whl"
+                mv "$whl" "wheelhouse/$new_name"
+                echo "Created: wheelhouse/$new_name"
+              done
+              rm -rf dist build *.egg-info
+            else
+              echo "Warning: No wheel created for $ARCH"
             fi
-            
-            python setup.py bdist_wheel --plat-name android_${ARCH}
-            
-            cp dist/*.whl wheelhouse/ 2>/dev/null || true
-            rm -rf dist build *.egg-info
           done
           
+          echo "=========================================="
           echo "Build complete. Wheels:"
+          echo "=========================================="
           ls -la wheelhouse/
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: cibw-wheels-${{ matrix.os }}-${{ matrix.platform }}-${{ strategy.job-index }}
-          path: ./wheelhouse/*.whl
-          if-no-files-found: warn

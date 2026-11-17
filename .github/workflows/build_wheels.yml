@@ -62,9 +62,9 @@ jobs:
           CIBW_ARCHS_MACOS: "x86_64 arm64"
           CIBW_ARCHS_ANDROID: "arm64_v8a x86_64"
           CIBW_BUILD: ${{ matrix.platform == 'android' && 'cp313-* cp314-*' || '' }}
-          # Убираем ручную установку numpy — он уже в build-system.requires,
-          # а cibuildwheel сам подменит его заголовки на Android-версию (xbuild-files)
           CIBW_BEFORE_BUILD: "pip install setuptools wheel Cython"
+          # Индекс с Android-колёсами numpy для xbuild-files
+          CIBW_ENVIRONMENT_ANDROID: 'PIP_EXTRA_INDEX_URL="https://pypi.flet.dev"'
 
       - uses: actions/upload-artifact@v4
         with:

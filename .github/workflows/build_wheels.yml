@@ -42,23 +42,18 @@ jobs:
       - name: Set up Android SDK (for Android build)
         if: matrix.platform == 'android'
         run: |
-          # Устанавливаем Android SDK вручную через sdkmanager
           sudo apt-get update && sudo apt-get install -y wget unzip
           
-          # Скачиваем cmdline-tools
           wget https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip -O cmdline-tools.zip
           unzip cmdline-tools.zip -d /usr/local/lib/android/sdk
-          mkdir -p /usr/local/lib/android/sdk/cmdline-tools
-          mv /usr/local/lib/android/sdk/cmdline-tools/bin /usr/local/lib/android/sdk/cmdline-tools/latest 2>/dev/null || true
+          mkdir -p /usr/local/lib/android/sdk/cmdline-tools/latest
+          mv /usr/local/lib/android/sdk/cmdline-tools/bin/* /usr/local/lib/android/sdk/cmdline-tools/latest/ 2>/dev/null || true
           
-          # Настраиваем переменные окружения
           export ANDROID_HOME=/usr/local/lib/android/sdk
           export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools
           
-          # Принимаем лицензии
           yes | sdkmanager --licenses
           
-          # Устанавливаем необходимые компоненты
           sdkmanager "platform-tools" "platforms;android-34" "ndk;26.1.10909125"
           
           echo "ANDROID_HOME=$ANDROID_HOME" >> $GITHUB_ENV
@@ -73,16 +68,51 @@ jobs:
           ls "$ANDROID_HOME" || echo "SDK directory not found"
           ls "$ANDROID_NDK_HOME" || echo "NDK directory not found"
 
-      - name: Build wheels
-        uses: pypa/cibuildwheel@v4.3.5
-        env:
-          CIBW_ENVIRONMENT_LINUX: "PYTHONSAFEPATH=1"
-          CIBW_BUILD_VERBOSITY: 3
-          CIBW_PLATFORM: ${{ matrix.platform }}
-          CIBW_ARCHS_LINUX: "auto aarch64 i686"
-          CIBW_ARCHS_MACOS: "x86_64 arm64"
-          CIBW_ARCHS_ANDROID: "arm64-v8a armeabi-v7a x86_64 x86"
-          CIBW_BEFORE_BUILD: "pip install setuptools wheel Cython numpy"
+      - name: Build Android wheels
+        if: matrix.platform == 'android'
+        run: |
+          mkdir -p wheelhouse
+          
+          pip install setuptools wheel Cython numpy
+          
+          ARCHS=("arm64-v8a" "armeabi-v7a" "x86_64" "x86")
+          
+          for ARCH in "${ARCHS[@]}"; do
+            echo "Building for $ARCH..."
+            
+            export ANDROID_ABI=$ARCH
+            
+            # Для arm64-v8a
+            if [ "$ARCH" == "arm64-v8a" ]; then
+              export CC=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android29-clang
+              export CXX=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android29-clang++
+              export AR=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-ar
+              export RANLIB=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-ranlib
+            elif [ "$ARCH" == "armeabi-v7a" ]; then
+              export CC=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi29-clang
+              export CXX=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi29-clang++
+              export AR=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-ar
+              export RANLIB=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-ranlib
+            elif [ "$ARCH" == "x86_64" ]; then
+              export CC=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/x86_64-linux-android29-clang
+              export CXX=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/x86_64-linux-android29-clang++
+              export AR=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-ar
+              export RANLIB=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-ranlib
+            elif [ "$ARCH" == "x86" ]; then
+              export CC=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/i686-linux-android29-clang
+              export CXX=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/i686-linux-android29-clang++
+              export AR=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-ar
+              export RANLIB=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-ranlib
+            fi
+            
+            python setup.py bdist_wheel --plat-name android_${ARCH}
+            
+            cp dist/*.whl wheelhouse/ 2>/dev/null || true
+            rm -rf dist build *.egg-info
+          done
+          
+          echo "Build complete. Wheels:"
+          ls -la wheelhouse/
 
       - uses: actions/upload-artifact@v4
         with:

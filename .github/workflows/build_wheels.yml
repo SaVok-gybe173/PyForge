@@ -22,8 +22,8 @@ jobs:
             platform: macos
           - os: ubuntu-latest
             platform: android
-          - os: macos-26
-            platform: ios
+          #- os: macos-26
+          #  platform: ios
 
     steps:
       - uses: actions/checkout@v4

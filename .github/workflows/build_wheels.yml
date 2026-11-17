@@ -14,15 +14,15 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: ubuntu-latest
-            platform: linux
-          - os: windows-latest
-            platform: windows
-          - os: macos-26
-            platform: macos
+          #- os: ubuntu-latest
+          #  platform: linux
+          #- os: windows-latest
+          #  platform: windows
+          #- os: macos-26
+          #  platform: macos
           - os: ubuntu-latest
             platform: android
-          #- os: macos-26
+          #- os: macos-14
           #  platform: ios
 
     steps:
@@ -41,7 +41,29 @@ jobs:
 
       - name: Set up Android SDK (for Android build)
         if: matrix.platform == 'android'
-        uses: android-actions/setup-android@v3
+        run: |
+          # Устанавливаем Android SDK вручную через sdkmanager
+          sudo apt-get update && sudo apt-get install -y wget unzip
+          
+          # Скачиваем cmdline-tools
+          wget https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip -O cmdline-tools.zip
+          unzip cmdline-tools.zip -d /usr/local/lib/android/sdk
+          mkdir -p /usr/local/lib/android/sdk/cmdline-tools
+          mv /usr/local/lib/android/sdk/cmdline-tools/bin /usr/local/lib/android/sdk/cmdline-tools/latest 2>/dev/null || true
+          
+          # Настраиваем переменные окружения
+          export ANDROID_HOME=/usr/local/lib/android/sdk
+          export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools
+          
+          # Принимаем лицензии
+          yes | sdkmanager --licenses
+          
+          # Устанавливаем необходимые компоненты
+          sdkmanager "platform-tools" "platforms;android-34" "ndk;26.1.10909125"
+          
+          echo "ANDROID_HOME=$ANDROID_HOME" >> $GITHUB_ENV
+          echo "ANDROID_NDK_HOME=$ANDROID_HOME/ndk/26.1.10909125" >> $GITHUB_ENV
+          echo "NDK_HOME=$ANDROID_HOME/ndk/26.1.10909125" >> $GITHUB_ENV
 
       - name: Verify Android SDK
         if: matrix.platform == 'android'
@@ -49,6 +71,7 @@ jobs:
           echo "ANDROID_HOME=$ANDROID_HOME"
           echo "ANDROID_NDK_HOME=$ANDROID_NDK_HOME"
           ls "$ANDROID_HOME" || echo "SDK directory not found"
+          ls "$ANDROID_NDK_HOME" || echo "NDK directory not found"
 
       - name: Build wheels
         uses: pypa/cibuildwheel@v4.3.5

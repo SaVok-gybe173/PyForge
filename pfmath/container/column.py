@@ -1,17 +1,18 @@
 from .core import MultiChildNode
-from .constants import AUTO
+from .constants import AUTO, ALIGN_START, ALIGN_CENTER, ALIGN_END, ALIGN_STRETCH
+
 
 class Column(MultiChildNode):
     """
     Дети сверху вниз.
 
-      spacing  — расстояние между детьми
-      align_h  — выравнивание по ширине:
-                  "start" | "center" | "end" | "stretch"
+        spacing  - расстояние между детьми
+        align_h  - выравнивание по ширине:
+            ALIGN_START | ALIGN_CENTER | ALIGN_END | ALIGN_STRETCH
     """
 
     def __init__(self, page, children, size_w=AUTO, size_h=AUTO,
-                 spacing=0, align_h="center", padding=0):
+             spacing=0, align_h=ALIGN_CENTER, padding=0):
         super().__init__(page, children, size_w, size_h, padding)
         self.spacing = spacing
         self.align_h = align_h
@@ -47,13 +48,13 @@ class Column(MultiChildNode):
 
         cy = iy
         for c, (cw, ch) in zip(self.children, sizes):
-            if   self.align_h == "stretch":
+            if   self.align_h & ALIGN_STRETCH:
                 cx, cw2 = ix, iw
-            elif self.align_h == "center":
+            elif self.align_h & ALIGN_CENTER:
                 cx, cw2 = ix + (iw - cw) / 2, cw
-            elif self.align_h == "end":
+            elif self.align_h & ALIGN_END:
                 cx, cw2 = ix + iw - cw, cw
-            else:  # "start"
+            else:  # ALIGN_START
                 cx, cw2 = ix, cw
 
             c.arrange(cx, cy, cw2, ch)

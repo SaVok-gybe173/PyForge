@@ -22,7 +22,7 @@ jobs:
           #  platform: macos
           - os: ubuntu-latest
             platform: android
-          #- os: macos-14
+          #- os: macos-26
           #  platform: ios
 
     steps:
@@ -38,113 +38,36 @@ jobs:
         uses: docker/setup-qemu-action@v3
         with:
           platforms: all
-
       - name: Set up Android SDK (for Android build)
         if: matrix.platform == 'android'
-        run: |
-          sudo apt-get update && sudo apt-get install -y wget unzip
-          
-          wget https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip -O cmdline-tools.zip
-          unzip cmdline-tools.zip -d /usr/local/lib/android/sdk
-          mkdir -p /usr/local/lib/android/sdk/cmdline-tools/latest
-          mv /usr/local/lib/android/sdk/cmdline-tools/bin/* /usr/local/lib/android/sdk/cmdline-tools/latest/ 2>/dev/null || true
-          
-          export ANDROID_HOME=/usr/local/lib/android/sdk
-          export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools
-          
-          yes | sdkmanager --licenses
-          
-          sdkmanager "platform-tools" "platforms;android-34" "ndk;26.1.10909125"
-          
-          echo "ANDROID_HOME=$ANDROID_HOME" >> $GITHUB_ENV
-          echo "ANDROID_NDK_HOME=$ANDROID_HOME/ndk/26.1.10909125" >> $GITHUB_ENV
-          echo "NDK_HOME=$ANDROID_HOME/ndk/26.1.10909125" >> $GITHUB_ENV
+        uses: android-actions/setup-android@v4
+        with:
+          packages: 'platform-tools'
+          log-accepted-android-sdk-licenses: false
 
       - name: Verify Android SDK
         if: matrix.platform == 'android'
         run: |
           echo "ANDROID_HOME=$ANDROID_HOME"
-          echo "ANDROID_NDK_HOME=$ANDROID_NDK_HOME"
-          ls "$ANDROID_HOME" || echo "SDK directory not found"
-          ls "$ANDROID_NDK_HOME" || echo "NDK directory not found"
+          ls "$ANDROID_HOME"
+          which java curl
 
-      - name: Build Android wheels
-        if: matrix.platform == 'android'
-        run: |
-          mkdir -p wheelhouse
-         
-          pip install setuptools wheel Cython numpy
-          
-          PYTHON_INCLUDE=$(python3 -c "from sysconfig import get_paths; print(get_paths()['include'])")
-          PYTHON_VERSION=$(python3 -c "import sys; print(f'{sys.version_info.major}.{sys.version_info.minor}')")
-          
-          echo "Python include: $PYTHON_INCLUDE"
-          echo "Python version: $PYTHON_VERSION"
-          
-          ARCHS=("arm64-v8a" "armeabi-v7a" "x86_64" "x86")
-          API_LEVEL=29
-          
-          for ARCH in "${ARCHS[@]}"; do
-            echo "=========================================="
-            echo "Building for $ARCH..."
-            echo "=========================================="
-            
-            TOOLCHAIN=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64
-            
-            case $ARCH in
-              arm64-v8a)
-                TRIPLET=aarch64-linux-android
-                HOST=aarch64-linux-android
-                ;;
-              armeabi-v7a)
-                TRIPLET=armv7a-linux-androideabi
-                HOST=arm-linux-androideabi
-                ;;
-              x86_64)
-                TRIPLET=x86_64-linux-android
-                HOST=x86_64-linux-android
-                ;;
-              x86)
-                TRIPLET=i686-linux-android
-                HOST=i686-linux-android
-                ;;
-            esac
-            
-            export CC="$TOOLCHAIN/bin/${TRIPLET}${API_LEVEL}-clang"
-            export CXX="$TOOLCHAIN/bin/${TRIPLET}${API_LEVEL}-clang++"
-            export AR="$TOOLCHAIN/bin/llvm-ar"
-            export RANLIB="$TOOLCHAIN/bin/llvm-ranlib"
-            export STRIP="$TOOLCHAIN/bin/llvm-strip"
-            
-            #указываем sysroot для Android
-            export SYSROOT="$TOOLCHAIN/sysroot"
-            
-            export CFLAGS="-I$PYTHON_INCLUDE --sysroot=$SYSROOT -D__ANDROID_API__=$API_LEVEL -fPIC"
-            export CXXFLAGS="$CFLAGS"
-            export LDFLAGS="--sysroot=$SYSROOT -L$SYSROOT/usr/lib/$HOST/$API_LEVEL"
-            
-            cp $PYTHON_INCLUDE/pyconfig.h /tmp/pyconfig_android_${ARCH}.h
-            sed -i 's|#  include <.*linux-gnu/python.*pyconfig.h>|/* & */|' /tmp/pyconfig_android_${ARCH}.h
-            
-            python setup.py bdist_wheel \
-              --plat-name android_${ARCH} \
-              build_ext \
-              --include-dirs="$PYTHON_INCLUDE"
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v4.3.5
+        env:
+          CIBW_ENVIRONMENT_LINUX: "PYTHONSAFEPATH=1"
+          CIBW_BUILD_VERBOSITY: 3
+          CIBW_PLATFORM: ${{ matrix.platform }}
+          CIBW_ARCHS_LINUX: "auto aarch64 i686"
+          CIBW_ARCHS_MACOS: "x86_64 arm64"
+          CIBW_ARCHS_ANDROID: "arm64_v8a x86_64"
+          CIBW_BUILD: ${{ matrix.platform == 'android' && 'cp313-* cp314-*' || '' }}
+          # Убираем ручную установку numpy — он уже в build-system.requires,
+          # а cibuildwheel сам подменит его заголовки на Android-версию (xbuild-files)
+          CIBW_BEFORE_BUILD: "pip install setuptools wheel Cython"
 
-            if ls dist/*.whl 1> /dev/null 2>&1; then
-              for whl in dist/*.whl; do
-                basename=$(basename "$whl" .whl)
-                new_name="${basename/linux_x86_64/android_${ARCH}}.whl"
-                mv "$whl" "wheelhouse/$new_name"
-                echo "Created: wheelhouse/$new_name"
-              done
-              rm -rf dist build *.egg-info
-            else
-              echo "Warning: No wheel created for $ARCH"
-            fi
-          done
-          
-          echo "=========================================="
-          echo "Build complete. Wheels:"
-          echo "=========================================="
-          ls -la wheelhouse/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cibw-wheels-${{ matrix.os }}-${{ matrix.platform }}-${{ strategy.job-index }}
+          path: ./wheelhouse/*.whl
+          if-no-files-found: warn

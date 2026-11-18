@@ -228,6 +228,22 @@ class Window:
     def fill(self, color: tuple[int, int, int]) -> None:
         self.color = color
 
+    def set_condition(self, condition: str | int) -> bool:
+        if isinstance(condition, str):
+            sceneName = [i.__class__.__name__ for i in self._scene]
+            if condition in sceneName:
+                index = sceneName.index(condition)
+                printInfo(f"[SCENE] Сцена перешла на новую [{self._scene[self.condition].__class__.__name__}][{self.condition}] -> [{condition}][{index}] ")
+                self.condition = index
+                return True
+        elif isinstance(condition, int):
+            if len(self._scene) > condition:
+                printInfo(f"[SCENE] Сцена перешла на новую  [{self._scene[self.condition].__class__.__name__}][{self.condition}] -> [{self._scene[condition].__class__.__name__}][{condition}] ")
+                self.condition = condition
+                return True
+        return False
+            
+
     # размеры
     @property
     def size(self):

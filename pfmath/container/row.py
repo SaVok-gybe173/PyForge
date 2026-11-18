@@ -3,16 +3,15 @@ from .constants import AUTO, ALIGN_START, ALIGN_CENTER, ALIGN_END, ALIGN_STRETCH
 
 
 class Row(MultiChildNode):
-    """
-    Дети слева направо.
-
-        spacing  - расстояние между детьми
-        align_v  - выравнивание по высоте:
-            ALIGN_START | ALIGN_CENTER | ALIGN_END | ALIGN_STRETCH
-    """
-
     def __init__(self, page, children, size_w=AUTO, size_h=AUTO,
              spacing=0, align_v=ALIGN_CENTER, padding=0):
+        """
+        Дети слева направо.
+    
+            spacing  - расстояние между детьми
+            align_v  - выравнивание по высоте:
+                ALIGN_START | ALIGN_CENTER | ALIGN_END | ALIGN_STRETCH
+        """
         super().__init__(page, children, size_w, size_h, padding)
         self.spacing = spacing
         self.align_v = align_v

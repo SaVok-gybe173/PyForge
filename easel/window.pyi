@@ -92,6 +92,11 @@ class Window:
         но сцене только срабатывает ивент .event
         """
 
+    def set_condition(self, condition: str | int) -> bool:
+        """
+        Принимает название класса или индекс и выдает bool значение (зависит от успеха)
+        """
+
     # размеры
     @property
     def size(self): ...

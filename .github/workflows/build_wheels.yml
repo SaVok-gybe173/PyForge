@@ -14,12 +14,12 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          #- os: ubuntu-latest
-          #  platform: linux
-          #- os: windows-latest
-          #  platform: windows
-          #- os: macos-26
-          #  platform: macos
+          - os: ubuntu-latest
+            platform: linux
+          - os: windows-latest
+            platform: windows
+          - os: macos-26
+            platform: macos
           - os: ubuntu-latest
             platform: android
           #- os: macos-26

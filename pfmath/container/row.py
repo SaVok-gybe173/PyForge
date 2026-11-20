@@ -1,9 +1,9 @@
 from .core import MultiChildNode
 from .constants import AUTO, ALIGN_START, ALIGN_CENTER, ALIGN_END, ALIGN_STRETCH
-
+from .wrapper import Container
 
 class Row(MultiChildNode):
-    def __init__(self, page, children, size_w=AUTO, size_h=AUTO,
+    def __init__(self, page, children: list[Container], size_w=AUTO, size_h=AUTO,
              spacing=0, align_v=ALIGN_CENTER, padding=0):
         """
         Дети слева направо.

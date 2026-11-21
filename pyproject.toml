@@ -15,7 +15,7 @@ dependencies = [
 ]
 
 [tool.cibuildwheel]
-build = ["cp312-*", "cp313-*", "cp314-*"]
+build = ["cp311-*", "cp312-*", "cp313-*", "cp314-*"]
 skip = ["*-musllinux_*", "pp*", "graalpy*", "*-manylinux_i686"]
 build-frontend = "build"
 build-verbosity = 1

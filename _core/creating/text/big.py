@@ -15,8 +15,8 @@ from dataclasses import dataclass
 import sdl2
 
 class _BigText(CoreListOfItemsDown):
-    _sel_anchor = None | tuple[int, int]    # (line_idx, char_idx)
-    _sel_cursor = None | tuple[int, int]    # (line_idx, char_idx)
+    _sel_anchor: None | tuple[int, int] = None   # (line_idx, char_idx)
+    _sel_cursor: None | tuple[int, int] = None   # (line_idx, char_idx)
     _dragging = False
 
 

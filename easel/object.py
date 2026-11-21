@@ -532,8 +532,8 @@ class PfObject(CoreObject):
 
     @rect.setter
     def rect(self, rect: Rect):
-        self.__rect.left, self.__rect.top = rect.left, self.top
-        self.__rect.width, self.__rect.height = rect.width, self.height
+        self.__rect.left, self.__rect.top = rect.left, rect.top
+        self.__rect.width, self.__rect.height = rect.width, rect.height
 
     @property
     def page(self) -> Window | None:

@@ -7,7 +7,6 @@ from ....pfmath.rect import Rect
 class _ProgressBar(ProgressBarCalc, PfObject):
     def __init__(self, page: Window, left_top: tuple[int, int] | Point, width_height: tuple[int, int] | Size, color: tuple[int, int, int]):
         self.color = color
-        self.rect = Rect(left_top,  (0, 0))
         PfObject.__init__(self, page, left_top, width_height)
         ProgressBarCalc.__init__(self)
 

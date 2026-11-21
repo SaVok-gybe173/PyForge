@@ -1,5 +1,4 @@
 from .constants import AUTO, CENTER
-from .wrapper import Container
 from ...easel.object import PfObject
 from ...easel.surface import Surface
 from ...easel.event import (
@@ -35,6 +34,12 @@ from ...easel.event import (
         DropEvent,
         AudioDeviceEvent
     )
+
+from typing import TYPE_CHECKING, Any
+if TYPE_CHECKING:
+    from .wrapper import Container
+else:
+    Container = Any
 
 
 class LayoutNode(PfObject):

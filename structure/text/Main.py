@@ -1,9 +1,17 @@
-from PyForge import Game
-import os
-import pygame as pg
+from PyForge.easel.app import App
+from PyForge.easel.scene import Scene
+from PyForge.easel.surface import Surface
+from PyForge.widget.button import Button
 
-class Main(Game):
-    condition = 0
-    def __init__(self, direct):
-        self.direct = direct
-        super().__init__((0,0), (25,25,25), flags = 0, mods_dir=os.path.join(direct, 'mods'),) 
+class MainScene(Scene):
+    def clickButtonMain(self, num: int):
+        print(f"Нажата кнопка {num}!")
+    
+    def __init__(self, page: App):
+        super().__init__(page)
+        sur = Surface((100, 100), flags=0)
+        self.append(Button(page, (150, 150), sur, is_click=self.clickButtonMain))
+
+def main(dir: str) -> int:
+    app = App(size=(400, 400), scene=[MainScene])
+    app.start()

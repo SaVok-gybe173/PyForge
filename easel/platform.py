@@ -4,6 +4,8 @@
 import sys
 import os
 
+from ..base.logger import printError
+
 def is_android():
     """
     Определяет, запущен ли Python-скрипт в среде Android.
@@ -19,8 +21,10 @@ def is_android():
     try:
         import android 
         return True
-    except ImportError:
-        pass 
+    except (ImportError, ModuleNotFoundError):
+        pass
+    except Exception as e:
+        printError(f"Не известная ошибка {e} при вызове is_android")
     return False
 
 def is_linux():

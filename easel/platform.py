@@ -19,7 +19,7 @@ def is_android():
     try:
         import android 
         return True
-    except ImportError:
+    except:
         pass 
     return False
 

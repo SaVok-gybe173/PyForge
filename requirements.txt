@@ -1,6 +1,6 @@
 numpy
 setuptools>=61.0
-cython>=3.3.0
+cython>=3.1.8
 requests>=2.34.2
 pysdl2==0.9.17
 pysdl2-dll

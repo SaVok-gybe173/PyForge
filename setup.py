@@ -40,7 +40,7 @@ SKIP_DIRS = {
 
 def _stage_package():
     """Копирует весь исходный код в PyForge/, чтобы wheel получился как
-    site-packages/PyForge/... — с импортами вида `import PyForge.cpu`."""
+    site-packages/PyForge/... - с импортами вида `import PyForge.cpu`."""
     if os.path.exists(STAGE_DIR):
         shutil.rmtree(STAGE_DIR, ignore_errors=True)
     os.makedirs(STAGE_DIR, exist_ok=True)
@@ -106,7 +106,7 @@ def main():
         annotate=False,
         include_path=[_here, STAGE_DIR],
     ),
-    python_requires=">=3.12",
+    python_requires=">=3.11",
     zip_safe=False,
 )
     finally:

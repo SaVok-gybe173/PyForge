@@ -108,12 +108,21 @@ class Window:
         """
         Главный цикл для работы
         """
-        sdl2.SDL_Init(sdl2.SDL_INIT_VIDEO)
+
+        
+        result = sdl2.SDL_Init(sdl2.SDL_INIT_VIDEO)
+
+        if result != 0:
+            printError(f"[Window] Не удалось создать окно (код ошибки {result})")
+            return result
+
+        # выбор дисплея
         if sdl2.SDL_GetNumVideoDisplays() < self.__display_index:
             self.__display_index = sdl2.SDL_GetNumVideoDisplays()
         elif self.__display_index < 0:
             self.__display_index = sdl2.SDL_GetNumVideoDisplays()-self.__display_index
 
+        # информация о дисплее
         mode = sdl2.SDL_DisplayMode()
         result = sdl2.SDL_GetCurrentDisplayMode(self.__display_index, mode)
         if result == 0:
@@ -121,9 +130,10 @@ class Window:
                 self.__point = (0, 0)
                 self.size = (mode.w, mode.h)
             else:
-                self.__point = self.__point if not self.__point is None else (WINDOWPOS_CENTERED, WINDOWPOS_CENTERED)
+                self.__point = self.__point if not self.__point is None else (WINDOWPOS_CENTERED_DISPLAY(self.__display_index), WINDOWPOS_CENTERED_DISPLAY(self.__display_index))
         else:
-            printError("[Window] Не удалось получить разрешение дисплея")
+            printError(f"[Window] Не удалось получить разрешение дисплея (код ошибки {result})")
+        del result
 
         # главное окно
         self.win: sdl2.SDL_Window = sdl2.SDL_CreateWindow(
@@ -138,9 +148,6 @@ class Window:
         # Инициализация подсистем
         self.initOpenGL()
         self._start_scenes()
-
-        printInfo("Значение self.win:", self.win)
-
 
         self.surface = Surface(self.holst, owned=False)
         self.clock_fps = Clock()
@@ -160,7 +167,7 @@ class Window:
                 # self.color должен быть кортежем (r,g,b) или sdl2.SDL_Color
                 self.surface.fill(self.color)
 
-            # 
+            # текущая позиция мыши
             self.button_state = sdl2.mouse.SDL_GetMouseState(ctypes.byref(x), ctypes.byref(y))
             self.mouse_pos =  (x.value, y.value)
 

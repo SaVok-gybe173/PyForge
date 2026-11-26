@@ -91,26 +91,26 @@ class CoreListOfItemsBase(PfObject):
             speed: пикселей за один тик колеса.
         """
         super().__init__(page, left_top, width_height)
-        self.distance = distance
-        self.size_streak = size_streak
-        self.min_thumb = min_thumb
-        self.color_streak = color_streak
-        self.speed = speed
+        self.distance = distance          # Отступ между элементами по оси списка (px).
+        self.size_streak = size_streak    # Толщина полосы прокрутки (px).
+        self.min_thumb = min_thumb        # Минимальная длина ползунка (px).
+        self.color_streak = color_streak  # RGB-цвет полосы/ползунка.
+        self.speed = speed                # Пикселей прокрутки за один тик колеса.
 
-        self.items: list[PfObjectIMG] = list(items) if items else []
+        self.items: list[PfObjectIMG] = list(items) if items else []    # Все элементы списка (копия переданного items).
 
         # кэш математики
         self._sizes = array('q')          # размеры элементов вдоль оси
         self._prefix = array('q')         # префиксные суммы
-        self._total_length = 0
-        self._max_scroll = 0
-        self._thumb_size = 0
-        self._thumb_travel = 0
+        self._total_length = 0            # Полная длина контента (сумма _sizes + отступы distance).
+        self._max_scroll = 0              # Максимально допустимый scroll_offset (_total_length - _view_length(), >= 0).
+        self._thumb_size = 0              # Длина ползунка (пропорциональна видимой части, ограничена min_thumb).
+        self._thumb_travel = 0            # Допустимый ход ползунка: _view_length() - _thumb_size (>= 0).
 
         # состояние
-        self.scroll_offset = 0
-        self.visible_start = 0
-        self.visible_end = -1
+        self.scroll_offset = 0            # Текущее смещение контента (0 ... _max_scroll).
+        self.visible_start = 0            # Индекс первого видимого элемента (включительно).
+        self.visible_end = -1             # Индекс последнего видимого элемента (включительно); -1, если видимых нет.
 
         self._rebuild_cache()
 

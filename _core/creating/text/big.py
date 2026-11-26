@@ -107,18 +107,6 @@ class _BigText(CoreListOfItemsDown):
         super()._scroll_by(delta)
         self._apply_selection()
 
-    # публичный API
-    def set_text(self, text: str) -> None:
-        self.clear(is_update=False)
-        self.items.extend(self._make_lines(text))
-        self._rebuild_cache()
-
-    def get_content(self) -> str:
-        return "\n".join(it.text for it in self.items)
-
-    @property
-    def text(self) -> str:
-        return self.get_content()
 
     # события
 
@@ -170,7 +158,31 @@ class _BigText(CoreListOfItemsDown):
         if key.keysym.sym == sdl2.SDLK_a and (key.keysym.mod & sdl2.KMOD_CTRL):
             self.select_all()
 
-    # API
+    # публичный API
+    
+    def set_text(self, text: str) -> None:
+        self.clear(is_update=False)
+        self.items.extend(self._make_lines(text))
+        self._rebuild_cache()
+
+    def add_text(self, text: str) -> None:
+        _max_scroll, scroll_offset = self._max_scroll, self.scroll_offset
+        self.items.extend(self._make_lines(text))
+        self._rebuild_cache()
+        if _max_scroll == scroll_offset:
+            self.scroll_offset = self._max_scroll
+
+    def get_content(self) -> str:
+        return "\n".join(it.text for it in self.items)
+
+    @property
+    def text(self) -> str:
+        return self.get_content()
+    @text.setter
+    def text(self, text: str) -> None:
+        self.set_text(text)
+
+
 
     def clear_selection(self):
         """Снять выделение со всех строк."""

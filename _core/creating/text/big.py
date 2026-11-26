@@ -124,8 +124,11 @@ class _BigText(CoreListOfItemsDown):
             return super().mousebuttondown(common, button)
         if button.button != sdl2.SDL_BUTTON_LEFT:
             return False
-
-        hit = self._hit_global(button.x, button.y)
+        try:
+            hit = self._hit_global(button.x, button.y)
+        except IndexError:
+            return False
+        
         if hit is None:
             return False
 

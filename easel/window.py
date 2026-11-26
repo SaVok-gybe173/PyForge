@@ -10,6 +10,7 @@ from ..base.logger import printError, printInfo
 from ..pfmath.time import Clock
 from .event import EVENT_NAMES, CommonEvent, QuitEvent, get as getevent, Event
 from .surface import Surface
+from .platform import is_ios, is_android
 from sdl2.video import (
     SDL_WINDOW_FULLSCREEN as WINDOW_FULLSCREEN,
     SDL_WINDOW_FULLSCREEN_DESKTOP as WINDOW_FULLSCREEN_DESKTOP,
@@ -24,6 +25,7 @@ from sdl2.video import (
     SDL_WINDOWPOS_CENTERED_DISPLAY as WINDOWPOS_CENTERED_DISPLAY,
     SDL_WINDOWPOS_ISCENTERED as WINDOWPOS_ISCENTERED
 )
+
 import sdl2
 import ctypes
 import sys
@@ -113,8 +115,15 @@ class Window:
             self.__display_index = sdl2.SDL_GetNumVideoDisplays()-self.__display_index
 
         mode = sdl2.SDL_DisplayMode()
-        sdl2.SDL_GetCurrentDisplayMode(self.__display_index, mode)
-        self.__point = self.__point if not self.__point is None else (int((mode.w-self.__size[0])/2), int((mode.h-self.__size[1])/2))
+        result = sdl2.SDL_GetCurrentDisplayMode(self.__display_index, mode)
+        if result == 0:
+            if is_ios() or is_android():
+                self.__point = (0, 0)
+                self.size = (mode.w, mode.h)
+            else:
+                self.__point = self.__point if not self.__point is None else (WINDOWPOS_CENTERED, WINDOWPOS_CENTERED)
+        else:
+            printError("[Window] Не удалось получить разрешение дисплея")
 
         # главное окно
         self.win: sdl2.SDL_Window = sdl2.SDL_CreateWindow(
@@ -246,7 +255,7 @@ class Window:
 
     # размеры
     @property
-    def size(self):
+    def size(self) -> list[int, int]:
         return self.__size
     @size.setter 
     def size(self, size: list[int, int]):

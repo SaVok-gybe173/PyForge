@@ -1,5 +1,6 @@
-from ..cpu.creating.text import TextLine
+from ..cpu.creating.text import TextLine, BigText
 
 __all__ = [
-    "TextLine"
+    "TextLine",
+    "BigText"
 ]

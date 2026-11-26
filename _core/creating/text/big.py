@@ -52,8 +52,11 @@ class _BigText(CoreListOfItemsDown):
         if pos < 0: return (0, 0)
         if pos >= self._total_length:
             last = len(self.items) - 1
-            return (last, len(self.items[last].text))
-
+            try:
+                return (last, len(self.items[last].text))
+            except IndexError:
+                return None
+            
         line_idx = find_index_at(self._prefix, self._sizes, pos)
         if line_idx < 0 or line_idx >= len(self.items): return None
 
@@ -120,15 +123,9 @@ class _BigText(CoreListOfItemsDown):
     # события
 
     def mousebuttondown(self, common, button):
-        if button.button in (4, 5):
-            return super().mousebuttondown(common, button)
-        if button.button != sdl2.SDL_BUTTON_LEFT:
-            return False
-        try:
-            hit = self._hit_global(button.x, button.y)
-        except IndexError:
-            return False
-        
+        if button.button in (4, 5): return super().mousebuttondown(common, button)
+        if button.button != sdl2.SDL_BUTTON_LEFT: return False
+        hit = self._hit_global(button.x, button.y)
         if hit is None:
             return False
 

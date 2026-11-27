@@ -121,14 +121,15 @@ class Window:
             self.__display_index = sdl2.SDL_GetNumVideoDisplays()
         elif self.__display_index < 0:
             self.__display_index = sdl2.SDL_GetNumVideoDisplays()-self.__display_index
-
+        
         # информация о дисплее
         mode = sdl2.SDL_DisplayMode()
         result = sdl2.SDL_GetCurrentDisplayMode(self.__display_index, mode)
         if result == 0:
             if is_ios() or is_android():
-                self.__point = (0, 0)
-                self.size = (mode.w, mode.h)
+                self.__point = (sdl2.SDL_WINDOWPOS_UNDEFINED, sdl2.SDL_WINDOWPOS_UNDEFINED)
+                self.__size # Эти размеры не важны, Android переопределит их
+                self.__flags = self.__flags | WINDOW_FULLSCREEN
             else:
                 self.__point = self.__point if not self.__point is None else (WINDOWPOS_CENTERED_DISPLAY(self.__display_index), WINDOWPOS_CENTERED_DISPLAY(self.__display_index))
         else:
@@ -151,6 +152,16 @@ class Window:
 
         self.surface = Surface(self.holst, owned=False)
         self.clock_fps = Clock()
+
+        # размеры
+        w = ctypes.c_int()
+        h = ctypes.c_int()
+
+        sdl2.SDL_GetWindowSize(self.win, w, h)
+        printInfo(f"[{self.win}] Размер окна: {w.value} x {h.value}")
+
+        if is_ios() or is_android():
+            self.__size = (w.value, h.value)
 
         # ссылка на координаты мышки на экране
         x = ctypes.c_int(0)
